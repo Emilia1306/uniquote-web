@@ -1,4 +1,7 @@
-# UniquoteWeb
+# UniquoteWeb – UNIQUOTE (Angular 20)
+
+Aplicación web para gestión y seguimiento de cotizaciones en UNIMER.
+Frontend en Angular 20. Backend previsto: NestJS (AWS).
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8.
 
