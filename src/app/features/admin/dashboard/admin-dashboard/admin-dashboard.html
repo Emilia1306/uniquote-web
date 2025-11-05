@@ -1,0 +1,49 @@
+<div class="grid gap-6">
+  <h2 class="text-xl font-semibold">Inicio — Administrador</h2>
+
+  <!-- Usuarios recientes -->
+  <section class="bg-white border border-zinc-200 rounded-2xl shadow-sm p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="font-medium">Lista de usuarios (recientes)</h3>
+      <span class="text-sm text-zinc-500">{{ usuarios.length }} usuarios</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="text-left text-zinc-500">
+          <tr>
+            <th class="py-2">Nombre</th>
+            <th>Correo</th>
+            <th>Estado</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of usuarios" class="border-t border-zinc-100">
+            <td class="py-2">{{ u.nombre }}</td>
+            <td>{{ u.correo }}</td>
+            <td>
+              <span class="inline-flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full"
+                      [class.bg-green-500]="u.estado==='Activo'"
+                      [class.bg-zinc-400]="u.estado==='Inactivo'"></span>
+                {{ u.estado }}
+              </span>
+            </td>
+            <td>{{ u.rol }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Actividad reciente (auditoría) -->
+  <section class="bg-white border border-zinc-200 rounded-2xl shadow-sm p-4">
+    <h3 class="font-medium mb-2">Actividad reciente (Auditoría)</h3>
+    <ul class="text-sm space-y-2">
+      <li *ngFor="let log of auditoria">
+        {{ log.mensaje }} — <span class="text-zinc-500">{{ log.hace }}</span>
+      </li>
+    </ul>
+  </section>
+</div>
