@@ -1,0 +1,47 @@
+<div class="min-h-screen grid place-items-center bg-zinc-100">
+  <div class="card w-full max-w-md p-8">
+    <h1 class="text-2xl font-semibold text-center mb-6">Iniciar sesión</h1>
+
+    <form (ngSubmit)="submit()" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Correo electrónico</label>
+        <input
+          class="input"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="correo@ejemplo.com"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm mb-1">Contraseña</label>
+        <div class="relative">
+          <input
+            class="input pr-10"
+            [type]="showPwd ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="••••••••"
+            required
+          />
+          <button type="button"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 text-xs muted hover:underline"
+                  (click)="showPwd = !showPwd">
+            {{ showPwd ? 'Ocultar' : 'Mostrar' }}
+          </button>
+        </div>
+      </div>
+
+      <button class="btn w-full" [disabled]="loading">
+        {{ loading ? 'Entrando…' : 'Iniciar sesión' }}
+      </button>
+
+      <!-- tips de prueba -->
+      <p class="text-xs muted text-center">
+        Tip: usa correos con <strong>admin</strong>, <strong>gerente</strong> o cualquier otro para entrar como Director (mock).
+      </p>
+    </form>
+  </div>
+</div>

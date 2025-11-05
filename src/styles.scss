@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Spartan (shadcn-style para Angular) */
+@layer theme, base, components, utilities;
+/* Si usarás Spartan, importa su preset (no pasa nada si luego no lo usas) */
+@import "@spartan-ng/brain/hlm-tailwind-preset.css";
+
+/* Utilidades propias */
+@layer utilities {
+  .card { @apply bg-white dark:bg-zinc-900 shadow-soft rounded-2xl border border-zinc-100 dark:border-zinc-800; }
+  .muted { @apply text-zinc-500 dark:text-zinc-400; }
+  .btn   { @apply inline-flex items-center justify-center px-4 py-2 rounded-lg border bg-black text-white hover:opacity-90 disabled:opacity-50; }
+  .input {
+    @apply w-full rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2
+           focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-zinc-600
+           bg-white dark:bg-zinc-800;
+  }
+}
