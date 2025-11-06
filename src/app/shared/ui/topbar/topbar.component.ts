@@ -14,6 +14,8 @@ export class TopbarComponent {
 
   initials = computed(() => {
     const n = this.user()?.name?.trim() ?? '';
-    return n ? n.split(/\s+/).slice(0,2).map(w => w[0]!.toUpperCase()).join('') : '';
+    return n ? n.split(/\s+/).slice(0, 2).map(w => w[0]!.toUpperCase()).join('') : 'UQ';
   });
+
+  roleText = computed(() => this.user()?.role ?? '—');
 }

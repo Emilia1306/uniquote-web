@@ -1,14 +1,10 @@
-<app-topbar />
-<div class="mx-auto max-w-[1600px]">
-  <div class="flex">
-    <!-- sidebar fijo en desktop -->
-    <aside class="hidden sm:block w-64 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-      <app-sidebar />
-    </aside>
+<div class="min-h-screen bg-zinc-100">
+  <app-topbar></app-topbar>
 
-    <!-- contenido -->
-    <main class="flex-1 p-4 md:p-6">
-      <router-outlet />
+  <div class="mx-auto px-4 grid gap-6" style="max-width: 1600px; grid-template-columns: 240px 1fr;">
+    <app-sidebar></app-sidebar>
+    <main class="pb-10">
+      <router-outlet></router-outlet>
     </main>
   </div>
 </div>

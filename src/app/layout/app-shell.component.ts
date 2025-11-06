@@ -1,12 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from '../core/auth/auth.service';
 import { TopbarComponent } from '../shared/ui/topbar/topbar.component';
 import { SidebarComponent } from '../shared/ui/sidebar/sidebar.component';
 
 @Component({
-  selector: 'app-shell',
   standalone: true,
+  selector: 'app-shell',
   imports: [RouterOutlet, TopbarComponent, SidebarComponent],
   templateUrl: './app-shell.component.html'
 })
-export class AppShellComponent {}
+export class AppShellComponent implements OnInit {
+  private auth = inject(AuthService);
+
+  async ngOnInit() {
+    // Rehidrata sesión si hay token (sin parpadeos)
+    await this.auth.loadMeOnce();
+  }
+}

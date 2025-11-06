@@ -34,14 +34,11 @@
         </div>
       </div>
 
-      <button class="btn w-full" [disabled]="loading">
-        {{ loading ? 'Entrando…' : 'Iniciar sesión' }}
+      <!-- botón -->
+      <button class="btn w-full" [disabled]="loading()">
+        {{ loading() ? 'Entrando…' : 'Iniciar sesión' }}
       </button>
 
-      <!-- tips de prueba -->
-      <p class="text-xs muted text-center">
-        Tip: usa correos con <strong>admin</strong>, <strong>gerente</strong> o cualquier otro para entrar como Director (mock).
-      </p>
     </form>
   </div>
 </div>

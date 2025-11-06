@@ -35,7 +35,8 @@ export class QuotesBrowsePage {
 
   ngOnInit() {
     const scope = this.auth.role() === 'DIRECTOR' ? 'mine' : 'global';
-    const userId = this.auth.user()?.id;
+    const userId = this.auth.user() ? String(this.auth.user()!.id) : undefined;
     this.store.load({ scope, userId });
+
   }
 }
