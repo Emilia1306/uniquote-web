@@ -18,4 +18,13 @@
            focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-zinc-600
            bg-white dark:bg-zinc-800;
   }
+  .card { @apply bg-white border border-zinc-200 rounded-2xl shadow-[0_2px_0_rgba(0,0,0,0.05)]; }
+  .card-hover { @apply transition-shadow hover:shadow-md; }
+  .btn-icon { @apply h-10 w-10 inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50; }
+  
+  .input { @apply h-10 rounded-xl border border-zinc-300 px-3 bg-white; }
+  .pill { @apply inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-xs font-medium border; }
+  .pill--ok { @apply border-green-300 text-green-700 bg-green-50; }
+  .divider { @apply border-t border-zinc-200 my-3; }
+  .muted { @apply text-zinc-500; }
 }

@@ -20,6 +20,17 @@ export const routes: Routes = [
       { path: 'admin', component: AdminDashboardComponent },
       { path: 'gerente', component: GerenteDashboardComponent },
       { path: 'director', component: DirectorDummy },
+      {
+        path: 'gerente/cotizaciones',
+        loadComponent: () => import('./features/cotizaciones/quotes-browse.page')
+          .then(m => m.QuotesBrowsePage)
+      },
+      {
+        path: 'director/cotizaciones',
+        loadComponent: () => import('./features/cotizaciones/quotes-browse.page')
+          .then(m => m.QuotesBrowsePage)
+      }
+
     ]
   },
 
