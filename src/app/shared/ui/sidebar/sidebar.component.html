@@ -1,11 +1,21 @@
-<aside class="w-64 h-full bg-white border-r border-zinc-200">
+<aside class="w-64 h-full bg-white border-r border-zinc-200 flex flex-col">
   <div class="p-4 font-semibold">Menú</div>
-  <nav class="px-2 space-y-1">
+
+  <nav class="px-2 space-y-1 flex-1 overflow-auto">
     <a *ngFor="let item of menu()"
-      [routerLink]="item.path"
-      routerLinkActive="bg-zinc-100 font-medium"
-      class="block px-4 py-2 rounded-md hover:bg-zinc-100 text-zinc-800">
+       [routerLink]="item.path"
+       routerLinkActive="bg-zinc-100 font-medium"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="block px-4 py-2 rounded-md hover:bg-zinc-100 text-zinc-800">
       {{ item.label }}
     </a>
   </nav>
+
+  <div class="p-3 border-t border-zinc-200">
+    <button
+      (click)="logout()"
+      class="w-full px-3 py-2 rounded-md bg-red-50 text-red-600 hover:bg-red-100 text-left">
+      Cerrar sesión
+    </button>
+  </div>
 </aside>

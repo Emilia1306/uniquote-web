@@ -1,4 +1,4 @@
-<header class="h-14 bg-white border-b border-zinc-200 flex items-center">
+<header class="h-14 bg-white border-b border-zinc-200 flex items-center sticky top-0 z-10">
   <div class="mx-auto w-full max-w-[1600px] px-4 flex items-center">
     <!-- Izquierda: marca -->
     <span class="font-semibold">UNIQUOTE</span>
@@ -6,12 +6,14 @@
     <!-- Derecha -->
     <div class="ml-auto flex items-center gap-2">
       <hlm-avatar
-        class="size-8 grid place-items-center bg-zinc-200 text-zinc-800 font-semibold select-none">
-        {{ initials() }}
+        class="size-8 rounded-full bg-zinc-200 text-zinc-800 font-semibold grid place-items-center select-none">
+        <span hlmAvatarFallback class="text-[12px] leading-none">
+          {{ initials() }}
+        </span>
       </hlm-avatar>
       <div class="text-sm">
-        <div class="font-medium">{{ user()?.name }}</div>
-        <div class="text-xs opacity-70">{{ user()?.role }}</div>
+        <div class="font-medium">{{ fullName() }}</div>
+        <div class="text-xs opacity-70">{{ roleText() }}</div>
       </div>
     </div>
   </div>

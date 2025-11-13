@@ -1,0 +1,39 @@
+<!-- src/app/features/auth/verify/verify.component.html -->
+<div class="min-h-screen grid place-items-center bg-zinc-100">
+  <div class="card w-full max-w-md p-8">
+    <h1 class="text-2xl font-semibold text-center mb-2">Verifica tu inicio de sesión</h1>
+    <p class="text-sm muted text-center mb-6">
+      Enviamos un código a <strong>{{ email }}</strong>
+    </p>
+
+    <form (ngSubmit)="submit()" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Código de verificación</label>
+        <input
+          class="input tracking-widest text-center text-lg"
+          type="text"
+          name="code"
+          [(ngModel)]="code"
+          placeholder="•••••••"
+          maxlength="6"
+          required
+        />
+      </div>
+
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="rememberDevice" name="rememberDevice" />
+        Recordar este dispositivo por 30 días
+      </label>
+
+      <button class="btn w-full" [disabled]="loading() || code.length !== 6">
+        {{ loading() ? 'Verificando…' : 'Confirmar' }}
+      </button>
+
+      <button type="button" class="w-full text-xs muted hover:underline" (click)="resend()">
+        Reenviar código
+      </button>
+
+      <p *ngIf="error()" class="text-sm text-red-600">{{ error() }}</p>
+    </form>
+  </div>
+</div>
