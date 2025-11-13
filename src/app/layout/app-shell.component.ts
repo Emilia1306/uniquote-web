@@ -14,7 +14,7 @@ export class AppShellComponent implements OnInit {
   private auth = inject(AuthService);
 
   async ngOnInit() {
-    // Rehidrata sesión si hay token (sin parpadeos)
+    // Rehidrata sesión si hay token
     await this.auth.loadMeOnce();
   }
 }

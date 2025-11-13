@@ -6,6 +6,6 @@ export interface LoginDto {
 }
 
 export interface LoginResponse {
-  accessToken: string; // <-- el JWT
+  accessToken: string; 
   user: User;
 }

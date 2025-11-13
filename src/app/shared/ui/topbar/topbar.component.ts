@@ -12,10 +12,36 @@ export class TopbarComponent {
   private auth = inject(AuthService);
   user = computed(() => this.auth.user());
 
-  initials = computed(() => {
-    const n = this.user()?.name?.trim() ?? '';
-    return n ? n.split(/\s+/).slice(0, 2).map(w => w[0]!.toUpperCase()).join('') : 'UQ';
+  /** Nombre completo: "Juan Pérez" (con fallback) */
+  fullName = computed(() => {
+    const u = this.user();
+    const name = (u?.name ?? '').trim();
+    const last = (u?.lastName ?? '').trim();
+    const full = [name, last].filter(Boolean).join(' ').trim();
+    return full || 'Usuario';
   });
 
-  roleText = computed(() => this.user()?.role ?? '—');
+  /** Iniciales a partir de nombre y apellido: "JP" */
+  initials = computed(() => {
+    const u = this.user();
+    const name = (u?.name ?? '').trim();
+    const last = (u?.lastName ?? '').trim();
+    const a = name ? name[0]!.toUpperCase() : '';
+    const b = last ? last[0]!.toUpperCase() : '';
+    return (a + b) || 'UQ';
+  });
+
+  roleText = computed(() => {
+    const r = this.user()?.role;
+    const map: Record<string, string> = {
+      ADMIN: 'ADMIN',
+      GERENTE: 'GERENTE',
+      DIRECTOR: 'DIRECTOR',
+    };
+
+    const key = String(r ?? '').toUpperCase();
+    const raw = String(r ?? '').trim();      
+
+    return map[key] ?? (raw || '—');
+  });
 }

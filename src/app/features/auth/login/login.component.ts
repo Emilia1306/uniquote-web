@@ -1,3 +1,4 @@
+// src/app/features/auth/login/login.component.ts
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,8 +24,8 @@ export class LoginComponent {
     this.error.set(null);
     this.loading.set(true);
     try {
-      await this.auth.loginApi({ email: this.email.trim(), password: this.password });
-      // navegación la hace el servicio según el rol
+      await this.auth.loginOrAskMfa({ email: this.email.trim(), password: this.password });
+      // Si la API pidió MFA, el service te manda a /verificacion
     } catch (e: any) {
       this.error.set(e?.message ?? 'Error iniciando sesión');
     } finally {

@@ -41,7 +41,7 @@ export class SidebarComponent {
           { label: 'Clientes', path: '/director/clientes' },
         ];
       default:
-        return []; // evita “modo director” por defecto mientras carga
+        return [];
     }
   });
 
