@@ -22,6 +22,7 @@ import { DirectorDashboard }         from './features/director/dashboard/directo
 // Cotizaciones
 import { QuotesBrowsePage } from './features/cotizaciones/quotes-browse.page';
 import { AdminUsersPage } from './features/admin/users/users.page';
+import { ClientesPage } from './features/clientes/clientes.page';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -45,6 +46,7 @@ export const routes: Routes = [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'usuarios', component: AdminUsersPage },
+          { path: 'clientes', component: ClientesPage },
           // { path: 'tarifario', loadComponent: ... },
           // { path: 'auditoria', loadComponent: ... },
         ]

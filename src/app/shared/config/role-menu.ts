@@ -6,6 +6,7 @@ export const ROLE_MENU: Record<Role, MenuItem[]> = {
     { label: 'Inicio', path: '/admin', icon: 'lucideHouse' },
     { label: 'Cotizaciones', path: '/admin/cotizaciones', icon: 'lucideFileText' },
     { label: 'Usuarios', path: '/admin/usuarios', icon: 'lucideUsers' },
+    { label: 'Clientes', path: '/admin/cliente', icon: 'lucideUsers' },
     { label: 'Tarifario', path: '/admin/tarifario', icon: 'lucideTicket' },
     { label: 'Auditoría', path: '/admin/auditoria', icon: 'lucideHistory' },
   ],

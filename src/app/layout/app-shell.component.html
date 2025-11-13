@@ -1,10 +1,44 @@
-<div class="min-h-screen bg-zinc-100">
+<div class="min-h-svh bg-zinc-100">
+  <!-- Topbar global (tu componente) -->
   <app-topbar></app-topbar>
 
-  <div class="mx-auto px-4 grid gap-6" style="max-width: 1600px; grid-template-columns: 240px 1fr;">
-    <app-sidebar></app-sidebar>
-    <main class="pb-10">
-      <router-outlet></router-outlet>
-    </main>
+  <!-- Toolbar móvil con botón hamburguesa (solo < md) -->
+  <header class="md:hidden sticky top-0 z-30 bg-white border-b border-zinc-200">
+    <div class="flex items-center justify-between px-4 h-12">
+      <button class="p-2 -ml-2 rounded hover:bg-zinc-100"
+              (click)="toggleDrawer()"
+              aria-label="Abrir menú">
+        <span class="block w-6 h-[2px] bg-zinc-800 mb-1"></span>
+        <span class="block w-6 h-[2px] bg-zinc-800 mb-1"></span>
+        <span class="block w-6 h-[2px] bg-zinc-800"></span>
+      </button>
+      <div class="text-sm text-zinc-500">Menú</div>
+      <div class="w-6"></div>
+    </div>
+  </header>
+
+  <!-- Layout principal -->
+  <div class="mx-auto px-4 md:px-6 max-w-[1600px]">
+    <div class="min-h-[calc(100svh-3rem)] md:min-h-[calc(100svh-0px)] md:flex md:gap-6">
+      <!-- Sidebar desktop: fijo, a toda altura -->
+      <div class="hidden md:block md:sticky md:top-0 md:h-svh">
+        <app-sidebar></app-sidebar>
+      </div>
+
+      <!-- Contenido -->
+      <main class="flex-1 min-w-0 pb-10">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+
+  <!-- Drawer móvil -->
+  <div *ngIf="open()" class="fixed inset-0 z-40 md:hidden">
+    <!-- backdrop -->
+    <div class="absolute inset-0 bg-black/40" (click)="closeDrawer()"></div>
+    <!-- panel -->
+    <div class="absolute left-0 top-0 h-full w-72 bg-white shadow-xl">
+      <app-sidebar></app-sidebar>
+    </div>
   </div>
 </div>

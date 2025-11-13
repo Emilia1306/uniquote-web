@@ -1,0 +1,155 @@
+<div class="mx-auto max-w-[1400px] px-6 py-6">
+  <!-- Encabezado -->
+  <div class="mb-4">
+    <h1 class="text-3xl font-semibold">Clientes</h1>
+    <p class="muted">Historial de clientes y sus cotizaciones</p>
+  </div>
+
+  <!-- Alert de error -->
+  <div *ngIf="error()" class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-700">
+    {{ error() }}
+  </div>
+
+  <!-- Toolbar: buscador + toggle vista + botón -->
+  <div
+    class="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 md:items-center mb-6"
+  >
+    <!-- Buscador (largo, debajo del header) -->
+    <div class="relative">
+      <input
+        id="clientes-search"
+        class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 outline-none focus:border-zinc-500"
+        type="text"
+        [ngModel]="qRaw()"
+        (ngModelChange)="setQRaw($event)"
+        placeholder="Buscar por empresa o razón social"
+      />
+      <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
+    </div>
+
+    <!-- Toggle de vista -->
+    <div class="flex gap-2">
+      <button
+        type="button"
+        class="btn-outline w-full"
+        [class.btn]="view()==='list'"
+        [class.btn-outline]="view()!=='list'"
+        (click)="setView('list')"
+      >
+        Lista
+      </button>
+      <button
+        type="button"
+        class="btn-outline w-full"
+        [class.btn]="view()==='cards'"
+        [class.btn-outline]="view()!=='cards'"
+        (click)="setView('cards')"
+      >
+        Cards
+      </button>
+    </div>
+
+    <!-- Botón crear -->
+    <div class="text-right">
+      <button class="btn" (click)="openCreate()">+ Nuevo cliente</button>
+    </div>
+  </div>
+
+  <!-- Vista LISTA -->
+  <div *ngIf="view()==='list'" class="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+    <table class="w-full text-sm">
+      <thead class="bg-zinc-50">
+        <tr class="text-left">
+          <th class="p-3">Empresa</th>
+          <th class="p-3">Razón social</th>
+          <th class="p-3 w-40"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filtered()" class="border-t">
+          <td class="p-3 font-medium">{{ c.empresa }}</td>
+          <td class="p-3">{{ c.razonSocial }}</td>
+          <td class="p-3 text-right">
+            <button class="text-blue-600 hover:underline mr-2" (click)="openEdit(c)">Editar</button>
+            <button class="text-red-600 hover:underline" (click)="remove(c)">Eliminar</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading() && filtered().length === 0">
+          <td class="p-6 text-center text-zinc-500" colspan="3">Sin resultados</td>
+        </tr>
+        <tr *ngIf="loading()">
+          <td class="p-6 text-center text-zinc-500" colspan="3">Cargando…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Vista CARDS -->
+  <div *ngIf="view()==='cards'">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div
+        *ngFor="let c of filtered()"
+        class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+      >
+        <div class="mb-2 text-lg font-semibold">{{ c.empresa }}</div>
+        <div class="text-sm text-zinc-600 mb-4">
+          <span class="inline-flex items-center gap-2">
+            <span class="inline-block h-2 w-2 rounded-full bg-zinc-400"></span>
+            Razón social
+          </span>
+          <div class="mt-1 text-zinc-800">{{ c.razonSocial }}</div>
+        </div>
+
+        <div class="mt-4 flex justify-end gap-2">
+          <button class="btn-outline" (click)="openEdit(c)">Editar</button>
+          <button class="btn-danger" (click)="remove(c)">Eliminar</button>
+        </div>
+      </div>
+
+      <!-- estados -->
+      <div *ngIf="!loading() && filtered().length === 0" class="col-span-full">
+        <div class="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          Sin resultados
+        </div>
+      </div>
+      <div *ngIf="loading()" class="col-span-full">
+        <div class="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
+          Cargando…
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer: contador -->
+  <div class="mt-4 text-sm text-zinc-600">
+    Mostrando {{ totalMostrados() }} de {{ clientes().length }}
+  </div>
+
+  <!-- Modal crear/editar -->
+  <div *ngIf="showForm()" class="fixed inset-0 grid place-items-center bg-black/40">
+    <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <h2 class="mb-4 text-xl font-semibold">
+        {{ editingId() ? 'Editar cliente' : 'Nuevo cliente' }}
+      </h2>
+
+      <form (ngSubmit)="submit()" class="space-y-3">
+        <div>
+          <label class="mb-1 block text-xs">Empresa</label>
+          <input class="input w-full" [(ngModel)]="f.empresa" name="empresa" required />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs">Razón social</label>
+          <input class="input w-full" [(ngModel)]="f.razonSocial" name="razonSocial" required />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn-outline" (click)="cancelForm()">Cancelar</button>
+          <button class="btn" [disabled]="loading()">
+            {{ loading() ? 'Guardando…' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
