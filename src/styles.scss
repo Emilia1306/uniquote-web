@@ -1,30 +1,109 @@
-/* You can add global styles to this file, and also import other style files */
+/* Tailwind primero */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Spartan (shadcn-style para Angular) */
-@layer theme, base, components, utilities;
-/* Si usarás Spartan, importa su preset (no pasa nada si luego no lo usas) */
-@import "@spartan-ng/brain/hlm-tailwind-preset.css";
+/* ===========================
+   UNIQUOTE — Tema durazno
+   =========================== */
 
-/* Utilidades propias */
-@layer utilities {
-  .card { @apply bg-white dark:bg-zinc-900 shadow-soft rounded-2xl border border-zinc-100 dark:border-zinc-800; }
-  .muted { @apply text-zinc-500 dark:text-zinc-400; }
-  .btn   { @apply inline-flex items-center justify-center px-4 py-2 rounded-lg border bg-black text-white hover:opacity-90 disabled:opacity-50; }
-  .input {
-    @apply w-full rounded-lg border border-zinc-200 dark:border-zinc-700 px-4 py-2
-           focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-zinc-600
-           bg-white dark:bg-zinc-800;
+/* Quicksand (400/500/600/700) */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+/* Tokens / variables */
+:root {
+  --peach-25:  #FEF8F2;
+  --peach-50:  #FFF4EA;   /* fondo general suave */
+  --peach-75:  #FCF4EE;   /* hover sidebar */
+  --peach-100: #FCF4EE;   /* active sidebar */
+
+  --accent-500:#F36C38;   /* naranja principal */
+  --accent-600:#F36C38;   /* barra activa */
+  --accent-700:#F36C38;
+
+  --ink-700:   #111827;
+  --ink-600:   #1F2937;
+
+  --border:    rgba(17, 24, 39, .08);
+  --shadow-1:  0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(17,24,39,.04);
+  --shadow-top:0 1px 0 rgba(0,0,0,.04), 0 8px 24px rgba(17,24,39,.04);
+}
+
+/* Base (resets/typography) */
+@layer base {
+  html, body {
+    font-family: 'Quicksand', ui-sans-serif, system-ui, -apple-system, Segoe UI,
+                 Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';
+    color: var(--ink-700);
   }
-  .card { @apply bg-white border border-zinc-200 rounded-2xl shadow-[0_2px_0_rgba(0,0,0,0.05)]; }
-  .card-hover { @apply transition-shadow hover:shadow-md; }
-  .btn-icon { @apply h-10 w-10 inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white hover:bg-zinc-50; }
-  
-  .input { @apply h-10 rounded-xl border border-zinc-300 px-3 bg-white; }
-  .pill { @apply inline-flex items-center gap-1 rounded-full px-3 py-0.5 text-xs font-medium border; }
-  .pill--ok { @apply border-green-300 text-green-700 bg-green-50; }
+}
+
+/* Componentes globales */
+@layer components {
+  /* Tarjetas y helpers */
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-1); }
+  .input { @apply h-10 rounded-xl border border-zinc-300 px-3 bg-white; } /* inputs suaves */
+
+  /* Pills por rol */
+  .pill { display:inline-block; padding:2px 10px; font-size:.75rem; font-weight:600; border-radius:9999px; line-height:1.4; }
+  .pill--admin   { background:#FCF4EE; color:#F36C38; }
+  .pill--gerente { background:#FCF4EE; color:#F36C38; }
+  .pill--director{ background:#FCF4EE; color:#F36C38; }
+
+  /* Botones globales (sistema) */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 select-none
+           rounded-full
+           font-semibold tracking-[0.01em]
+           transition-[background,box-shadow,opacity,transform] duration-150
+           focus:outline-none focus-visible:ring-2 ring-offset-1
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn--sm { @apply h-9  px-3  text-sm; }
+  .btn--md { @apply h-10 px-4  text-base; }
+  .btn--lg { @apply h-12 px-6  text-lg; }
+
+  .btn--primary  { @apply bg-[var(--accent-600)] text-white ring-[var(--accent-600)]; }
+  .btn--primary:hover  { @apply bg-[color:var(--accent-700)]; }
+  .btn--primary:active { @apply translate-y-[0.5px]; }
+
+  .btn--outline { @apply bg-white text-[var(--ink-700)] border border-[var(--border)] ring-[var(--accent-600)]; }
+  .btn--outline:hover { @apply bg-[var(--peach-75)]; }
+
+  .btn--ghost   { @apply bg-transparent text-[var(--accent-700)] ring-[var(--accent-600)]; }
+  .btn--ghost:hover { @apply bg-[var(--peach-75)]; }
+
+  .btn--danger  { @apply bg-red-600 text-white ring-red-600; }
+  .btn--danger:hover { @apply bg-red-700; }
+
+  .btn--block { @apply w-full; }
+  .btn--icon  { @apply h-10 w-10 p-0; }
+  .btn--loading { @apply relative text-transparent; }
+  .btn--loading::after {
+    content:""; @apply absolute inset-0 m-auto h-4 w-4 rounded-full border-2 border-white border-r-transparent animate-spin;
+  }
+}
+
+/* Utilities personalizadas */
+@layer utilities {
+  .muted   { @apply text-zinc-500; }
   .divider { @apply border-t border-zinc-200 my-3; }
-  .muted { @apply text-zinc-500; }
+}
+
+/* ====== Overrides de tema (fuera de layers para más fuerza) ====== */
+
+/* Fondo general “durazno” (tu root usa bg-zinc-100) */
+.bg-zinc-100 { background-color: var(--peach-50) !important; }
+
+/* Topbar con sombrita */
+app-topbar header { box-shadow: var(--shadow-top); }
+
+/* Sidebar: hover/active */
+app-sidebar aside { border-right: 1px solid var(--border); }
+app-sidebar aside nav a { border-radius: 10px; transition: background-color .15s ease, box-shadow .15s ease; }
+app-sidebar aside nav a:hover { background: var(--peach-75); }
+/* Activo: coincide con tu routerLinkActive="bg-zinc-100" */
+app-sidebar aside nav a.bg-zinc-100 {
+  background: var(--peach-100) !important;
+  font-weight: 600;
 }

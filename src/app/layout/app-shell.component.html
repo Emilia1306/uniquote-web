@@ -1,10 +1,24 @@
-<div class="min-h-screen bg-zinc-100">
-  <app-topbar></app-topbar>
+<!-- Topbar fija -->
+<app-topbar class="fixed inset-x-0 top-0 z-40 h-14"></app-topbar>
 
-  <div class="mx-auto px-4 grid gap-6" style="max-width: 1600px; grid-template-columns: 240px 1fr;">
-    <app-sidebar></app-sidebar>
-    <main class="pb-10">
+<!-- Sidebar fija (solo ≥ md) -->
+<div class="hidden md:block fixed left-0 top-14 z-30 w-64 h-[calc(100svh-3.5rem)] bg-white border-r border-zinc-200">
+  <app-sidebar></app-sidebar>
+</div>
+
+<!-- Contenido: compensa la topbar y (en desktop) el ancho de la sidebar -->
+<div class="pt-14 md:pl-64">
+  <div class="mx-auto px-4 md:px-6 max-w-[1600px] bg-[var(--peach-50)]">
+    <main class="min-h-[calc(100svh-3.5rem)] pb-10">
       <router-outlet></router-outlet>
     </main>
+  </div>
+</div>
+
+<!-- Drawer móvil (bajo la topbar) -->
+<div *ngIf="open()" class="fixed inset-x-0 top-14 bottom-0 z-40 md:hidden">
+  <div class="absolute inset-0 bg-black/40" (click)="closeDrawer()"></div>
+  <div class="absolute left-0 top-0 h-full w-72 bg-white shadow-xl">
+    <app-sidebar></app-sidebar>
   </div>
 </div>

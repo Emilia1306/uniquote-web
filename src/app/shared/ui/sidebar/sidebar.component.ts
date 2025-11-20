@@ -9,6 +9,7 @@ type Item = { label: string; path: string };
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgFor],
+  styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent {
@@ -23,6 +24,7 @@ export class SidebarComponent {
           { label: 'Inicio', path: '/admin' },
           { label: 'Cotizaciones', path: '/admin/cotizaciones' },
           { label: 'Usuarios', path: '/admin/usuarios' },
+          { label: 'Clientes', path: '/admin/clientes' },
           { label: 'Tarifario', path: '/admin/tarifario' },
           { label: 'Auditoría', path: '/admin/auditoria' },
         ];

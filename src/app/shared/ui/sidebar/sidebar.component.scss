@@ -1,0 +1,31 @@
+/* Link base */
+.sidebar-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  color: #27272a; /* zinc-800 */
+  text-decoration: none;
+  transition: background-color .15s ease, color .15s ease;
+
+  &:hover {
+    background-color: var(--peach-75); /* hover suave */
+  }
+}
+
+/* Activo: solo cambia color de texto/ícono y fondo suave */
+.sidebar-link.is-active {
+  background-color: var(--peach-100); 
+  color: var(--accent-700);           
+  font-weight: 600;
+}
+
+/* Si pones iconos dentro, heredarán el color */
+.sidebar-link .sidebar-icon {
+  color: inherit;
+}
+
+/* Accesibilidad */
+.sidebar-link:focus-visible {
+  outline: 2px solid var(--accent-600);
+  outline-offset: 2px;
+}

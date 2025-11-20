@@ -1,44 +1,52 @@
-<div class="min-h-screen grid place-items-center bg-zinc-100">
-  <div class="card w-full max-w-md p-8">
-    <h1 class="text-2xl font-semibold text-center mb-6">Iniciar sesión</h1>
+<div class="min-h-svh grid place-items-center bg-zinc-100">
+  <div class="login-card w-[92vw] max-w-xl">
+    <h1 class="login-title">Iniciar Sesión</h1>
 
-    <form (ngSubmit)="submit()" class="space-y-4">
+    <form (ngSubmit)="submit()" class="space-y-6">
+      <!-- Email -->
       <div>
-        <label class="block text-sm mb-1">Correo electrónico</label>
+        <label class="login-label">Correo Electrónico</label>
         <input
-          class="input"
+          class="login-input"
           type="email"
           name="email"
           [(ngModel)]="email"
-          placeholder="correo@ejemplo.com"
+          placeholder="correo@example.com"
+          autocomplete="email"
           required
         />
       </div>
 
+      <!-- Password -->
       <div>
-        <label class="block text-sm mb-1">Contraseña</label>
+        <label class="login-label">Contraseña</label>
         <div class="relative">
           <input
-            class="input pr-10"
+            class="login-input pr-20"
             [type]="showPwd ? 'text' : 'password'"
             name="password"
             [(ngModel)]="password"
-            placeholder="••••••••"
+            placeholder="**********"
+            autocomplete="current-password"
             required
           />
-          <button type="button"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 text-xs muted hover:underline"
-                  (click)="showPwd = !showPwd">
+          <button
+            type="button"
+            class="show-btn"
+            (click)="showPwd = !showPwd"
+            aria-label="Mostrar/Ocultar contraseña"
+          >
             {{ showPwd ? 'Ocultar' : 'Mostrar' }}
           </button>
         </div>
       </div>
 
       <!-- botón -->
-      <button class="btn w-full" [disabled]="loading()">
-        {{ loading() ? 'Entrando…' : 'Iniciar sesión' }}
-      </button>
-
+      <div class="flex justify-center">
+        <button class="btn btn-peach btn--sm block mx-auto" [disabled]="loading()">
+          {{ loading() ? 'Entrando…' : 'Iniciar Sesión' }}
+        </button>
+      </div>
     </form>
   </div>
 </div>
