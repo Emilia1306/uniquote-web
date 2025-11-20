@@ -10,7 +10,7 @@ import { SidebarComponent } from '../shared/ui/sidebar/sidebar.component';
   selector: 'app-shell',
   imports: [
     RouterOutlet,
-    NgIf,                   // 👈 habilita *ngIf en el template
+    NgIf,                   
     TopbarComponent,
     SidebarComponent,
   ],

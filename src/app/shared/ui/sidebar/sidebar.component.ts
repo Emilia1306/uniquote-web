@@ -9,6 +9,7 @@ type Item = { label: string; path: string };
   selector: 'app-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgFor],
+  styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
 export class SidebarComponent {

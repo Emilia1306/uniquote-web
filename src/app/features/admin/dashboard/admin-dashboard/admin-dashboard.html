@@ -14,23 +14,23 @@
           <tr>
             <th class="py-2">Nombre</th>
             <th>Correo</th>
-            <th>Estado</th>
             <th>Rol</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let u of usuarios" class="border-t border-zinc-100">
             <td class="py-2">{{ u.nombre }}</td>
-            <td>{{ u.correo }}</td>
+            <td class="truncate max-w-[260px] md:max-w-none">{{ u.correo }}</td>
             <td>
-              <span class="inline-flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full"
-                      [class.bg-green-500]="u.estado==='Activo'"
-                      [class.bg-zinc-400]="u.estado==='Inactivo'"></span>
-                {{ u.estado }}
+              <span
+                class="inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium text-white"
+                [class.bg-red-500]="u.rol === 'Admin'"
+                [class.bg-orange-500]="u.rol === 'Gerente'"
+                [class.bg-amber-500]="u.rol === 'Director'"
+              >
+                {{ u.rol }}
               </span>
             </td>
-            <td>{{ u.rol }}</td>
           </tr>
         </tbody>
       </table>

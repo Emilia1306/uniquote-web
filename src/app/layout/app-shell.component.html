@@ -1,5 +1,5 @@
-<div class="min-h-svh bg-zinc-100">
-  <!-- Topbar global (tu componente) -->
+<div class="app-shell min-h-svh">
+  <!-- Topbar global -->
   <app-topbar></app-topbar>
 
   <!-- Toolbar móvil con botón hamburguesa (solo < md) -->
@@ -18,9 +18,9 @@
   </header>
 
   <!-- Layout principal -->
-  <div class="mx-auto px-4 md:px-6 max-w-[1600px]">
+  <div class="mx-auto px-4 md:px-6 max-w-[1600px] ">
     <div class="min-h-[calc(100svh-3rem)] md:min-h-[calc(100svh-0px)] md:flex md:gap-6">
-      <!-- Sidebar desktop: fijo, a toda altura -->
+      <!-- Sidebar desktop -->
       <div class="hidden md:block md:sticky md:top-0 md:h-svh">
         <app-sidebar></app-sidebar>
       </div>
@@ -34,9 +34,7 @@
 
   <!-- Drawer móvil -->
   <div *ngIf="open()" class="fixed inset-0 z-40 md:hidden">
-    <!-- backdrop -->
     <div class="absolute inset-0 bg-black/40" (click)="closeDrawer()"></div>
-    <!-- panel -->
     <div class="absolute left-0 top-0 h-full w-72 bg-white shadow-xl">
       <app-sidebar></app-sidebar>
     </div>
