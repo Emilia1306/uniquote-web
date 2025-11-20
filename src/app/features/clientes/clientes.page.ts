@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
+import { LucideAngularModule } from 'lucide-angular';
 
 function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -13,7 +14,7 @@ type ViewMode = 'cards' | 'list';
 @Component({
   standalone: true,
   selector: 'clientes-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './clientes.page.html',
 })
 export class ClientesPage {
@@ -25,9 +26,9 @@ export class ClientesPage {
   clientes = signal<Cliente[]>([]);
 
   // -------- Filtros en memoria ----------
-  private _qRaw = signal('');           // interno (lo editas desde el input)
-  public  qRaw  = this._qRaw;           // alias público para el template
-  q = signal('');                       // valor debounced
+  private _qRaw = signal('');           // lo que escribe el usuario
+  public  qRaw  = this._qRaw;           // alias para template
+  q = signal('');                       // valor con debounce
   view = signal<ViewMode>('cards');     // toggle lista/cards
 
   // debounce
@@ -37,10 +38,9 @@ export class ClientesPage {
     clearTimeout(this.t);
     this.t = setTimeout(() => this.q.set(v.trim()), 250);
   }
-
   setQRaw(v: string) {
-    this.qRaw.set(v);         // actualiza la señal visible
-    this.onSearchChange(v);   // aplica debounce y filtra
+    this.qRaw.set(v);
+    this.onSearchChange(v);
   }
 
   filtered = computed(() => {
@@ -63,7 +63,7 @@ export class ClientesPage {
     this.error.set(null);
     try {
       if (force) this.api.clearCache();
-      // pide lista (auto decide cliente/servidor), toma solo items
+      // auto (cliente/servidor) y tomamos items
       const res = await this.api.list({ sort: 'empresa_asc', page: 1, pageSize: 50 }, 'auto');
       this.clientes.set(res.items);
     } catch (e: any) {
@@ -121,5 +121,15 @@ export class ClientesPage {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  // --- helpers visuales para cards (stats dummy, determinísticos) ---
+  stats(c: Cliente) {
+    const base = String(c.id ?? c.empresa)
+      .split('')
+      .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const cot = (base % 20) + 1;            // 1..20
+    const apr = ((base % 70) + 30);         // 30..99 aprox
+    return { cotizaciones: cot, aprobacion: Math.min(apr, 99) };
   }
 }

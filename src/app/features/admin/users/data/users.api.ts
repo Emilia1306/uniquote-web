@@ -37,6 +37,7 @@ export function mapApiUser(u: ApiUser): User {
     lastName: u.lastName,
     email: u.email,
     role: normalizeRole(u.role?.name),
+    phone: u.phone ?? undefined,
   };
 }
 
