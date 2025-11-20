@@ -1,42 +1,24 @@
-<div class="app-shell min-h-svh">
-  <!-- Topbar global -->
-  <app-topbar></app-topbar>
+<!-- Topbar fija -->
+<app-topbar class="fixed inset-x-0 top-0 z-40 h-14"></app-topbar>
 
-  <!-- Toolbar móvil con botón hamburguesa (solo < md) -->
-  <header class="md:hidden sticky top-0 z-30 bg-white border-b border-zinc-200">
-    <div class="flex items-center justify-between px-4 h-12">
-      <button class="p-2 -ml-2 rounded hover:bg-zinc-100"
-              (click)="toggleDrawer()"
-              aria-label="Abrir menú">
-        <span class="block w-6 h-[2px] bg-zinc-800 mb-1"></span>
-        <span class="block w-6 h-[2px] bg-zinc-800 mb-1"></span>
-        <span class="block w-6 h-[2px] bg-zinc-800"></span>
-      </button>
-      <div class="text-sm text-zinc-500">Menú</div>
-      <div class="w-6"></div>
-    </div>
-  </header>
+<!-- Sidebar fija (solo ≥ md) -->
+<div class="hidden md:block fixed left-0 top-14 z-30 w-64 h-[calc(100svh-3.5rem)] bg-white border-r border-zinc-200">
+  <app-sidebar></app-sidebar>
+</div>
 
-  <!-- Layout principal -->
-  <div class="mx-auto px-4 md:px-6 max-w-[1600px] ">
-    <div class="min-h-[calc(100svh-3rem)] md:min-h-[calc(100svh-0px)] md:flex md:gap-6">
-      <!-- Sidebar desktop -->
-      <div class="hidden md:block md:sticky md:top-0 md:h-svh">
-        <app-sidebar></app-sidebar>
-      </div>
-
-      <!-- Contenido -->
-      <main class="flex-1 min-w-0 pb-10">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
+<!-- Contenido: compensa la topbar y (en desktop) el ancho de la sidebar -->
+<div class="pt-14 md:pl-64">
+  <div class="mx-auto px-4 md:px-6 max-w-[1600px] bg-[var(--peach-50)]">
+    <main class="min-h-[calc(100svh-3.5rem)] pb-10">
+      <router-outlet></router-outlet>
+    </main>
   </div>
+</div>
 
-  <!-- Drawer móvil -->
-  <div *ngIf="open()" class="fixed inset-0 z-40 md:hidden">
-    <div class="absolute inset-0 bg-black/40" (click)="closeDrawer()"></div>
-    <div class="absolute left-0 top-0 h-full w-72 bg-white shadow-xl">
-      <app-sidebar></app-sidebar>
-    </div>
+<!-- Drawer móvil (bajo la topbar) -->
+<div *ngIf="open()" class="fixed inset-x-0 top-14 bottom-0 z-40 md:hidden">
+  <div class="absolute inset-0 bg-black/40" (click)="closeDrawer()"></div>
+  <div class="absolute left-0 top-0 h-full w-72 bg-white shadow-xl">
+    <app-sidebar></app-sidebar>
   </div>
 </div>

@@ -71,4 +71,14 @@ export class UsersApi {
   async remove(id: number | string): Promise<void> {
     await this.http.delete(`${this.base}/${id}`).toPromise();
   }
+
+  async listRecent(limit = 5): Promise<User[]> {
+    const res = await this.http.get<ApiUser[]>(this.base).toPromise();
+    const sorted = (res ?? []).sort((a, b) => {
+      const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return db - da; // descendente
+    });
+    return sorted.slice(0, limit).map(mapApiUser);
+  }
 }

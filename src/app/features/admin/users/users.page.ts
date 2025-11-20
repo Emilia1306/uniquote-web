@@ -1,9 +1,11 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, HostListener, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersApi, CreateUserDto, UpdateUserDto } from './data/users.api';
 import type { User } from '../../../core/models/user';
 import type { Role } from '../../../core/auth/roles';
+import { LucideAngularModule } from 'lucide-angular';
+import { AuthService } from '../../../core/auth/auth.service';
 
 function normalizeTxt(s: string) {
   return (s || '')
@@ -12,36 +14,48 @@ function normalizeTxt(s: string) {
     .replace(/\p{Diacritic}/gu, '');
 }
 
+type RoleFilter = Role | 'ALL';
+
 @Component({
   standalone: true,
   selector: 'admin-users-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './users.page.html',
 })
 export class AdminUsersPage {
   private api = inject(UsersApi);
+  private auth = inject(AuthService);
 
+  // ------------ Data ------------
   loading = signal(false);
   error = signal<string | null>(null);
   users = signal<User[]>([]);
 
-  // ------------ Filtros (cliente) ------------
-  public _searchRaw = signal('');              // input inmediato
-  search = signal('');                          // texto ya con debounce
-  roleFilter = signal<Role | 'ALL'>('ALL');     // selector de rol
+  // Usuario logueado (por si lo necesitas mostrar)
+  meId = signal<number | string | null>(null);
+  meEmail = signal<string | null>(null);
 
-  // debouncing simple
+  // ------------ Filtros (cliente) ------------
+  public _searchRaw = signal('');             // input inmediato
+  search = signal('');                        // con debounce
+  roleFilter = signal<RoleFilter>('ALL');     // filtro por rol (lista)
+
+  // Dropdown custom (lista)
+  isRoleOpen = signal(false);
+  readonly roleOptions: RoleFilter[] = ['ALL', 'ADMIN', 'GERENTE', 'DIRECTOR'];
+  roleLabel(r: RoleFilter) { return r === 'ALL' ? 'Todos los roles' : r; }
+  toggleRoleDropdown() { this.isRoleOpen.update(v => !v); }
+  setRole(r: RoleFilter) { this.roleFilter.set(r); this.isRoleOpen.set(false); this.page.set(0); }
+
+  // Debounce búsqueda
   private searchTimer: any = null;
   onSearchChange(v: string) {
     this._searchRaw.set(v);
     clearTimeout(this.searchTimer);
-    this.searchTimer = setTimeout(() => this.search.set(v.trim()), 250);
-  }
-  onRoleChange(v: string) {
-    this.roleFilter.set(v as any);
+    this.searchTimer = setTimeout(() => { this.search.set(v.trim()); this.page.set(0); }, 250);
   }
 
-  // lista filtrada (no llama API, deriva de signals en memoria)
+  // Lista filtrada en memoria
   filtered = computed(() => {
     const q = normalizeTxt(this.search());
     const rf = this.roleFilter();
@@ -53,18 +67,67 @@ export class AdminUsersPage {
     });
   });
 
+  // ------------ Paginación ------------
+  page = signal(0);           // 0-based
+  pageSize = signal(10);
+
+  totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize())));
+  startIndex = computed(() => this.page() * this.pageSize());
+  endIndex = computed(() => Math.min(this.startIndex() + this.pageSize(), this.filtered().length));
+  paged = computed(() => this.filtered().slice(this.startIndex(), this.endIndex()));
+
+  hasPrev = computed(() => this.page() > 0);
+  hasNext = computed(() => this.page() < this.totalPages() - 1);
+
+  prevPage() { if (this.hasPrev()) this.page.set(this.page() - 1); }
+  nextPage() { if (this.hasNext()) this.page.set(this.page() + 1); }
+  goPage(i: number) { if (i >= 0 && i < this.totalPages()) this.page.set(i); }
+
+  pagesArray = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i));
+
   // ------------ CRUD state ------------
   showForm = signal(false);
   editingId = signal<number | string | null>(null);
+
+  // Form state
   f = { name:'', lastName:'', email:'', phone:'', password:'', roleId: 1 };
 
-  async ngOnInit() { await this.load(); }
+  // Dropdown custom (modal)
+  isFormRoleOpen = signal(false);
+  readonly formRoleOptions = [
+    { id: 1, label: 'ADMIN' },
+    { id: 2, label: 'GERENTE' },
+    { id: 3, label: 'DIRECTOR' },
+  ];
+  formRoleLabel() {
+    return this.formRoleOptions.find(x => x.id === this.f.roleId)?.label ?? 'Selecciona un rol';
+  }
+  toggleFormRole() { this.isFormRoleOpen.update(v => !v); }
+  pickFormRole(id: number) { this.f.roleId = id; this.isFormRoleOpen.set(false); }
+
+  async ngOnInit() {
+    await this.auth.loadMeOnce();
+    await this.load();
+  }
 
   async load() {
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
-      this.users.set(await this.api.list());
+      const all = await this.api.list();
+
+      const me = this.auth.user();
+      const myId = (me as any)?.id ?? null;
+      const myEmail = (me as any)?.email ?? null;
+
+      this.meId.set(myId); this.meEmail.set(myEmail);
+
+      const cleaned = all.filter(u =>
+        (myId ? u.id !== myId : true) &&
+        (myEmail ? u.email !== myEmail : true)
+      );
+
+      this.users.set(cleaned);
+      this.page.set(0);
     } catch (e: any) {
       this.error.set(e?.message ?? 'No se pudo cargar usuarios');
     } finally {
@@ -72,22 +135,27 @@ export class AdminUsersPage {
     }
   }
 
-  // --------- crear/editar/eliminar (igual que ya tenías) ----------
   openCreate() {
     this.editingId.set(null);
     this.f = { name:'', lastName:'', email:'', phone:'', password:'', roleId: 1 };
     this.showForm.set(true);
   }
+
   openEdit(u: User) {
     this.editingId.set(u.id);
     const inferredRoleId = u.role === 'ADMIN' ? 1 : u.role === 'GERENTE' ? 2 : 3;
     this.f = { name: u.name, lastName: u.lastName, email: u.email, phone:'', password:'', roleId: inferredRoleId };
     this.showForm.set(true);
   }
-  cancelForm() { this.showForm.set(false); this.editingId.set(null); }
+
+  cancelForm() {
+    this.showForm.set(false);
+    this.isFormRoleOpen.set(false);
+    this.editingId.set(null);
+  }
+
   async submit() {
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
       if (this.editingId()) {
         const dto: UpdateUserDto = {
@@ -118,17 +186,24 @@ export class AdminUsersPage {
       this.loading.set(false);
     }
   }
+
   async remove(u: User) {
     if (!confirm(`¿Eliminar a ${u.name} ${u.lastName}?`)) return;
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
       await this.api.remove(u.id);
       this.users.set(this.users().filter(x => x.id !== u.id));
+      if (this.paged().length === 0 && this.page() > 0) this.page.set(this.page() - 1);
     } catch (e: any) {
       this.error.set(e?.message ?? 'No se pudo eliminar');
     } finally {
       this.loading.set(false);
     }
+  }
+
+  // --- Cerrar modal con ESC (tipado compatible) ---
+  @HostListener('document:keydown.escape', ['$event'])
+  onEsc(ev: KeyboardEvent | Event) {
+    if (this.showForm()) this.cancelForm();
   }
 }
