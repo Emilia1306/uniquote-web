@@ -1,9 +1,8 @@
-import { CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
+import { CanActivateFn } from '@angular/router';
 import { AuthService } from './auth.service';
 
 export const meReadyGuard: CanActivateFn = async () => {
-  const auth = inject(AuthService);
-  await auth.loadMeOnce();  // espera que el user se cargue si hay token
+  await inject(AuthService).loadMeOnce();
   return true;
 };

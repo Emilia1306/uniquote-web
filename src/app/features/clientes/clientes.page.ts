@@ -1,57 +1,50 @@
+// src/app/features/clientes/clientes.page.ts
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';              // 👈 importa RouterLink
+import { LucideAngularModule } from 'lucide-angular';      // (opcional si usas <lucide-angular>)
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
-import { LucideAngularModule } from 'lucide-angular';
 
 function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
 }
-
 type ViewMode = 'cards' | 'list';
 
 @Component({
   standalone: true,
   selector: 'clientes-page',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  // 👇 agrega RouterLink (y LucideAngularModule si lo usas en la plantilla)
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
   templateUrl: './clientes.page.html',
 })
 export class ClientesPage {
   private api = inject(ClientesApi);
 
-  // datos
   loading  = signal(false);
   error    = signal<string | null>(null);
   clientes = signal<Cliente[]>([]);
 
-  // -------- Filtros en memoria ----------
-  private _qRaw = signal('');           // lo que escribe el usuario
-  public  qRaw  = this._qRaw;           // alias para template
-  q = signal('');                       // valor con debounce
-  view = signal<ViewMode>('cards');     // toggle lista/cards
+  private _qRaw = signal('');
+  public  qRaw  = this._qRaw;
+  q = signal('');
+  view = signal<ViewMode>('cards');
 
-  // debounce
   private t: any = null;
   onSearchChange(v: string) {
     this._qRaw.set(v);
     clearTimeout(this.t);
     this.t = setTimeout(() => this.q.set(v.trim()), 250);
   }
-  setQRaw(v: string) {
-    this.qRaw.set(v);
-    this.onSearchChange(v);
-  }
+  setQRaw(v: string) { this.qRaw.set(v); this.onSearchChange(v); }
 
   filtered = computed(() => {
     const q = norm(this.q());
     if (!q) return this.clientes();
-    return this.clientes().filter(c =>
-      norm(`${c.empresa} ${c.razonSocial}`).includes(q)
-    );
+    return this.clientes().filter(c => norm(`${c.empresa} ${c.razonSocial}`).includes(q));
   });
 
-  // -------- Modal crear/editar ----------
   showForm  = signal(false);
   editingId = signal<number | string | null>(null);
   f = { empresa: '', razonSocial: '' };
@@ -59,11 +52,9 @@ export class ClientesPage {
   async ngOnInit() { await this.load(); }
 
   async load(force = false) {
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
       if (force) this.api.clearCache();
-      // auto (cliente/servidor) y tomamos items
       const res = await this.api.list({ sort: 'empresa_asc', page: 1, pageSize: 50 }, 'auto');
       this.clientes.set(res.items);
     } catch (e: any) {
@@ -73,26 +64,15 @@ export class ClientesPage {
     }
   }
 
-  // UI helpers
   setView(v: ViewMode) { this.view.set(v); }
   totalMostrados = computed(() => this.filtered().length);
 
-  // -------- CRUD ----------
-  openCreate() {
-    this.editingId.set(null);
-    this.f = { empresa: '', razonSocial: '' };
-    this.showForm.set(true);
-  }
-  openEdit(c: Cliente) {
-    this.editingId.set(c.id);
-    this.f = { empresa: c.empresa, razonSocial: c.razonSocial };
-    this.showForm.set(true);
-  }
+  openCreate() { this.editingId.set(null); this.f = { empresa: '', razonSocial: '' }; this.showForm.set(true); }
+  openEdit(c: Cliente) { this.editingId.set(c.id); this.f = { empresa: c.empresa, razonSocial: c.razonSocial }; this.showForm.set(true); }
   cancelForm() { this.showForm.set(false); this.editingId.set(null); }
 
   async submit() {
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
       if (this.editingId()) {
         const updated = await this.api.update(this.editingId()!, { ...this.f });
@@ -111,8 +91,7 @@ export class ClientesPage {
 
   async remove(c: Cliente) {
     if (!confirm(`¿Eliminar "${c.empresa}"?`)) return;
-    this.loading.set(true);
-    this.error.set(null);
+    this.loading.set(true); this.error.set(null);
     try {
       await this.api.remove(c.id);
       this.clientes.set(this.clientes().filter(x => x.id !== c.id));
@@ -123,13 +102,6 @@ export class ClientesPage {
     }
   }
 
-  // --- helpers visuales para cards (stats dummy, determinísticos) ---
-  stats(c: Cliente) {
-    const base = String(c.id ?? c.empresa)
-      .split('')
-      .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-    const cot = (base % 20) + 1;            // 1..20
-    const apr = ((base % 70) + 30);         // 30..99 aprox
-    return { cotizaciones: cot, aprobacion: Math.min(apr, 99) };
-  }
+  // demo KPIs
+  stats(c: Cliente) { return { cotizaciones: 12, aprobacion: 60 }; }
 }

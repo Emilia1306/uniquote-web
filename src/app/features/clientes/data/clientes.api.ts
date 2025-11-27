@@ -143,6 +143,7 @@ export class ClientesApi {
     this.pageCache.clear();
   }
 
+
   /** Aplica búsqueda, ordenamiento y paginación en memoria. */
   private applyClientOps(data: Cliente[], opts?: ListOptions): ListResponse<Cliente> {
     const q = normalize(opts?.q ?? '');
@@ -175,5 +176,17 @@ export class ClientesApi {
     const items = arr.slice(start, end);
 
     return { items, total };
+  }
+
+  async getById(id: number | string) {
+    // intenta cache local primero
+    if (this.cacheAll) {
+      const hit = this.cacheAll.find(c => String(c.id) === String(id));
+      if (hit) return hit;
+    }
+    // llamado directo al endpoint /clientes/{id}
+    const res = await this.http.get<Cliente>(`${this.base}/${id}`).toPromise();
+    if (!res) throw new Error('No se pudo obtener el cliente');
+    return res;
   }
 }
