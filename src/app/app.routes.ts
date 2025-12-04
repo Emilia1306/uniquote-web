@@ -18,7 +18,15 @@ import { QuotesBrowsePage } from './features/cotizaciones/quotes-browse.page';
 import { AdminUsersPage }   from './features/admin/users/users.page';
 import { ClientesPage }     from './features/clientes/clientes.page';
 
-// 👇 importa el detalle
+// Cotizaciones
+import { CrearCotizacionPage } from './features/cotizaciones/crear/crear-cotizacion.page';
+import { CotizacionDetailPage } from './features/cotizaciones/detalle/cotizacion-detail.page';
+
+import { ProyectosBrowsePage } from './features/proyectos/proyectos-browse.page';
+import { ProyectoDetailsPage } from './features/proyectos/proyecto-details.page';
+import { ProyectoCreatePage } from './features/proyectos/crear/crear-proyecto.page';
+
+
 import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
 
 export const routes: Routes = [
@@ -41,7 +49,6 @@ export const routes: Routes = [
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'usuarios',     component: AdminUsersPage },
           { path: 'clientes',     component: ClientesPage },
-          // 👇 detalle de cliente
           { path: 'clientes/:id', component: ClienteDetailPage },
         ]
       },
@@ -52,9 +59,16 @@ export const routes: Routes = [
         canMatch: [roleGuard(['GERENTE'])],
         children: [
           { path: '', component: GerenteDashboardComponent },
+
+          // PROYECTOS
+          { path: 'proyectos', component: ProyectosBrowsePage },
+          { path: 'proyectos/crear', component: ProyectoCreatePage },
+          { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
+          // COTIZACIONES
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          // si el gerente también verá detalle de clientes, añade:
-          // { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'cotizaciones/crear', component: CrearCotizacionPage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
         ]
       },
 
@@ -65,8 +79,6 @@ export const routes: Routes = [
         children: [
           { path: '', component: DirectorDashboard },
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          // idem si aplica:
-          // { path: 'clientes/:id', component: ClienteDetailPage },
         ]
       },
     ],

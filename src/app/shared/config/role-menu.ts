@@ -12,6 +12,7 @@ export const ROLE_MENU: Record<Role, MenuItem[]> = {
   ],
   GERENTE: [
     { label: 'Inicio', path: '/gerente', icon: 'lucideHouse' },
+    { label: 'Proyectos', path: '/gerente/proyectos', icon: 'lucideFileText' },
     { label: 'Cotizaciones', path: '/gerente/cotizaciones', icon: 'lucideFileText' },
     { label: 'Estadísticas', path: '/gerente/estadisticas', icon: 'lucideBarChart' },
     { label: 'Clientes', path: '/gerente/clientes', icon: 'lucideBuilding2' },

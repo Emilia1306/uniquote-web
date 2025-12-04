@@ -31,6 +31,7 @@ export class SidebarComponent {
       case 'GERENTE':
         return [
           { label: 'Inicio', path: '/gerente' },
+          { label: 'Proyectos', path: '/gerente/proyectos' },
           { label: 'Cotizaciones', path: '/gerente/cotizaciones' },
           { label: 'Estadísticas', path: '/gerente/estadisticas' },
           { label: 'Clientes', path: '/gerente/clientes' },
