@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 export interface Cotizacion {
   id: number;
@@ -31,61 +32,61 @@ export class CotizacionesApi {
 
   http = inject(HttpClient);
 
+  // 👇 BASE CORRECTA
+  base = `${environment.apiUrl}/cotizaciones`;
+
   getByProject(projectId: number) {
     return this.http.get<Cotizacion[]>(
-      `/api/v1/cotizaciones?projectId=${projectId}`,
+      `${this.base}?projectId=${projectId}`,
       { withCredentials: true }
     );
   }
 
   getAllFiltered(params: any) {
-    return this.http.get<Cotizacion[]>(`/api/v1/cotizaciones-global`, {
+    return this.http.get<Cotizacion[]>(`${this.base}-global`, {
       params,
       withCredentials: true
     });
   }
 
   getOne(id: number) {
-    return this.http.get(`/api/v1/cotizaciones/${id}`, {
+    return this.http.get(`${this.base}/${id}`, {
       withCredentials: true
     });
   }
 
   getById(id: number) {
-    return this.http.get<any>(`/api/v1/cotizaciones/${id}`, {
+    return this.http.get<any>(`${this.base}/${id}`, {
       withCredentials: true
     });
   }
 
   create(body: any) {
-    return this.http.post<{ id: number }>(`/api/v1/cotizaciones`, body, {
+    return this.http.post<{ id: number }>(this.base, body, {
       withCredentials: true
     });
   }
 
-
   update(id: number, body: any) {
-    return this.http.patch(`/api/v1/cotizaciones/${id}`, body, {
+    return this.http.patch(`${this.base}/${id}`, body, {
       withCredentials: true
     });
   }
 
   updateStatus(id: number, body: any) {
-    return this.http.patch(`/api/v1/cotizaciones/${id}/status`, body, {
+    return this.http.patch(`${this.base}/${id}/status`, body, {
       withCredentials: true
     });
   }
 
   clone(id: number) {
-    return this.http.post<{ id: number }>(
-      `/api/v1/cotizaciones/${id}/clone`,
-      {},
-      { withCredentials: true }
-    );
+    return this.http.post<{ id: number }>(`${this.base}/${id}/clone`, {}, {
+      withCredentials: true
+    });
   }
 
   delete(id: number) {
-    return this.http.delete(`/api/v1/cotizaciones/${id}`, {
+    return this.http.delete(`${this.base}/${id}`, {
       withCredentials: true
     });
   }

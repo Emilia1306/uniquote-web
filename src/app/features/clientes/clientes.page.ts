@@ -2,8 +2,8 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';              // 👈 importa RouterLink
-import { LucideAngularModule } from 'lucide-angular';      // (opcional si usas <lucide-angular>)
+import { RouterLink } from '@angular/router';              
+import { LucideAngularModule } from 'lucide-angular';      
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
 
@@ -15,7 +15,6 @@ type ViewMode = 'cards' | 'list';
 @Component({
   standalone: true,
   selector: 'clientes-page',
-  // 👇 agrega RouterLink (y LucideAngularModule si lo usas en la plantilla)
   imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
   templateUrl: './clientes.page.html',
 })
