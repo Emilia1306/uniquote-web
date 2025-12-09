@@ -1,32 +1,26 @@
-/* Envoltura general del link */
 .menu-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color .15s ease, color .15s ease;
+  color: var(--text-900);
 
-  /* Hover general */
   &:hover {
-    background: var(--peach-75);      /* Durazno suave */
-    color: var(--accent-600);         /* Texto naranja */
+    background: var(--peach-75);
 
-    lucide-angular {
-      color: var(--accent-600) !important;
+    .icon,
+    .label {
+      color: var(--brand) !important;
     }
   }
 }
 
-/* Activo */
 .active-link {
   background: var(--peach-100) !important;
   font-weight: 600;
-  color: var(--accent-600) !important;
   position: relative;
+  color: var(--brand) !important;
 
-  /* Barra naranja a la izquierda */
+  .icon {
+    color: var(--brand) !important;
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -36,9 +30,5 @@
     width: 4px;
     border-radius: 0 4px 4px 0;
     background: var(--accent-600);
-  }
-
-  lucide-angular {
-    color: var(--accent-600) !important;
   }
 }

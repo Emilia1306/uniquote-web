@@ -30,18 +30,6 @@ app-sidebar aside nav a {
   transition: background-color .15s ease, box-shadow .15s ease;
 }
 
-/* Hover */
-app-sidebar aside nav a:hover {
-  background: var(--peach-75);
-}
-
-/* Activo: coincide con routerLinkActive="bg-zinc-100" */
-app-sidebar aside nav a.bg-zinc-100 {
-  background: var(--peach-100) !important;
-  box-shadow: inset 3px 0 0 var(--accent-600);
-  font-weight: 600;
-}
-
 /* Accesibilidad: focus visible */
 app-sidebar aside nav a:focus-visible {
   outline: 2px solid var(--accent-600);
