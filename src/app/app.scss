@@ -1,73 +1,41 @@
 /* ===========================
-   UNIQUOTE — Tema durazno
-   Global styles (app.scss)
+   UNIQUOTE — Layout global
+   (solo overrides de estructura)
    =========================== */
 
-/* Paleta */
-/* Quicksand (400/500/600/700) */
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
-
-/* Fuente por defecto del sitio */
-html, body {
-  font-family: 'Quicksand', ui-sans-serif, system-ui, -apple-system, Segoe UI,
-               Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji', 'Segoe UI Symbol';
-}
-
-
-:root {
-  --peach-25:  #FEF8F2;
-  --peach-50:  #FFF4EA;   /* fondo general suave */
-  --peach-75:  #FCF4EE;   /* hover sidebar */
-  --peach-100: #FCF4EE;   /* active sidebar */
-  --accent-500:#F36C38;   /* naranja principal */
-  --accent-600:#EA8A00;   /* barra activa */
-  --accent-700:#D97706;
-
-  --ink-700:   #111827;
-  --ink-600:   #1F2937;
-  --border:    rgba(17, 24, 39, .08);
-  --shadow-1:  0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(17,24,39,.04);
-  --shadow-top:0 1px 0 rgba(0,0,0,.04), 0 8px 24px rgba(17,24,39,.04);
-}
-
-/* Texto por defecto un pelín más oscuro */
-body { color: var(--ink-700); }
-
-/* ---------------------------------
-   Fondo general del app (override)
-   Tu root tiene `bg-zinc-100`, lo
-   reasignamos al durazno suave.
----------------------------------- */
+/* Fondo general
+   Tu root usa clases como bg-zinc-100,
+   aquí las reinterpretamos con la paleta peach. */
 .bg-zinc-100 {
   background-color: var(--peach-50) !important;
 }
 
 /* ---------------------------------
-   Topbar (ligerísima sombra)
+   Topbar: sombra ligera
 ---------------------------------- */
 app-topbar header {
   box-shadow: var(--shadow-top);
 }
 
 /* ---------------------------------
-   Sidebar: hover durazno,
-   active durazno + barra naranja a la izquierda
-   (no necesitas cambiar routerLinkActive)
+   Sidebar: borde y estados de links
 ---------------------------------- */
 app-sidebar aside {
   border-right: 1px solid var(--border);
 }
 
+/* Links del menú lateral */
 app-sidebar aside nav a {
   border-radius: 10px;
   transition: background-color .15s ease, box-shadow .15s ease;
 }
 
+/* Hover */
 app-sidebar aside nav a:hover {
   background: var(--peach-75);
 }
 
-/* Activo: usa tu `routerLinkActive="bg-zinc-100"` */
+/* Activo: coincide con routerLinkActive="bg-zinc-100" */
 app-sidebar aside nav a.bg-zinc-100 {
   background: var(--peach-100) !important;
   box-shadow: inset 3px 0 0 var(--accent-600);
@@ -81,48 +49,9 @@ app-sidebar aside nav a:focus-visible {
 }
 
 /* ---------------------------------
-   Tarjetas genéricas (por si las
-   necesitas fuera del dashboard)
+   Helper opcional para el contenido
+   (por si quieres usarla en el shell)
 ---------------------------------- */
-.card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shadow-1);
-}
-
-/* ---------------------------------
-   Pills por rol (por si las reusas)
----------------------------------- */
-.pill {
-  display: inline-block;
-  padding: 2px 10px;
-  font-size: .75rem;
-  font-weight: 600;
-  border-radius: 9999px;
-  line-height: 1.4;
-}
-
-.pill--admin   { background:#FCF4EE; color:#F36C38; }
-.pill--gerente { background:#FCF4EE; color:#F36C38; }
-.pill--director{ background:#FCF4EE; color:#F36C38; }
-
-/* ---- Botones (añade estos modificadores) ---- */
-.btn-peach {
-  background: var(--accent-600);
-  border-color: transparent;
-  color: #fff;
-}
-.btn-peach:hover { filter: brightness(0.95); }
-
-/* tamaño pequeño */
-.btn--sm {
-  padding: 0.5rem 1rem;   /* más compacto */
-  border-radius: 0.625rem;
-  font-weight: 600;
-}
-
-/* inputs del login un pelín más suaves (opcional) */
-.input {
-  border-radius: 12px;
+.app-shell-main {
+  min-height: calc(100svh - 3.5rem); /* 3.5rem = altura de la topbar */
 }

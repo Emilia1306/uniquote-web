@@ -5,25 +5,41 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        quicksand: ['Quicksand', 'ui-sans-serif', 'system-ui'],
+        sans: ['Quicksand', 'ui-sans-serif', 'system-ui'],
       },
-      container: { center: true, screens: { '2xl': '1600px' } },
-      boxShadow: { soft: '0 8px 30px rgba(0,0,0,0.06)' },
-      borderRadius: { '2xl': '1rem' },
+
       colors: {
+        brand: {
+          50:  '#FFF3F2',
+          100: '#FFE4E1',
+          200: '#FFCDC7',
+          300: '#FFADA3',
+          400: '#FF8A7E',
+          500: '#F05546',   // NARANJA/ROJO PRINCIPAL
+          600: '#E0493C',
+          700: '#C53C31',
+          800: '#A23028',
+          900: '#7A231C',
+        },
+
         peach: {
-          25:  '#FEF8F2',
-          50:  '#FEF2E7',  // fondo general
-          75:  '#FBE9D8',  // hover
-          100: '#F7E2CF',  // activo
+          50:  '#FFF6EF',
+          100: '#FFEBDD',
+          200: '#FDD8C0',
+          300: '#FBC4A1',
         },
-        accent: {
-          500: '#F59E0B',
-          600: '#EA8A00',  // naranja barra activa
-          700: '#D97706',
-        },
+      },
+
+      borderRadius: {
+        xl: '14px',
+        '2xl': '18px',
+      },
+
+      boxShadow: {
+        card: '0 4px 16px rgba(0,0,0,0.05)',
+        soft: '0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(17,24,39,.04)',
       },
     },
   },
   plugins: [],
-}
+};

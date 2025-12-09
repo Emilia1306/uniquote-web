@@ -24,7 +24,6 @@ import { CotizacionDetailPage } from './features/cotizaciones/detalle/cotizacion
 
 import { ProyectosBrowsePage } from './features/proyectos/proyectos-browse.page';
 import { ProyectoDetailsPage } from './features/proyectos/proyecto-details.page';
-import { ProyectoCreatePage } from './features/proyectos/crear/crear-proyecto.page';
 
 
 import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
@@ -62,7 +61,6 @@ export const routes: Routes = [
 
           // PROYECTOS
           { path: 'proyectos', component: ProyectosBrowsePage },
-          { path: 'proyectos/crear', component: ProyectoCreatePage },
           { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
           // COTIZACIONES
           { path: 'cotizaciones', component: QuotesBrowsePage },
