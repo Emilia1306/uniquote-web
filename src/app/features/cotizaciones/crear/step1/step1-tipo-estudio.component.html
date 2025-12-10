@@ -1,0 +1,47 @@
+<h2 class="text-2xl font-semibold mb-2">Tipo de Estudio</h2>
+
+<p class="text-zinc-500 mb-6">
+  Selecciona el tipo de estudio que mejor se ajuste a tus necesidades.
+</p>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- CUALITATIVO -->
+  <div 
+    class="option-card"
+    [class.selected]="isSelected('Cualitativo')"
+    (click)="select('Cualitativo')">
+
+    <div class="flex items-start gap-3">
+      <lucide-icon name="star" class=" w-5 h-5 mt-1"></lucide-icon>
+
+      <div>
+        <h3 class="font-semibold text-[--brand]">Estudio Cualitativo</h3>
+        <p class="text-sm text-zinc-600">
+          Análisis profundo basado en textos y observaciones.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CUANTITATIVO -->
+  <div 
+    class="option-card"
+    [class.selected]="isSelected('Cuantitativo')"
+    (click)="select('Cuantitativo')">
+
+    <div class="flex items-start gap-3">
+      <lucide-icon name="activity" class="w-5 h-5 mt-1"></lucide-icon>
+
+      <div>
+        <h3 class="font-semibold text-zinc-700">Estudio Cuantitativo</h3>
+        <p class="text-sm text-zinc-600">
+          Análisis numérico con estadísticas y datos medibles.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>

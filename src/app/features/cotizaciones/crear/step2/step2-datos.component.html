@@ -1,0 +1,46 @@
+<h3 class="section-title">Información del cliente</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- CLIENTE -->
+  <div>
+    <label class="form-label">Cliente *</label>
+    <select class="form-input"
+            [(ngModel)]="clienteIdSeleccionado"
+            (ngModelChange)="onClienteChange($event)">
+      <option value="">Seleccione</option>
+      <option *ngFor="let c of clientes" [value]="c.id">
+        {{ c.empresa }}
+      </option>
+    </select>
+  </div>
+
+  <!-- CONTACTO -->
+  <div>
+    <label class="form-label">Contacto *</label>
+    <select class="form-input"
+            [(ngModel)]="d.contactoId"
+            (ngModelChange)="patch()"
+            [disabled]="contactosFiltrados.length === 0">
+      <option value="">Seleccione</option>
+      <option *ngFor="let ct of contactosFiltrados" [value]="ct.id">
+        {{ ct.nombre }}
+      </option>
+    </select>
+  </div>
+
+  <!-- PROYECTO -->
+  <div>
+    <label class="form-label">Proyecto *</label>
+    <select class="form-input"
+            [(ngModel)]="d.projectId"
+            (ngModelChange)="patch()"
+            [disabled]="proyectosFiltrados.length === 0">
+      <option value="">Seleccione</option>
+      <option *ngFor="let p of proyectosFiltrados" [value]="p.id">
+        {{ p.name }}
+      </option>
+    </select>
+  </div>
+
+</div>

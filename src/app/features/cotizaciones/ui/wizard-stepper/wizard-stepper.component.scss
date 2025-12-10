@@ -1,0 +1,49 @@
+.circle {
+  @apply w-12 h-12 rounded-full flex items-center justify-center 
+         border-2 bg-white text-zinc-400 border-zinc-300
+         font-semibold transition-all duration-200 relative z-10;
+}
+
+/* Activo (círculo rojo, texto rojo) */
+.circle.active {
+  @apply border-[--brand] text-[--brand];
+}
+
+/* Completado (fondo rojo, ícono blanco) */
+.circle.completed {
+  @apply bg-[--brand] border-[--brand] text-white shadow-md;
+}
+
+/* Pendiente (default) */
+.circle.pending {
+  @apply border-zinc-300 text-zinc-400;
+}
+
+.step-label {
+  @apply text-sm mt-2 transition-all;
+}
+
+.label-active {
+  @apply text-[--brand] font-medium;
+}
+
+.label-default {
+  @apply text-zinc-500;
+}
+
+/* Líneas entre círculos */
+.circle::after {
+  content: '';
+  @apply absolute top-1/2 left-full h-[2px] bg-zinc-300 -z-10;
+  width: calc(100% - 48px);
+  transform: translateY(-50%);
+}
+
+.circle:last-child::after {
+  display: none;
+}
+
+/* Línea roja cuando está completado */
+.circle.completed::after {
+  @apply bg-[--brand];
+}

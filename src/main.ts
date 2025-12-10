@@ -13,7 +13,10 @@ import { LucideAngularModule, Search, ChevronDown, Pencil, Trash2, User,
   BarChart,
   Building2,
   FolderOpen,
-  Library } from 'lucide-angular';
+  Library,
+  Check, ArrowLeft, 
+  ArrowRight,
+  Activity, Star} from 'lucide-angular';
 
 bootstrapApplication(AppRoot, {
   // conserva tu appConfig
@@ -31,7 +34,8 @@ bootstrapApplication(AppRoot, {
         BarChart,
         Building2,
         FolderOpen,
-        Library})
+        Library,
+        Check, ArrowLeft, ArrowRight, Activity, Star})
     ),
   ],
 })

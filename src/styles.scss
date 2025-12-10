@@ -16,7 +16,7 @@
 :root {
   --brand: #F05546;
 
-  --bg-main: #FFF6EF;
+  --bg-main: #f8fafc;
   --bg-card: #ffffff;
 
   --text-900: #111;
@@ -97,6 +97,11 @@
            hover:bg-[var(--bg-card)];
   }
 
+  .btn-dark {
+    @apply bg-black text-white hover:bg-zinc-900;
+  }
+
+
   .btn-ghost {
     @apply text-brand-500 hover:bg-brand-50;
   }
@@ -123,7 +128,7 @@
   }
 
   .table tr:hover td {
-    @apply bg-peach-50;
+    @apply bg-[var(--main)];
   }
 
   /* ----------- MODALES ----------- */

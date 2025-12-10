@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Proyecto } from './proyectos.types';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProyectosApi {
@@ -43,4 +44,19 @@ export class ProyectosApi {
       withCredentials: true,
     });
   }
+
+  /** Listar proyectos por cliente */
+  listByCliente(clienteId: number): Observable<Proyecto[]> {
+    return this.http.get<Proyecto[]>(`${this.base}?clienteId=${clienteId}`, {
+      withCredentials: true,
+    });
+  }
+
+  getByCliente(clienteId: number) {
+    return this.http.get<Proyecto[]>(`${this.base}?clienteId=${clienteId}`, {
+      withCredentials: true
+    });
+  }
+
+
 }

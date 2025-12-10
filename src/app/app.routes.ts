@@ -34,6 +34,7 @@ export const routes: Routes = [
   { path: 'login',        component: LoginComponent,  canActivate: [guestGuard] },
   { path: 'verificacion', component: VerifyComponent, canActivate: [guestGuard] },
 
+
   {
     path: '',
     component: AppShellComponent,

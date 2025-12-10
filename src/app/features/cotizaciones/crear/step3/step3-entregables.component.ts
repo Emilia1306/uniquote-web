@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CotizacionWizardStore } from './wizard.store';
+import { CotizacionWizardStore } from '../wizard.store';
 
 @Component({
   standalone: true,

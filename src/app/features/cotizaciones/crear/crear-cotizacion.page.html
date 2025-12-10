@@ -1,0 +1,83 @@
+<div class="page">
+
+  <!-- TÍTULO -->
+  <h1 class="text-center text-[--brand] text-4xl font-semibold mb-1">
+    Nueva Cotización
+  </h1>
+
+  <p class="text-center text-zinc-500 mb-10">
+    Sigue los pasos para crear la cotización
+  </p>
+
+  <!-- CARD -->
+  <div class="card max-w-5xl mx-auto p-10 rounded-3xl shadow-lg">
+
+    <!-- STEPPER -->
+    <wizard-stepper
+      [current]="stepIndex()"
+      (stepChange)="stepIndex.set($event)">
+    </wizard-stepper>
+
+    <div class="divider"></div>
+
+    <!-- CONTENIDO -->
+    <div [ngSwitch]="stepIndex()">
+
+      <step1-tipo-estudio *ngSwitchCase="0"></step1-tipo-estudio>
+
+      <step2-datos *ngSwitchCase="1"></step2-datos>
+
+      <step3-entregables *ngSwitchCase="2"></step3-entregables>
+
+      <step4-resumen *ngSwitchCase="3"></step4-resumen>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- BOTONES -->
+    <div class="flex justify-between mt-6">
+
+      <!-- IZQUIERDA -->
+      <div>
+
+        <!-- Paso 0 → Cancelar -->
+        <button
+          *ngIf="stepIndex() === 0"
+          class="btn btn-outline"
+          (click)="cancel()">
+          Cancelar
+        </button>
+
+        <!-- Paso 1+ → Anterior -->
+        <button
+          *ngIf="stepIndex() > 0"
+          class="btn btn-outline"
+          (click)="prev()">
+          <lucide-icon name="arrow-left" class="w-4 h-4 mr-1"></lucide-icon>
+          Anterior
+        </button>
+
+      </div>
+
+      <!-- DERECHA -->
+      <button class="btn btn-primary" (click)="onNext()">
+
+        <!-- Siguiente -->
+        <ng-container *ngIf="stepIndex() < 3">
+          Siguiente
+          <lucide-icon name="arrow-right" class="w-4 h-4 ml-1"></lucide-icon>
+        </ng-container>
+
+        <!-- Crear -->
+        <ng-container *ngIf="stepIndex() === 3">
+          Crear
+          <lucide-icon name="check" class="w-4 h-4 ml-1"></lucide-icon>
+        </ng-container>
+
+      </button>
+
+    </div>
+
+  </div>
+</div>

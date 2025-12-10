@@ -1,14 +1,15 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 export interface WizardData {
-  projectId: number;
-  contactoId?: number | null;
+  projectId: number | null;
+  contactoId: number | null;
 
-  // Paso 1
-  studyType: 'cualitativo' | 'cuantitativo' | null;
-  metodologia?: string | null;
+  // Paso 1 — Tipo de estudio
+  studyType: 'Cualitativo' | 'Cuantitativo' | null;
 
-  // Paso 2
+  // Paso 2 — Datos técnicos
+  metodologia: string | null;                       // ⬅ Ahora sí pertenece al paso 2
+  numeroOlasBi: number | null;
   totalEntrevistas: number | null;
   duracionCuestionarioMin: number | null;
   tipoEntrevista: string | null;
@@ -17,30 +18,38 @@ export interface WizardData {
   supervisores: number | null;
   encuestadoresTotales: number | null;
 
-  // Paso 3
+  // Trabajo de campo (también en paso 2)
+  trabajoDeCampoRealiza: boolean;
+  trabajoDeCampoTipo: 'propio' | 'subcontratado' | null;
+  trabajoDeCampoCosto: number | null;
+
+  // Paso 3 — Entregables
   realizamosCuestionario: boolean;
   realizamosScript: boolean;
   clienteSolicitaReporte: boolean;
   clienteSolicitaInformeBI: boolean;
-  numeroOlasBi: number | null;
   incentivoTotal: number | null;
 
-  trabajoDeCampo: boolean;
-
-  // Nombre cotización
+  // Nombre de la cotización
   name: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CotizacionWizardStore {
 
-  step = signal(1);
+  // Paso actual: 0 = paso 1, 1 = paso 2, etc.
+  step = signal(0);
 
   data = signal<WizardData>({
-    projectId: 0,
-    studyType: null,
-    metodologia: null,
+    projectId: null,
+    contactoId: null,
 
+    // Paso 1
+    studyType: null,
+
+    // Paso 2
+    metodologia: null,
+    numeroOlasBi: 1,
     totalEntrevistas: null,
     duracionCuestionarioMin: null,
     tipoEntrevista: null,
@@ -49,76 +58,102 @@ export class CotizacionWizardStore {
     supervisores: null,
     encuestadoresTotales: null,
 
+    // Trabajo de campo
+    trabajoDeCampoRealiza: false,
+    trabajoDeCampoTipo: null,
+    trabajoDeCampoCosto: null,
+
+    // Paso 3 — entregables
     realizamosCuestionario: false,
     realizamosScript: false,
     clienteSolicitaReporte: false,
     clienteSolicitaInformeBI: false,
-    numeroOlasBi: 2,
     incentivoTotal: null,
 
-    trabajoDeCampo: true,
     name: null,
   });
 
-  patch(patch: Partial<WizardData>) {
+  patch(values: Partial<WizardData>) {
     this.data.set({
       ...this.data(),
-      ...patch
+      ...values
     });
   }
 
   next() {
-    if (this.step() < 4) this.step.set(this.step() + 1);
+    if (this.step() < 3) this.step.update(v => v + 1);
   }
 
   back() {
-    if (this.step() > 1) this.step.set(this.step() - 1);
+    if (this.step() > 0) this.step.update(v => v - 1);
   }
 
   reset() {
-    this.step.set(1);
+    this.step.set(0);
   }
+
+  // ======================
+  // VALIDACIONES POR PASO
+  // ======================
 
   isValidStep(step: number): boolean {
     const d = this.data();
 
+    // PASO 1 — Solo pide tipo de estudio
+    if (step === 0) {
+      return !!d.studyType;
+    }
+
+    // PASO 2 — Datos técnicos + metodología + trabajo de campo
     if (step === 1) {
-      if (!d.studyType) return false;
-      if (d.studyType === 'cualitativo' && !d.metodologia) return false;
+
+      if (
+        !d.metodologia ||
+        !d.totalEntrevistas ||
+        !d.duracionCuestionarioMin ||
+        !d.tipoEntrevista ||
+        !d.penetracionCategoria ||
+        !d.cobertura ||
+        !d.supervisores ||
+        !d.encuestadoresTotales
+      ) return false;
+
+      // Validación trabajo de campo
+      if (d.trabajoDeCampoRealiza) {
+        if (!d.trabajoDeCampoTipo) return false;
+        if (d.trabajoDeCampoTipo === 'subcontratado' &&
+            d.trabajoDeCampoCosto == null) return false;
+      }
+
       return true;
     }
 
+    // PASO 3 — Entregables
     if (step === 2) {
-      return (
-        d.totalEntrevistas &&
-        d.duracionCuestionarioMin &&
-        d.tipoEntrevista &&
-        d.penetracionCategoria &&
-        d.cobertura &&
-        d.supervisores &&
-        d.encuestadoresTotales
-      ) ? true : false;
-    }
-
-    if (step === 3) {
-      return true;
+      return d.incentivoTotal != null;
     }
 
     return true;
   }
 
+  // ======================
+  // PAYLOAD FINAL API
+  // ======================
+
   finalPayload() {
     const d = this.data();
+
     return {
-      projectId: d.projectId,
-      contactoId: d.contactoId ?? null,
-      name: d.name ?? 'Nueva cotización',
+      projectId: d.projectId!,
+      contactoId: d.contactoId,
+      name: d.name ?? 'Nueva Cotización',
 
+      // Paso 1
       studyType: d.studyType,
+      
+      // Paso 2
       metodologia: d.metodologia,
-      trabajoDeCampo: d.trabajoDeCampo,
       numeroOlasBi: d.numeroOlasBi,
-
       totalEntrevistas: d.totalEntrevistas,
       duracionCuestionarioMin: d.duracionCuestionarioMin,
       tipoEntrevista: d.tipoEntrevista,
@@ -127,11 +162,17 @@ export class CotizacionWizardStore {
       supervisores: d.supervisores,
       encuestadoresTotales: d.encuestadoresTotales,
 
+      // Trabajo de campo
+      trabajoDeCampoRealiza: d.trabajoDeCampoRealiza,
+      trabajoDeCampoTipo: d.trabajoDeCampoTipo,
+      trabajoDeCampoCosto: d.trabajoDeCampoCosto,
+
+      // Paso 3
       realizamosCuestionario: d.realizamosCuestionario,
       realizamosScript: d.realizamosScript,
       clienteSolicitaReporte: d.clienteSolicitaReporte,
       clienteSolicitaInformeBI: d.clienteSolicitaInformeBI,
-      incentivoTotal: d.incentivoTotal,
+      incentivoTotal: d.incentivoTotal
     };
   }
 }
