@@ -71,7 +71,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let c of filtered()" class="border-t">
-          <td class="p-3 font-medium">{{ c.empresa }}</td>
+          <td class="p-3 font-medium">
+            <!-- 👇 link al detalle -->
+            <a [routerLink]="['/admin/clientes', c.id]" class="hover:underline">
+              {{ c.empresa }}
+            </a>
+          </td>
           <td class="p-3">{{ c.razonSocial }}</td>
           <td class="p-3 text-right">
             <button class="text-blue-600 hover:underline mr-2" (click)="openEdit(c)">Editar</button>
@@ -96,8 +101,12 @@
         *ngFor="let c of filtered()"
         class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
       >
-        <!-- Empresa -->
-        <div class="mb-2 text-lg font-semibold">{{ c.empresa }}</div>
+        <!-- Empresa (clicable) -->
+        <div class="mb-2 text-lg font-semibold">
+          <a [routerLink]="['/admin/clientes', c.id]" class="hover:underline">
+            {{ c.empresa }}
+          </a>
+        </div>
 
         <!-- Razón social -->
         <div class="text-sm text-zinc-600 mb-4">
@@ -126,8 +135,15 @@
 
         <!-- Acciones -->
         <div class="mt-2 flex flex-col sm:flex-row sm:justify-start gap-2">
-          <button class="btn-outline px-4 py-2 text-sm">Ver contactos</button>
-          <button class="btn-outline px-4 py-2 text-sm">Ver historial</button>
+          <!-- 👇 ambos van al detalle por ahora -->
+          <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm"
+             [routerLink]="['/admin/clientes', c.id]">
+            Ver contactos
+          </a>
+          <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm"
+             [routerLink]="['/admin/clientes', c.id]">
+            Ver historial
+          </a>
         </div>
       </div>
 
@@ -150,7 +166,7 @@
     Mostrando {{ totalMostrados() }} de {{ clientes().length }}
   </div>
 
-  <!-- Modal crear/editar (minimal igual a tu versión) -->
+  <!-- Modal crear/editar (igual que tenías) -->
   <div *ngIf="showForm()" class="fixed inset-0 grid place-items-center bg-black/40">
     <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
       <h2 class="mb-4 text-xl font-semibold">

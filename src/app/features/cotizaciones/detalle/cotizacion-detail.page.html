@@ -1,0 +1,108 @@
+<div class="mx-auto max-w-6xl px-6 py-6">
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center py-20">
+    <div class="loader mx-auto"></div>
+    <p class="muted mt-2">Cargando cotización...</p>
+  </div>
+
+  <ng-container *ngIf="!loading && cotizacion">
+
+    <!-- Encabezado -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-3xl font-semibold">
+          {{ cotizacion.name }}
+        </h1>
+        <p class="muted">Código: {{ cotizacion.code }}</p>
+      </div>
+
+      <!-- Estado -->
+      <cotizacion-status-pill [status]="cotizacion.status" />
+    </div>
+
+    <!-- Info general -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+      <div class="card p-6">
+        <h3 class="font-semibold text-lg mb-3">Información del Cliente</h3>
+
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between">
+            <span class="muted">Cliente:</span>
+            <span>{{ cotizacion.project?.cliente?.empresa }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="muted">Razón Social:</span>
+            <span>{{ cotizacion.project?.cliente?.razonSocial }}</span>
+          </div>
+
+          <div *ngIf="cotizacion.contacto" class="flex justify-between">
+            <span class="muted">Contacto:</span>
+            <span>{{ cotizacion.contacto.nombre }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="font-semibold text-lg mb-3">Datos Técnicos</h3>
+
+        <div class="space-y-1 text-sm">
+          <div class="flex justify-between">
+            <span class="muted">Tipo Estudio:</span>
+            <span>{{ cotizacion.studyType }}</span>
+          </div>
+
+          <div *ngIf="cotizacion.metodologia" class="flex justify-between">
+            <span class="muted">Metodología:</span>
+            <span>{{ cotizacion.metodologia }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="muted">Total de Entrevistas:</span>
+            <span>{{ cotizacion.totalEntrevistas }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="muted">Duración:</span>
+            <span>{{ cotizacion.duracionCuestionarioMin }} min</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="muted">Cobertura:</span>
+            <span>{{ cotizacion.cobertura }}</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tabla de Ítems -->
+    <cotizacion-items-table [items]="cotizacion.items" />
+
+    <!-- Totales -->
+    <div class="card p-6 mt-8">
+      <h3 class="font-semibold text-lg mb-3">Resumen</h3>
+      <div class="space-y-1 text-sm">
+        <div class="flex justify-between">
+          <span class="muted">Costo por entrevista:</span>
+          <span>$ {{ cotizacion.costoPorEntrevista | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="muted">Total a cobrar:</span>
+          <span class="font-semibold">$ {{ cotizacion.totalCobrar | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end mt-8 gap-3">
+      <button class="btn btn-outline" (click)="editar()">Editar</button>
+      <button class="btn btn-outline" (click)="clonar()">Clonar</button>
+      <button class="btn btn-danger" (click)="eliminar()">Eliminar</button>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -1,69 +1,78 @@
-<div class="mx-auto max-w-[1400px] px-6 py-6">
+<div class="page space-y-8">
+
   <!-- Encabezado -->
-  <div class="mb-4">
-    <h1 class="text-3xl font-semibold text-[color:var(--accent-600)]">Inicio</h1>
+  <header>
+    <h1 class="text-[color:var(--brand)]">Inicio</h1>
     <p class="muted">Usuarios y actividad reciente.</p>
-  </div>
+  </header>
 
-  <!-- Usuarios recientes -->
-  <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm mb-6">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="font-medium">Lista de usuarios (recientes)</h3>
+  <!-- Card: Usuarios recientes -->
+  <section class="card">
 
-      <div class="flex items-center gap-3">
-        <!-- ⬇️ llama al signal -->
-        <span class="text-sm text-zinc-500 hidden sm:inline">{{ usuarios().length }} usuarios</span>
-        <a class="btn btn--primary btn--sm rounded-full"
-           [routerLink]="['/admin/usuarios']"
-           aria-label="Ver más usuarios">
-          Ver más
-        </a>
+    <!-- Header card -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <h3 class="text-lg font-semibold">Lista de usuarios</h3>
+        <p class="text-sm muted">{{ usuarios().length }} usuarios registrados</p>
       </div>
+
+      <a
+        [routerLink]="['/admin/usuarios']"
+        class="btn btn-dark h-9 px-4 rounded-full"
+      >
+        Ver más
+      </a>
     </div>
 
-    <!-- estados -->
-    <div *ngIf="loadingUsers()" class="p-4 text-sm text-zinc-600">Cargando…</div>
-    <div *ngIf="!loadingUsers() && usersError()" class="p-4 text-sm text-red-600">
+    <!-- Estados -->
+    <div *ngIf="loadingUsers()" class="py-4 text-sm muted">Cargando…</div>
+    <div *ngIf="!loadingUsers() && usersError()" class="py-4 text-sm text-red-600">
       {{ usersError() }}
     </div>
 
+    <!-- Tabla -->
     <div *ngIf="!loadingUsers() && !usersError()" class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="bg-zinc-50 text-left text-zinc-600">
+      <table class="table w-full">
+        <thead>
           <tr>
-            <th class="p-3">Nombre</th>
-            <th class="p-3">Correo</th>
-            <th class="p-3 w-40">Rol</th>
+            <th class="w-1/3">Nombre</th>
+            <th class="w-1/3">Correo</th>
+            <th class="w-28">Rol</th>
           </tr>
         </thead>
         <tbody>
-          <!-- ⬇️ llama al signal -->
-          <tr *ngFor="let u of usuarios()" class="border-t">
-            <td class="p-3">{{ u.name }} {{ u.lastName }}</td>
-            <td class="p-3 truncate max-w-[260px] md:max-w-none">{{ u.email }}</td>
-            <td class="p-3">
-              <!-- ⬇️ ya funciona ngClass porque importamos NgClass -->
-              <span [ngClass]="rolePillClasses(u.role)">{{ u.role | titlecase }}</span>
+          <tr *ngFor="let u of usuarios()">
+            <td>{{ u.name }} {{ u.lastName }}</td>
+            <td class="truncate max-w-[260px] md:max-w-none">{{ u.email }}</td>
+            <td>
+              <span
+                *ngIf="u.role"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white bg-[--brand]"
+              >
+                {{ u.role | titlecase }}
+              </span>
             </td>
           </tr>
 
-          <!-- ⬇️ llama al signal -->
           <tr *ngIf="usuarios().length === 0">
-            <td colspan="3" class="p-4 text-center text-zinc-500">Sin usuarios recientes</td>
+            <td colspan="3" class="py-4 text-center muted">Sin usuarios recientes</td>
           </tr>
         </tbody>
       </table>
     </div>
+
   </section>
 
-  <!-- Actividad reciente (Auditoría) -->
-  <section class="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-    <h3 class="font-medium mb-2">Actividad reciente (Auditoría)</h3>
-    <ul class="text-sm space-y-2">
-      <li *ngFor="let log of auditoria" class="flex items-baseline justify-between border-b last:border-b-0 py-2">
-        <span class="text-zinc-800">{{ log.mensaje }}</span>
-        <span class="text-zinc-500">{{ log.hace }}</span>
+  <!-- Card: Actividad reciente -->
+  <section class="card">
+    <h3 class="text-lg font-semibold mb-4">Actividad reciente</h3>
+
+    <ul class="space-y-3 text-sm">
+      <li *ngFor="let log of auditoria" class="flex justify-between border-b last:border-b-0 pb-2">
+        <span>{{ log.mensaje }}</span>
+        <span class="muted">{{ log.hace }}</span>
       </li>
     </ul>
   </section>
+
 </div>

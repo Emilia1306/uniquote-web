@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { QuotesStore } from '../data/quotes.store';
+import { CotizacionesStore } from '../data/quotes.store';
 
 @Component({
   selector: 'quotes-toolbar',
@@ -27,5 +27,5 @@ import { QuotesStore } from '../data/quotes.store';
   `
 })
 export class QuotesToolbarComponent {
-  store = inject(QuotesStore);
+  store = inject(CotizacionesStore);
 }

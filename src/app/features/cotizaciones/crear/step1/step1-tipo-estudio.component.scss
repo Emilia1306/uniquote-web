@@ -1,0 +1,34 @@
+.option-card {
+  @apply p-5 rounded-xl border border-zinc-300 bg-white cursor-pointer 
+         transition-all duration-200 shadow-sm hover:shadow-md flex items-start gap-3;
+
+  /* Icono negro en estado normal */
+  lucide-icon {
+    @apply w-5 h-5 text-zinc-900 mt-1;
+  }
+
+  /* Título negro normal */
+  h3 {
+    @apply font-semibold text-zinc-900;
+  }
+
+  /* Descripción gris */
+  p {
+    @apply text-sm text-zinc-600;
+  }
+}
+
+/* ESTADO SELECCIONADO */
+.option-card.selected {
+  @apply border-[--brand] bg-[#FFF3EF];
+
+  /* Icono naranja */
+  lucide-icon {
+    @apply text-[--brand];
+  }
+
+  /* Título naranja */
+  h3 {
+    @apply text-[--brand];
+  }
+}

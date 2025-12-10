@@ -1,37 +1,40 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
-// Shell con Topbar + Sidebar
 import { AppShellComponent } from './layout/app-shell.component';
-
-// Páginas públicas
 import { LoginComponent } from './features/auth/login/login.component';
 import { VerifyComponent } from './features/auth/verify/verify.component';
 
-// Guards
 import { meReadyGuard } from './core/auth/me-ready.guard';
 import { authGuard }    from './core/auth/auth.guard';
-import { roleGuard }    from './core/auth/role.guard';
 import { guestGuard }   from './core/auth/guest.guard';
+import { roleGuard }    from './core/auth/role.guard';
 
-// Dashboards (standalone)
 import { AdminDashboardComponent }   from './features/admin/dashboard/admin-dashboard/admin-dashboard';
 import { GerenteDashboardComponent } from './features/gerente/dashboard/gerente-dashboard/gerente-dashboard';
 import { DirectorDashboard }         from './features/director/dashboard/director-dashboard/director-dashboard';
 
-// Cotizaciones
 import { QuotesBrowsePage } from './features/cotizaciones/quotes-browse.page';
-import { AdminUsersPage } from './features/admin/users/users.page';
-import { ClientesPage } from './features/clientes/clientes.page';
+import { AdminUsersPage }   from './features/admin/users/users.page';
+import { ClientesPage }     from './features/clientes/clientes.page';
+
+// Cotizaciones
+import { CrearCotizacionPage } from './features/cotizaciones/crear/crear-cotizacion.page';
+import { CotizacionDetailPage } from './features/cotizaciones/detalle/cotizacion-detail.page';
+
+import { ProyectosBrowsePage } from './features/proyectos/proyectos-browse.page';
+import { ProyectoDetailsPage } from './features/proyectos/proyecto-details.page';
+
+
+import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 
-  // Público: solo invitados (si ya está logueado, guestGuard redirige)
   { path: 'login',        component: LoginComponent,  canActivate: [guestGuard] },
   { path: 'verificacion', component: VerifyComponent, canActivate: [guestGuard] },
 
-  // Protegido: rehidrata -> exige sesión -> valida rol por rama
+
   {
     path: '',
     component: AppShellComponent,
@@ -40,46 +43,45 @@ export const routes: Routes = [
       // ADMIN
       {
         path: 'admin',
-        canActivate: [roleGuard],
-        data: { roles: ['ADMIN'] },
+        canMatch: [roleGuard(['ADMIN'])],
         children: [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          { path: 'usuarios', component: AdminUsersPage },
-          { path: 'clientes', component: ClientesPage },
-          // { path: 'tarifario', loadComponent: ... },
-          // { path: 'auditoria', loadComponent: ... },
+          { path: 'usuarios',     component: AdminUsersPage },
+          { path: 'clientes',     component: ClientesPage },
+          { path: 'clientes/:id', component: ClienteDetailPage },
         ]
       },
 
       // GERENTE
       {
         path: 'gerente',
-        canActivate: [roleGuard],
-        data: { roles: ['GERENTE'] },
+        canMatch: [roleGuard(['GERENTE'])],
         children: [
           { path: '', component: GerenteDashboardComponent },
+
+          // PROYECTOS
+          { path: 'proyectos', component: ProyectosBrowsePage },
+          { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
+          // COTIZACIONES
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          // { path: 'clientes', loadComponent: ... },
-          // { path: 'estadisticas', loadComponent: ... },
+          { path: 'cotizaciones/crear', component: CrearCotizacionPage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
         ]
       },
 
       // DIRECTOR
       {
         path: 'director',
-        canActivate: [roleGuard],
-        data: { roles: ['DIRECTOR'] },
+        canMatch: [roleGuard(['DIRECTOR'])],
         children: [
           { path: '', component: DirectorDashboard },
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          // { path: 'biblioteca', loadComponent: ... },
-          // { path: 'clientes', loadComponent: ... },
         ]
       },
     ],
   },
 
-  // fallback
   { path: '**', redirectTo: 'login' },
 ];

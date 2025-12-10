@@ -1,31 +1,34 @@
-/* Link base */
-.sidebar-link {
-  display: block;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  color: #27272a; /* zinc-800 */
-  text-decoration: none;
-  transition: background-color .15s ease, color .15s ease;
+.menu-link {
+  color: var(--text-900);
 
   &:hover {
-    background-color: var(--peach-75); /* hover suave */
+    background: var(--peach-75);
+
+    .icon,
+    .label {
+      color: var(--brand) !important;
+    }
   }
 }
 
-/* Activo: solo cambia color de texto/ícono y fondo suave */
-.sidebar-link.is-active {
-  background-color: var(--peach-100); 
-  color: var(--accent-700);           
+.active-link {
+  background: var(--peach-100) !important;
   font-weight: 600;
-}
+  position: relative;
+  color: var(--brand) !important;
 
-/* Si pones iconos dentro, heredarán el color */
-.sidebar-link .sidebar-icon {
-  color: inherit;
-}
+  .icon {
+    color: var(--brand) !important;
+  }
 
-/* Accesibilidad */
-.sidebar-link:focus-visible {
-  outline: 2px solid var(--accent-600);
-  outline-offset: 2px;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background: var(--accent-600);
+  }
 }

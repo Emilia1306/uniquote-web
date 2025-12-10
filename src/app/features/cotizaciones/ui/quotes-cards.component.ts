@@ -1,6 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { QuotesStore } from '../data/quotes.store';
+import { CotizacionesStore } from '../data/quotes.store';
+import { STATUS_COLORS } from './status-colors';
 
 @Component({
   selector: 'quotes-cards',
@@ -9,52 +10,43 @@ import { QuotesStore } from '../data/quotes.store';
   template: `
   <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
     <article *ngFor="let q of store.filtered()" class="card card-hover p-6">
-      <!-- encabezado -->
-      <div class="flex items-start justify-between gap-2">
-        <h3 class="text-xl font-semibold leading-tight">Título cotización</h3>
 
-        <span class="pill"
-              [ngClass]="{
-                'pill--ok': q.estado==='APROBADA',
-                'border-yellow-300 bg-yellow-50 text-yellow-700': q.estado==='PENDIENTE',
-                'border-red-300 bg-red-50 text-red-700': q.estado==='RECHAZADA'
-              }">
-          {{ q.estado | titlecase }}
+      <div class="flex items-start justify-between gap-2">
+        <h3 class="text-xl font-semibold leading-tight">{{ q.name }}</h3>
+
+        <span class="pill border"
+              [ngClass]="STATUS_COLORS[q.status]">
+          {{ q.status | titlecase }}
         </span>
       </div>
 
-      <p class="muted mt-1">Descripción de la cotización</p>
+      <p class="muted mt-1">
+        {{ q.createdBy.name }} {{ q.createdBy.lastName }}
+      </p>
 
-      <!-- datos -->
       <div class="mt-4 grid grid-cols-2 gap-x-4 text-sm">
-        <div class="muted">Cliente:</div><div class="text-right">Pizza Hut</div>
-        <div class="muted">Fecha:</div><div class="text-right">{{ q.fecha | date:'dd/MM/yy' }}</div>
-        <div class="muted">Tipo de estudio:</div><div class="text-right">Casa × Casa</div>
-        <div class="muted">Muestra:</div><div class="text-right">500</div>
+        <div class="muted">Fecha:</div>
+        <div class="text-right">{{ q.createdAt | date:'dd/MM/yy' }}</div>
+        <div class="muted">Entrevistas:</div>
+        <div class="text-right">{{ q.totalEntrevistas }}</div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- monto -->
       <div>
         <div class="text-2xl font-bold text-blue-700">
-          {{ q.monto | currency:'USD':'symbol':'1.0-0' }}
+          {{ q.totalCobrar | currency:'USD':'symbol':'1.0-0' }}
         </div>
         <div class="muted -mt-1 text-xs">Monto total</div>
       </div>
 
-      <!-- botón -->
-      <div class="mt-4">
-        <button class="btn w-full justify-center gap-2">
-          <svg class="h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor"
-            d="M3 12s4-7 9-7 9 7 9 7-4 7-9 7-9-7-9-7zm9 4a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
-          Ver Detalles
-        </button>
-      </div>
     </article>
   </div>
   `
 })
 export class QuotesCardsComponent {
-  store = inject(QuotesStore);
+  @Input() items: any[] = [];   
+  store = inject(CotizacionesStore);
+  STATUS_COLORS = STATUS_COLORS;
+  
 }

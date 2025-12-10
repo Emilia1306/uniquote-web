@@ -1,0 +1,51 @@
+<div class="relative w-full flex flex-col items-center">
+
+  <!-- Línea general -->
+  <div class="absolute top-1/2 left-0 right-0 h-[2px] bg-zinc-300 -z-10"></div>
+
+  <div class="flex justify-between w-full max-w-2xl">
+
+    <div
+      *ngFor="let step of steps; let i = index"
+      class="flex flex-col items-center flex-1 cursor-pointer select-none"
+      (click)="goTo(i)"
+    >
+
+      <!-- Círculo -->
+      <div
+        class="circle"
+        [ngClass]="{
+          'active': current === i,
+          'completed': current > i,
+          'pending': current < i
+        }"
+      >
+
+        <!-- Check -->
+        <ng-container *ngIf="current > i; else showNumber">
+          <lucide-icon name="check" class="w-5 h-5"></lucide-icon>
+        </ng-container>
+
+        <!-- Número -->
+        <ng-template #showNumber>
+          <span>{{ i + 1 }}</span>
+        </ng-template>
+
+      </div>
+
+      <!-- Label -->
+      <div
+        class="step-label"
+        [ngClass]="{
+          'label-active': current === i,
+          'label-default': current !== i
+        }"
+      >
+        {{ step.label }}
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
