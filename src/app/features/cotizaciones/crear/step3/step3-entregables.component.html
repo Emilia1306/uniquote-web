@@ -26,7 +26,7 @@
 </div>
 
 <!-- Olas BI Section (Conditional) -->
-<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 p-6 bg-white border border-zinc-200 rounded-lg animation-fade-in">
+<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 p-6 bg-zinc-50 border border-zinc-200 rounded-lg animation-fade-in">
 
     <!-- Pregunta con botones Sí/No -->
     <p class="text-sm text-zinc-600 mb-4">
@@ -35,30 +35,30 @@
 
     <div class="flex gap-4 mb-6">
         <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
-            [class.border-[var(--brand)]="tieneOlasExtras" [class.text-[var(--brand)]="tieneOlasExtras"
+            [class.border-[var(--brand)]]="tieneOlasExtras" [class.text-[var(--brand)]]="tieneOlasExtras"
             [class.bg-white]="tieneOlasExtras" [class.border-zinc-300]="!tieneOlasExtras"
-            [class.text-zinc-600]="!tieneOlasExtras" [class.bg-zinc-50]="!tieneOlasExtras"
-            (click)="setOlasExtras(true)">
+            [class.text-zinc-600]="!tieneOlasExtras" (click)="setOlasExtras(true)">
             Sí
         </button>
 
         <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
-            [class.border-[var(--brand)]="!tieneOlasExtras" [class.text-[var(--brand)]="!tieneOlasExtras"
+            [class.border-[var(--brand)]]="!tieneOlasExtras" [class.text-[var(--brand)]]="!tieneOlasExtras"
             [class.bg-white]="!tieneOlasExtras" [class.border-zinc-300]="tieneOlasExtras"
-            [class.text-zinc-600]="tieneOlasExtras" [class.bg-zinc-50]="tieneOlasExtras" (click)="setOlasExtras(false)">
+            [class.text-zinc-600]="tieneOlasExtras" (click)="setOlasExtras(false)">
             No
         </button>
     </div>
 
     <!-- Input de olas extras (solo si está activado) -->
-    <div *ngIf="tieneOlasExtras" class="animation-fade-in">
-        <label class="form-label text-zinc-700">Número de olas extra</label>
-        <input type="number" class="form-input max-w-sm" [(ngModel)]="olasExtras" (ngModelChange)="onOlasExtrasChange()"
-            min="0" placeholder="0" />
+    <div *ngIf="tieneOlasExtras" class="mb-6 animation-fade-in">
+        <label class="form-label text-zinc-700 mb-2 block">Número de olas extra</label>
+        <input type="number"
+            class="w-full h-14 px-4 text-base border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
+            [(ngModel)]="olasExtras" (ngModelChange)="onOlasExtrasChange()" min="0" placeholder="0" />
     </div>
 
-    <!-- Total de olas (siempre visible) -->
-    <div class="mt-6 pt-4 border-t border-zinc-200">
+    <!-- Total de olas (siempre visible cuando BI está seleccionado) -->
+    <div class="pt-4 border-t border-zinc-300">
         <p class="text-base font-semibold text-zinc-900">
             Total de olas BI: {{ d.numeroOlasBi || 2 }}
         </p>

@@ -24,12 +24,15 @@ export class Step3EntregablesComponent {
   toggle(field: 'realizamosCuestionario' | 'realizamosScript' | 'clienteSolicitaReporte' | 'clienteSolicitaInformeBI') {
     const newValue = !this.d[field];
 
+    console.log(`Toggling ${field} to ${newValue}`);
+
     this.store.patch({
       [field]: newValue
     });
 
     // Si se activa BI, establecer 2 olas por defecto
     if (field === 'clienteSolicitaInformeBI' && newValue) {
+      console.log('Activando BI con 2 olas por defecto');
       this.tieneOlasExtras = false;
       this.olasExtras = 0;
       this.store.patch({ numeroOlasBi: 2 });
@@ -37,10 +40,13 @@ export class Step3EntregablesComponent {
 
     // Si se desactiva BI, resetear olas
     if (field === 'clienteSolicitaInformeBI' && !newValue) {
+      console.log('Desactivando BI');
       this.tieneOlasExtras = false;
       this.olasExtras = 0;
       this.store.patch({ numeroOlasBi: 0 });
     }
+
+    console.log('Estado actual:', this.d);
   }
 
   onOlasExtrasToggle() {
