@@ -128,17 +128,18 @@
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Cliente ID</label>
-        <input
-          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all bg-gray-100"
-          type="number" [(ngModel)]="editClienteId" name="editClienteId" readonly />
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Cliente</label>
+        <ui-combobox [items]="clientesItems()" [value]="editClienteId" (valueChange)="onEditClienteChange($event)"
+          placeholder="Seleccionar cliente...">
+        </ui-combobox>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Contacto ID</label>
-        <input
-          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all"
-          type="number" [(ngModel)]="editContactoId" name="editContactoId" />
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Contacto</label>
+        <ui-combobox [items]="editContactosItems()" [(value)]="editContactoId" [disabled]="!editClienteId"
+          placeholder="Seleccionar contacto...">
+        </ui-combobox>
+        <p *ngIf="!editClienteId" class="text-xs text-zinc-400 mt-1">Selecciona primero un cliente</p>
       </div>
     </div>
 

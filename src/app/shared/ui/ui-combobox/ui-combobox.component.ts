@@ -37,7 +37,8 @@ export class UiComboboxComponent implements OnChanges {
 
   // Detectar cambios desde el padre
   ngOnChanges(changes: SimpleChanges) {
-    if ('value' in changes) {
+    // Si cambian los items o el value, actualizar el display
+    if ('value' in changes || 'items' in changes) {
       if (this.value === null || this.value === undefined) {
         this.search.set('');
         return;
