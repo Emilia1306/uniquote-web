@@ -1,111 +1,159 @@
-<div class="max-w-[1400px] mx-auto px-6 py-6">
+<div class="page">
 
   <!-- HEADER -->
-  <div class="flex justify-between mb-6">
-    <div>
-      <h1 class="text-3xl font-semibold">Proyectos</h1>
-      <p class="muted">Listado de proyectos del cliente</p>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <button class="btn btn-primary" (click)="openCreateModal()">
-        + Nuevo Proyecto
-      </button>
-
-      <!-- Vista -->
-      <div class="flex gap-2">
-        <button class="btn-icon"
-                [class.opacity-60]="view() !== 'cards'"
-                (click)="view.set('cards')">
-          <svg viewBox="0 0 24 24" class="h-5 w-5">
-            <path fill="currentColor"
-              d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
-          </svg>
-        </button>
-
-        <button class="btn-icon"
-                [class.opacity-60]="view() !== 'table'"
-                (click)="view.set('table')">
-          <svg viewBox="0 0 24 24" class="h-5 w-5">
-            <path fill="currentColor"
-              d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">Proyectos</h1>
+    <p class="text-zinc-500">Listado de proyectos del cliente</p>
   </div>
 
-  <!-- BUSCADOR -->
-  <div class="mb-6">
-    <input
-      class="input w-full"
-      placeholder="Buscar..."
-      [(ngModel)]="searchText"
-    />
+  <!-- TOOLBAR -->
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
+    <!-- Buscador -->
+    <div class="relative flex-1">
+      <input
+        class="w-full h-12 rounded-xl border border-zinc-200 bg-white px-5 pr-12 outline-none focus:border-zinc-400 focus:ring-0 shadow-sm"
+        placeholder="Buscar..." [(ngModel)]="searchText" />
+      <lucide-angular name="search" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400"
+        [size]="20"></lucide-angular>
+    </div>
+
+    <!-- Acciones derecha -->
+    <div class="flex items-center gap-3">
+      <!-- Toggle vista (solo 1 botón) -->
+      <button type="button"
+        class="h-12 w-12 rounded-xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
+        (click)="view.set(view() === 'cards' ? 'table' : 'cards')"
+        [title]="view() === 'cards' ? 'Cambiar a lista' : 'Cambiar a tarjetas'">
+        <lucide-angular [name]="view() === 'cards' ? 'list' : 'layout-grid'" [size]="20"></lucide-angular>
+      </button>
+
+      <button
+        class="h-12 px-6 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm"
+        (click)="openCreateModal()">
+        <lucide-angular name="plus" [size]="18"></lucide-angular>
+        <span>Nuevo Proyecto</span>
+      </button>
+    </div>
   </div>
 
   <!-- LISTA -->
   <ng-container [ngSwitch]="view()">
 
     <!-- CARDS -->
-    <proyectos-cards
-      *ngSwitchCase="'cards'"
-      [items]="filteredList()"
-      (ver)="verDetalle($event)" 
-      (editar)="openEditModal($event)"
-      (eliminar)="eliminarProyecto($event)"  
-    ></proyectos-cards>
+    <proyectos-cards *ngSwitchCase="'cards'" [items]="filteredList()" (ver)="verDetalle($event)"
+      (editar)="openEditModal($event)" (eliminar)="eliminarProyecto($event)"></proyectos-cards>
 
     <!-- TABLA -->
-    <proyectos-table
-      *ngSwitchCase="'table'"
-      [items]="filteredList()"
-      (ver)="verDetalle($event)"
-      (editar)="openEditModal($event)"
-      (eliminar)="eliminarProyecto($event)"
-    ></proyectos-table>
+    <div *ngSwitchCase="'table'" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+      <proyectos-table [items]="filteredList()" (ver)="verDetalle($event)" (editar)="openEditModal($event)"
+        (eliminar)="eliminarProyecto($event)"></proyectos-table>
+    </div>
 
   </ng-container>
 </div>
 
 <!-- MODAL CREAR -->
-<dialog id="modal-create" class="modal">
-  <form method="dialog" class="modal-box p-6">
-    <h3 class="text-xl mb-4">Crear Proyecto</h3>
+<dialog id="modal-create" class="modal backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+  <form method="dialog" class="modal-box p-0 w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden">
 
-    <label>Nombre</label>
-    <input class="input mb-3" [(ngModel)]="modalName" name="newName"/>
-
-    <label>Cliente ID</label>
-    <input class="input mb-3" type="number" [(ngModel)]="modalClienteId" name="newCliente"/>
-
-    <label>Contacto ID</label>
-    <input class="input mb-3" type="number" [(ngModel)]="modalContactoId" name="newContacto"/>
-
-    <div class="flex justify-end gap-2 mt-4">
-      <button class="btn" type="button" (click)="closeCreateModal()">Cancelar</button>
-      <button class="btn btn-primary" type="button" (click)="crearProyecto()">Guardar</button>
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+      <h3 class="text-lg font-bold text-zinc-800">Crear Proyecto</h3>
+      <button (click)="closeCreateModal()" type="button" class="text-zinc-400 hover:text-zinc-600">
+        <lucide-angular name="x" [size]="20"></lucide-angular>
+      </button>
     </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Nombre</label>
+        <input
+          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all"
+          [(ngModel)]="modalName" name="newName" placeholder="Ej. Estudio de mercado" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Cliente</label>
+        <ui-combobox [items]="clientesItems()" [value]="modalClienteId" (valueChange)="onClienteChange($event)"
+          placeholder="Seleccionar cliente...">
+        </ui-combobox>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Contacto</label>
+        <ui-combobox [items]="contactosItems()" [(value)]="modalContactoId" [disabled]="!modalClienteId"
+          placeholder="Seleccionar contacto...">
+        </ui-combobox>
+        <p *ngIf="!modalClienteId" class="text-xs text-zinc-400 mt-1">Selecciona primero un cliente</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50/50 border-t border-zinc-100">
+      <button
+        class="px-5 h-11 rounded-full border border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-medium transition-colors"
+        type="button" (click)="closeCreateModal()">
+        Cancelar
+      </button>
+      <button
+        class="px-6 h-11 rounded-full bg-[var(--brand)] text-white hover:bg-opacity-90 font-medium shadow-md shadow-orange-500/20 transition-all"
+        type="button" (click)="crearProyecto()">
+        Guardar
+      </button>
+    </div>
+
   </form>
 </dialog>
 
 <!-- MODAL EDITAR -->
-<dialog id="modal-edit" class="modal">
-  <form method="dialog" class="modal-box p-6">
-    <h3 class="text-xl mb-4">Editar Proyecto</h3>
+<dialog id="modal-edit" class="modal backdrop:bg-black/40 backdrop:backdrop-blur-sm">
+  <form method="dialog" class="modal-box p-0 w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden">
 
-    <label>Nombre</label>
-    <input class="input mb-3" [(ngModel)]="editName" name="editName"/>
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+      <h3 class="text-lg font-bold text-zinc-800">Editar Proyecto</h3>
+      <button (click)="closeEditModal()" type="button" class="text-zinc-400 hover:text-zinc-600">
+        <lucide-angular name="x" [size]="20"></lucide-angular>
+      </button>
+    </div>
 
-    <label>Cliente ID</label>
-    <input class="input mb-3" type="number" [(ngModel)]="editClienteId" name="editClienteId"/>
+    <!-- Body -->
+    <div class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Nombre</label>
+        <input
+          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all"
+          [(ngModel)]="editName" name="editName" />
+      </div>
 
-    <label>Contacto ID</label>
-    <input class="input mb-3" type="number" [(ngModel)]="editContactoId" name="editContactoId"/>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Cliente ID</label>
+        <input
+          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all bg-gray-100"
+          type="number" [(ngModel)]="editClienteId" name="editClienteId" readonly />
+      </div>
 
-    <div class="flex justify-end gap-2 mt-4">
-      <button class="btn" type="button" (click)="closeEditModal()">Cancelar</button>
-      <button class="btn btn-primary" type="button" (click)="guardarCambios()">Guardar cambios</button>
+      <div>
+        <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Contacto ID</label>
+        <input
+          class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all"
+          type="number" [(ngModel)]="editContactoId" name="editContactoId" />
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-3 px-6 py-4 bg-zinc-50/50 border-t border-zinc-100">
+      <button
+        class="px-5 h-11 rounded-full border border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-medium transition-colors"
+        type="button" (click)="closeEditModal()">
+        Cancelar
+      </button>
+      <button
+        class="px-6 h-11 rounded-full bg-[var(--brand)] text-white hover:bg-opacity-90 font-medium shadow-md shadow-orange-500/20 transition-all"
+        type="button" (click)="guardarCambios()">
+        Guardar cambios
+      </button>
     </div>
   </form>
 </dialog>

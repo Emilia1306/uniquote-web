@@ -12,6 +12,7 @@ import { UiModalComponent } from '../../ui-modal/ui-modal.component';
 export class ModalCrearProyectoComponent {
 
   @Input() clienteId!: number;
+  @Input() contactoId: number | null = null;
   open = false;
 
   nombre = '';
@@ -32,11 +33,12 @@ export class ModalCrearProyectoComponent {
 
     this.creado.emit({
       clienteId: this.clienteId,
+      contactoId: this.contactoId,
       name: this.nombre
     });
 
     this.hide();
-    this.resetForm(); 
+    this.resetForm();
   }
 
   resetForm() {

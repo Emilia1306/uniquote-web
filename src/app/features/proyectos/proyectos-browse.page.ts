@@ -2,12 +2,17 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { ProyectosStore } from './data/proyectos.store';
 import { Proyecto } from './data/proyectos.types';
 
 import { ProyectosCardsComponent } from './ui/proyectos-cards.component';
 import { ProyectosTableComponent } from './ui/proyectos-table.component';
+import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox/ui-combobox.component';
+
+import { ClientesApi } from '../clientes/data/clientes.api';
+import { ContactosApi } from '../clientes/data/contactos.api';
 
 @Component({
   selector: 'proyectos-browse',
@@ -17,6 +22,8 @@ import { ProyectosTableComponent } from './ui/proyectos-table.component';
     FormsModule,
     ProyectosCardsComponent,
     ProyectosTableComponent,
+    UiComboboxComponent,
+    LucideAngularModule
   ],
   templateUrl: './proyectos-browse.page.html'
 })
@@ -24,6 +31,8 @@ export class ProyectosBrowsePage {
 
   private store = inject(ProyectosStore);
   private router = inject(Router);
+  private clientesApi = inject(ClientesApi);
+  private contactosApi = inject(ContactosApi);
 
   // Estado
   searchText = signal('');
@@ -34,6 +43,10 @@ export class ProyectosBrowsePage {
   modalClienteId: number | null = null;
   modalContactoId: number | null = null;
 
+  // Listas para comboboxes
+  clientesItems = signal<UiComboboxItem[]>([]);
+  contactosItems = signal<UiComboboxItem[]>([]);
+
   // EDITAR
   editId: number | null = null;
   editName = '';
@@ -42,6 +55,39 @@ export class ProyectosBrowsePage {
 
   async ngOnInit() {
     await this.store.loadAll();
+    await this.loadClientes();
+  }
+
+  async loadClientes() {
+    try {
+      const res = await this.clientesApi.list({ sort: 'empresa_asc', pageSize: 1000 }, 'auto');
+      const items = res.items.map(c => ({
+        value: c.id,
+        label: c.empresa
+      }));
+      this.clientesItems.set(items);
+    } catch (err) {
+      console.error('Error cargando clientes', err);
+    }
+  }
+
+  async onClienteChange(clienteId: number | null) {
+    this.modalClienteId = clienteId;
+    this.modalContactoId = null; // Reset contacto
+    this.contactosItems.set([]);
+
+    if (clienteId) {
+      try {
+        const contactos = await this.contactosApi.listByCliente(clienteId);
+        const items = contactos.map(c => ({
+          value: c.id,
+          label: c.nombre
+        }));
+        this.contactosItems.set(items);
+      } catch (err) {
+        console.error('Error cargando contactos', err);
+      }
+    }
   }
 
   filteredList = computed(() => {
@@ -62,6 +108,10 @@ export class ProyectosBrowsePage {
   // ------------------------------------------------------
 
   openCreateModal() {
+    this.modalName = '';
+    this.modalClienteId = null;
+    this.modalContactoId = null;
+    this.contactosItems.set([]);
     (document.getElementById('modal-create') as HTMLDialogElement).showModal();
   }
 
@@ -71,7 +121,7 @@ export class ProyectosBrowsePage {
 
   async crearProyecto() {
     if (!this.modalName.trim() || !this.modalClienteId) {
-      alert('Debe rellenar nombre y cliente ID');
+      alert('Debe rellenar nombre y cliente');
       return;
     }
 

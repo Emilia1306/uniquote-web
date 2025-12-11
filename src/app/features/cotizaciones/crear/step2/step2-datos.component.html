@@ -228,5 +228,6 @@
 <modal-crear-contacto #modalContacto [clienteId]="clienteIdSeleccionado ?? 0" (creado)="crearContacto($event)">
 </modal-crear-contacto>
 
-<modal-crear-proyecto #modalProyecto [clienteId]="clienteIdSeleccionado ?? 0" (creado)="crearProyecto($event)">
+<modal-crear-proyecto #modalProyecto [clienteId]="clienteIdSeleccionado ?? 0" [contactoId]="contactoSeleccionado"
+  (creado)="crearProyecto($event)">
 </modal-crear-proyecto>
