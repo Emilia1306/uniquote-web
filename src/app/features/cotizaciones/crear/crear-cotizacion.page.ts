@@ -3,7 +3,6 @@ import {
   NgIf,
   NgSwitch,
   NgSwitchCase,
-  NgSwitchDefault,
 } from '@angular/common';
 
 import { WizardStepperComponent } from '../../cotizaciones/ui/wizard-stepper/wizard-stepper.component';
@@ -28,7 +27,6 @@ import { firstValueFrom } from 'rxjs';
     NgIf,
     NgSwitch,
     NgSwitchCase,
-    NgSwitchDefault,
 
     LucideAngularModule,
 
@@ -74,6 +72,7 @@ export class CrearCotizacionPage {
 
     // Último paso → enviar al API
     const payload = this.store.finalPayload();
+    console.log('PAYLOAD SENDING TO API:', payload);
 
     try {
       const res = await firstValueFrom(this.api.create(payload));

@@ -2,8 +2,8 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';              
-import { LucideAngularModule } from 'lucide-angular';      
+import { RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
 
@@ -21,14 +21,14 @@ type ViewMode = 'cards' | 'list';
 export class ClientesPage {
   private api = inject(ClientesApi);
 
-  loading  = signal(false);
-  error    = signal<string | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
   clientes = signal<Cliente[]>([]);
 
   private _qRaw = signal('');
-  public  qRaw  = this._qRaw;
+  public qRaw = this._qRaw;
   q = signal('');
-  view = signal<ViewMode>('cards');
+  view = signal<ViewMode>((localStorage.getItem('clientes-view') as ViewMode) || 'cards');
 
   private t: any = null;
   onSearchChange(v: string) {
@@ -44,7 +44,7 @@ export class ClientesPage {
     return this.clientes().filter(c => norm(`${c.empresa} ${c.razonSocial}`).includes(q));
   });
 
-  showForm  = signal(false);
+  showForm = signal(false);
   editingId = signal<number | string | null>(null);
   f = { empresa: '', razonSocial: '' };
 
@@ -63,7 +63,10 @@ export class ClientesPage {
     }
   }
 
-  setView(v: ViewMode) { this.view.set(v); }
+  setView(v: ViewMode) {
+    this.view.set(v);
+    localStorage.setItem('clientes-view', v);
+  }
   totalMostrados = computed(() => this.filtered().length);
 
   openCreate() { this.editingId.set(null); this.f = { empresa: '', razonSocial: '' }; this.showForm.set(true); }
@@ -102,5 +105,5 @@ export class ClientesPage {
   }
 
   // demo KPIs
-  stats(c: Cliente) { return { cotizaciones: 12, aprobacion: 60 }; }
+
 }

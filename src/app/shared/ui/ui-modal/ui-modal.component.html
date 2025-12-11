@@ -1,0 +1,15 @@
+<div *ngIf="open" class="modal-overlay">
+  <div class="modal-box animate-fade">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-semibold">{{ title }}</h2>
+
+      <button class="text-zinc-500 hover:text-black" (click)="onClose()">
+        ✕
+      </button>
+    </div>
+
+    <div class="mt-4">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

@@ -2,45 +2,232 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-  <!-- CLIENTE -->
+  <!-- ===========================
+       CLIENTE
+  ============================ -->
   <div>
     <label class="form-label">Cliente *</label>
-    <select class="form-input"
-            [(ngModel)]="clienteIdSeleccionado"
-            (ngModelChange)="onClienteChange($event)">
-      <option value="">Seleccione</option>
-      <option *ngFor="let c of clientes" [value]="c.id">
-        {{ c.empresa }}
-      </option>
-    </select>
+
+    <div class="flex items-center gap-2">
+      <ui-combobox class="flex-1" [items]="clientesItems" placeholder="Seleccione cliente..."
+        [(value)]="clienteIdSeleccionado" (valueChange)="onClienteChange($event)">
+      </ui-combobox>
+
+      <button
+        class="btn-icon text-[--brand] border border-[--brand] rounded-full h-10 w-10 flex items-center justify-center"
+        (click)="modalCliente.show()">
+        +
+      </button>
+    </div>
   </div>
 
-  <!-- CONTACTO -->
+  <!-- ===========================
+       CONTACTO
+  ============================ -->
   <div>
     <label class="form-label">Contacto *</label>
-    <select class="form-input"
-            [(ngModel)]="d.contactoId"
-            (ngModelChange)="patch()"
-            [disabled]="contactosFiltrados.length === 0">
-      <option value="">Seleccione</option>
-      <option *ngFor="let ct of contactosFiltrados" [value]="ct.id">
-        {{ ct.nombre }}
-      </option>
-    </select>
+
+    <div class="flex items-center gap-2">
+      <ui-combobox class="flex-1" [items]="contactosItems" placeholder="Seleccione contacto..."
+        [(value)]="contactoSeleccionado" (valueChange)="patchContacto()" [disabled]="contactosItems.length === 0">
+      </ui-combobox>
+
+      <button
+        class="btn-icon text-[--brand] border border-[--brand] rounded-full h-10 w-10 flex items-center justify-center"
+        (click)="modalContacto.show()" [disabled]="!clienteIdSeleccionado">
+        +
+      </button>
+    </div>
   </div>
 
-  <!-- PROYECTO -->
+  <!-- ===========================
+       PROYECTO
+  ============================ -->
   <div>
     <label class="form-label">Proyecto *</label>
-    <select class="form-input"
-            [(ngModel)]="d.projectId"
-            (ngModelChange)="patch()"
-            [disabled]="proyectosFiltrados.length === 0">
-      <option value="">Seleccione</option>
-      <option *ngFor="let p of proyectosFiltrados" [value]="p.id">
-        {{ p.name }}
-      </option>
-    </select>
+
+    <div class="flex items-center gap-2">
+      <ui-combobox class="flex-1" [items]="proyectosItems" placeholder="Seleccione proyecto..."
+        [(value)]="proyectoSeleccionado" (valueChange)="patchProyecto()" [disabled]="proyectosItems.length === 0">
+      </ui-combobox>
+
+      <button
+        class="btn-icon text-[--brand] border border-[--brand] rounded-full h-10 w-10 flex items-center justify-center"
+        (click)="modalProyecto.show()" [disabled]="!clienteIdSeleccionado">
+        +
+      </button>
+    </div>
   </div>
 
 </div>
+
+<!-- ========================================================= -->
+<!-- =============== DATOS DE LA COTIZACIÓN ================== -->
+<!-- ========================================================= -->
+
+<h3 class="section-title mt-10">Datos de la cotización</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+
+  <!-- TÍTULO -->
+  <div>
+    <label class="form-label">Título *</label>
+    <input class="form-input" type="text" [(ngModel)]="d.name" (ngModelChange)="patch({ name: d.name })"
+      placeholder="Ingresa un nombre para la cotización" />
+  </div>
+
+  <!-- COBERTURA -->
+  <div>
+    <label class="form-label">Cobertura *</label>
+    <ui-select [items]="coberturaItems" [(value)]="d.cobertura" (valueChange)="onCoberturaChange($event)"
+      placeholder="Seleccione cobertura..."></ui-select>
+  </div>
+
+  <!-- TOTAL ENTREVISTAS -->
+  <div>
+    <label class="form-label">Total entrevistas *</label>
+    <input class="form-input" type="number" min="0" [(ngModel)]="d.totalEntrevistas"
+      (ngModelChange)="patch({ totalEntrevistas: d.totalEntrevistas })" />
+  </div>
+
+  <!-- DURACIÓN CUESTIONARIO -->
+  <div>
+    <label class="form-label">Duración cuestionario (min) *</label>
+    <input class="form-input" type="number" min="1" [(ngModel)]="d.duracionCuestionarioMin"
+      (ngModelChange)="patch({ duracionCuestionarioMin: d.duracionCuestionarioMin })" />
+  </div>
+
+  <!-- METODOLOGÍA -->
+  <div>
+    <label class="form-label">Metodología *</label>
+    <ui-select [items]="metodologiaItems" [(value)]="d.metodologia" (valueChange)="onMetodologiaChange($event)"
+      placeholder="Seleccione metodología..."></ui-select>
+  </div>
+
+  <!-- PENETRACIÓN -->
+  <div>
+    <label class="form-label">Penetración de la categoría *</label>
+
+    <ui-select [items]="penetracionItems" [(value)]="penetracionSeleccionada"
+      (valueChange)="onPenetracionChange($event)" placeholder="Seleccione penetración..."></ui-select>
+
+    <!-- INPUT PERSONALIZADO -->
+    <div *ngIf="penetracionSeleccionada === 'custom'" class="mt-2">
+      <input class="form-input" type="number" placeholder="Ingrese porcentaje entre 0 y 1" min="0" max="1" step="0.01"
+        [(ngModel)]="d.penetracionCategoria"
+        (ngModelChange)="patch({ penetracionCategoria: d.penetracionCategoria })" />
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================= -->
+<!-- =============== TRABAJO DE CAMPO ======================== -->
+<!-- ========================================================= -->
+
+<div class="tc-section">
+  <h3 class="section-title mt-10">Trabajo de campo</h3>
+
+  <!-- ¿Deseas realizar trabajo de campo? -->
+  <p class="form-label">¿Deseas realizar trabajo de campo para este estudio?</p>
+
+  <div class="flex gap-4 mb-6">
+    <button class="toggle-btn" [class.active]="d.trabajoDeCampoRealiza === true" (click)="onToggleTrabajoDeCampo(true)">
+      Sí
+    </button>
+
+    <button class="toggle-btn" [class.active]="d.trabajoDeCampoRealiza === false"
+      (click)="onToggleTrabajoDeCampo(false)">
+      No
+    </button>
+  </div>
+
+  <!-- Mostrar sólo si seleccionó SI -->
+  <div *ngIf="d.trabajoDeCampoRealiza">
+
+    <!-- Tipo de trabajo -->
+    <p class="form-label mt-4">¿Cómo ejecutarás el trabajo de campo?</p>
+
+    <div class="flex gap-4 mb-6">
+
+      <!-- PROPIO -->
+      <div class="tc-card " [class.active]="d.trabajoDeCampoTipo === 'propio'" (click)="onChangeTipoTrabajo('propio')">
+        <h4 class="tc-title">Propio</h4>
+        <p class="tc-text">
+          El trabajo de campo será ejecutado directamente por UNIMER,
+          utilizando su propio equipo operativo y recursos internos.
+        </p>
+      </div>
+
+      <!-- SUBCONTRATADO -->
+      <div class="tc-card" [class.active]="d.trabajoDeCampoTipo === 'subcontratado'"
+        (click)="onChangeTipoTrabajo('subcontratado')">
+        <h4 class="tc-title">Subcontratado</h4>
+        <p class="tc-text">
+          El trabajo de campo será gestionado externamente, cotizando y
+          contratando a un proveedor especializado para su ejecución.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- PROPIO → Inputs operativos -->
+    <!-- =============================== -->
+    <div *ngIf="d.trabajoDeCampoTipo === 'propio'" class="p-4 border rounded-lg mb-6">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- ENCUESTADORES -->
+        <div>
+          <label class="form-label">Encuestadores</label>
+          <input class="form-input" type="number" min="0" [(ngModel)]="d.encuestadoresTotales"
+            (ngModelChange)="patch({ encuestadoresTotales: d.encuestadoresTotales })">
+        </div>
+
+        <!-- SUPERVISORES -->
+        <div>
+          <label class="form-label">Supervisores</label>
+          <input class="form-input" type="number" min="0" [(ngModel)]="d.supervisores"
+            (ngModelChange)="patch({ supervisores: d.supervisores })">
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- SUBCONTRATADO → Monto -->
+    <!-- =============================== -->
+    <div *ngIf="d.trabajoDeCampoTipo === 'subcontratado'" class="p-4 border rounded-lg mb-6">
+      <label class="form-label">Monto de subcontratación</label>
+      <input class="form-input" type="number" min="0" [(ngModel)]="d.trabajoDeCampoCosto"
+        (ngModelChange)="patch({ trabajoDeCampoCosto: d.trabajoDeCampoCosto })">
+    </div>
+
+  </div>
+
+  <div class="mt-4 mb-8">
+    <label class="form-label">Incentivo</label>
+    <input class="form-input" type="number" min="0" [(ngModel)]="d.incentivoTotal"
+      (ngModelChange)="patch({ incentivoTotal: d.incentivoTotal })" />
+  </div>
+
+
+
+</div>
+
+<!-- ===================== -->
+<!-- ======= MODALES ===== -->
+<!-- ===================== -->
+
+<modal-crear-cliente #modalCliente (creado)="crearCliente($event)">
+</modal-crear-cliente>
+
+<modal-crear-contacto #modalContacto [clienteId]="clienteIdSeleccionado ?? 0" (creado)="crearContacto($event)">
+</modal-crear-contacto>
+
+<modal-crear-proyecto #modalProyecto [clienteId]="clienteIdSeleccionado ?? 0" [contactoId]="contactoSeleccionado"
+  (creado)="crearProyecto($event)">
+</modal-crear-proyecto>

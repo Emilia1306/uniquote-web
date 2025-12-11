@@ -4,4 +4,9 @@ export interface Cliente {
   razonSocial: string;
   createdAt?: string;
   updatedAt?: string;
+  stats?: {
+    totalCotizaciones: number;
+    aprobadas: number;
+    porcentajeAprobadas: number;
+  };
 }

@@ -23,3 +23,43 @@
 .option-card.selected {
   @apply border-[--brand] bg-orange-50;
 }
+
+.toggle-btn {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  cursor: pointer;
+  background: white;
+  transition: 0.2s;
+}
+
+.toggle-btn.active {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: #fff5f2;
+}
+
+.tc-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 12px;
+  width: 240px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tc-card.active {
+  border-color: var(--brand);
+  background: #fff5f2;
+}
+
+.tc-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.tc-text {
+  font-size: 14px;
+  color: #666;
+}
+

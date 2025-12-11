@@ -1,0 +1,17 @@
+<ui-modal [open]="open" title="Crear contacto" (close)="hide()">
+
+  <label class="form-label">Nombre *</label>
+  <input class="input mb-3" [(ngModel)]="nombre">
+
+  <label class="form-label">Teléfono</label>
+  <input class="input mb-3" [(ngModel)]="telefono">
+
+  <label class="form-label">Email</label>
+  <input class="input mb-4" [(ngModel)]="email">
+
+  <div class="flex justify-end gap-2 mt-6">
+    <button class="btn-secondary" (click)="hide()">Cancelar</button>
+    <button class="btn-primary" (click)="guardar()">Guardar</button>
+  </div>
+
+</ui-modal>

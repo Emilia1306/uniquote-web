@@ -25,16 +25,16 @@ function norm(s: string) {
   templateUrl: './clientes-detail.page.html',
 })
 export class ClienteDetailPage {
-  private route        = inject(ActivatedRoute);
-  private clientesApi  = inject(ClientesApi);
+  private route = inject(ActivatedRoute);
+  private clientesApi = inject(ClientesApi);
   private contactosApi = inject(ContactosApi);
 
-  loading  = signal(false);
-  error    = signal<string | null>(null);
-  cliente  = signal<Cliente | null>(null);
+  loading = signal(false);
+  error = signal<string | null>(null);
+  cliente = signal<Cliente | null>(null);
   contactos = signal<ContactoEmpresa[]>([]);
 
-  view = signal<ViewMode>('cards');
+  view = signal<ViewMode>((localStorage.getItem('cliente-detail-view') as ViewMode) || 'cards');
   private _qRaw = signal('');
   q = signal('');
   private _debTimer: any = null;
@@ -54,7 +54,7 @@ export class ClienteDetailPage {
     );
   });
 
-  showForm  = signal(false);
+  showForm = signal(false);
   editingId = signal<number | null>(null);
   f = { nombre: '', email: '', telefono: '' };
 
@@ -67,7 +67,7 @@ export class ClienteDetailPage {
   async load(id: number) {
     this.loading.set(true); this.error.set(null);
     try {
-      const c    = await this.clientesApi.getById(id);
+      const c = await this.clientesApi.getById(id);
       const cons = await this.contactosApi.listByCliente(id);
       this.cliente.set(c);
       this.contactos.set(cons ?? []);
@@ -78,7 +78,10 @@ export class ClienteDetailPage {
     }
   }
 
-  setView(v: ViewMode) { this.view.set(v); }
+  setView(v: ViewMode) {
+    this.view.set(v);
+    localStorage.setItem('cliente-detail-view', v);
+  }
   totalMostrados = computed(() => this.filtered().length);
 
   openCreate() {

@@ -178,6 +178,35 @@
     animation: slide-right 0.28s cubic-bezier(.4,0,.2,1);
   }
 
+  /* ================================
+   SELECT bonito estilo UNIQUOTE
+   ================================ */
+
+  .select {
+    @apply w-full h-11 px-3 bg-white rounded-xl border border-[var(--border)]
+          text-[var(--text-900)] cursor-pointer transition-all duration-150
+          focus:ring-2 focus:ring-brand-500 outline-none;
+
+    /* Sombra suave como los dropdowns del topbar */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23777' height='22' viewBox='0 0 20 20' width='22' xmlns='http://www.w3.org/2000/svg'><path d='M5.5 7l4.5 4 4.5-4'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 1rem;
+  }
+
+  /* Hover */
+  .select:hover {
+    border-color: #d0d0d0;
+  }
+
+  /* Panel desplegado*/
+  select.select option {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
 
 }
 
@@ -190,3 +219,9 @@
   .divider { @apply border-t border-[var(--border)] my-4; }
   .page { @apply max-w-[1400px] mx-auto px-6 py-6; }
 }
+
+.cdk-overlay-backdrop {
+  pointer-events: none !important;
+  background: transparent !important;
+}
+

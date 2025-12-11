@@ -1,0 +1,32 @@
+<h3 class="step-title">¿Qué tipo de estudio deseas realizar?</h3>
+<p class="step-subtitle">Selecciona uno o más entregables para tu estudio</p>
+
+<div class="cards-grid">
+
+    <!-- Cuestionario -->
+    <div class="option-card" [class.active]="d.realizamosCuestionario" (click)="toggle('realizamosCuestionario')">
+        <span class="font-medium">Realización de cuestionario</span>
+    </div>
+
+    <!-- Script -->
+    <div class="option-card" [class.active]="d.realizamosScript" (click)="toggle('realizamosScript')">
+        <span class="font-medium">Realización de script</span>
+    </div>
+
+    <!-- Reporte -->
+    <div class="option-card" [class.active]="d.clienteSolicitaReporte" (click)="toggle('clienteSolicitaReporte')">
+        <span class="font-medium">Reporte de resultados</span>
+    </div>
+
+    <!-- Informe BI -->
+    <div class="option-card" [class.active]="d.clienteSolicitaInformeBI" (click)="toggle('clienteSolicitaInformeBI')">
+        <span class="font-medium">Informe BI</span>
+    </div>
+
+</div>
+
+<!-- Olas BI Input (Conditional) -->
+<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 animation-fade-in">
+    <label class="form-label">Número de olas BI</label>
+    <input type="number" class="form-input max-w-xs" [(ngModel)]="d.numeroOlasBi" (ngModelChange)="patch()" min="1" />
+</div>

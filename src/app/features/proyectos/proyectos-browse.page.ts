@@ -2,12 +2,17 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { ProyectosStore } from './data/proyectos.store';
 import { Proyecto } from './data/proyectos.types';
 
 import { ProyectosCardsComponent } from './ui/proyectos-cards.component';
 import { ProyectosTableComponent } from './ui/proyectos-table.component';
+import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox/ui-combobox.component';
+
+import { ClientesApi } from '../clientes/data/clientes.api';
+import { ContactosApi } from '../clientes/data/contactos.api';
 
 @Component({
   selector: 'proyectos-browse',
@@ -17,6 +22,8 @@ import { ProyectosTableComponent } from './ui/proyectos-table.component';
     FormsModule,
     ProyectosCardsComponent,
     ProyectosTableComponent,
+    UiComboboxComponent,
+    LucideAngularModule
   ],
   templateUrl: './proyectos-browse.page.html'
 })
@@ -24,6 +31,8 @@ export class ProyectosBrowsePage {
 
   private store = inject(ProyectosStore);
   private router = inject(Router);
+  private clientesApi = inject(ClientesApi);
+  private contactosApi = inject(ContactosApi);
 
   // Estado
   searchText = signal('');
@@ -34,6 +43,11 @@ export class ProyectosBrowsePage {
   modalClienteId: number | null = null;
   modalContactoId: number | null = null;
 
+  // Listas para comboboxes
+  clientesItems = signal<UiComboboxItem[]>([]);
+  contactosItems = signal<UiComboboxItem[]>([]);
+  editContactosItems = signal<UiComboboxItem[]>([]);
+
   // EDITAR
   editId: number | null = null;
   editName = '';
@@ -42,6 +56,58 @@ export class ProyectosBrowsePage {
 
   async ngOnInit() {
     await this.store.loadAll();
+    await this.loadClientes();
+  }
+
+  async loadClientes() {
+    try {
+      const res = await this.clientesApi.list({ sort: 'empresa_asc', pageSize: 1000 }, 'auto');
+      const items = res.items.map(c => ({
+        value: c.id,
+        label: c.empresa
+      }));
+      this.clientesItems.set(items);
+    } catch (err) {
+      console.error('Error cargando clientes', err);
+    }
+  }
+
+  async onClienteChange(clienteId: number | null) {
+    this.modalClienteId = clienteId;
+    this.modalContactoId = null; // Reset contacto
+    this.contactosItems.set([]);
+
+    if (clienteId) {
+      try {
+        const contactos = await this.contactosApi.listByCliente(clienteId);
+        const items = contactos.map(c => ({
+          value: c.id,
+          label: c.nombre
+        }));
+        this.contactosItems.set(items);
+      } catch (err) {
+        console.error('Error cargando contactos', err);
+      }
+    }
+  }
+
+  async onEditClienteChange(clienteId: number | null) {
+    this.editClienteId = clienteId;
+    this.editContactoId = null; // Reset contacto
+    this.editContactosItems.set([]);
+
+    if (clienteId) {
+      try {
+        const contactos = await this.contactosApi.listByCliente(clienteId);
+        const items = contactos.map(c => ({
+          value: c.id,
+          label: c.nombre
+        }));
+        this.editContactosItems.set(items);
+      } catch (err) {
+        console.error('Error cargando contactos', err);
+      }
+    }
   }
 
   filteredList = computed(() => {
@@ -62,6 +128,10 @@ export class ProyectosBrowsePage {
   // ------------------------------------------------------
 
   openCreateModal() {
+    this.modalName = '';
+    this.modalClienteId = null;
+    this.modalContactoId = null;
+    this.contactosItems.set([]);
     (document.getElementById('modal-create') as HTMLDialogElement).showModal();
   }
 
@@ -71,7 +141,7 @@ export class ProyectosBrowsePage {
 
   async crearProyecto() {
     if (!this.modalName.trim() || !this.modalClienteId) {
-      alert('Debe rellenar nombre y cliente ID');
+      alert('Debe rellenar nombre y cliente');
       return;
     }
 
@@ -88,12 +158,28 @@ export class ProyectosBrowsePage {
   // EDITAR PROYECTO
   // ------------------------------------------------------
 
-  openEditModal(p: Proyecto) {
+  async openEditModal(p: Proyecto) {
     this.editId = p.id;
     this.editName = p.name;
     this.editClienteId = p.cliente.id;
     this.editContactoId = p.contacto?.id ?? null;
 
+    // Load contacts for the selected client BEFORE showing modal
+    this.editContactosItems.set([]);
+    if (this.editClienteId) {
+      try {
+        const contactos = await this.contactosApi.listByCliente(this.editClienteId);
+        const items = contactos.map(c => ({
+          value: c.id,
+          label: c.nombre
+        }));
+        this.editContactosItems.set(items);
+      } catch (err) {
+        console.error('Error cargando contactos', err);
+      }
+    }
+
+    // Show modal AFTER data is loaded
     (document.getElementById('modal-edit') as HTMLDialogElement).showModal();
   }
 
@@ -109,6 +195,9 @@ export class ProyectosBrowsePage {
       clienteId: this.editClienteId!,
       contactoId: this.editContactoId || undefined
     });
+
+    // Reload to get fresh data with all relations
+    await this.store.loadAll();
 
     this.closeEditModal();
   }

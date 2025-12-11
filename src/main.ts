@@ -4,7 +4,8 @@ import { importProvidersFrom } from '@angular/core';
 import { appConfig } from './app/app.config';
 import { AppRoot } from './app/app.root';
 import { AuthService } from './app/core/auth/auth.service';
-import { LucideAngularModule, Search, ChevronDown, Pencil, Trash2, User,
+import {
+  LucideAngularModule, Search, ChevronDown, Pencil, Trash2, User,
   Settings, LogOut, Menu, House,
   FileText,
   Users,
@@ -14,9 +15,11 @@ import { LucideAngularModule, Search, ChevronDown, Pencil, Trash2, User,
   Building2,
   FolderOpen,
   Library,
-  Check, ArrowLeft, 
+  Check, ArrowLeft,
   ArrowRight,
-  Activity, Star} from 'lucide-angular';
+  Activity, Star, CheckCircle2,
+  List, LayoutGrid, Plus, X
+} from 'lucide-angular';
 
 bootstrapApplication(AppRoot, {
   // conserva tu appConfig
@@ -26,7 +29,8 @@ bootstrapApplication(AppRoot, {
     ...(appConfig.providers ?? []),
     // registra SOLO los íconos que vas a usar
     importProvidersFrom(
-      LucideAngularModule.pick({ Search, ChevronDown, Pencil, Trash2, User, Settings, LogOut, Menu, House,
+      LucideAngularModule.pick({
+        Search, ChevronDown, Pencil, Trash2, User, Settings, LogOut, Menu, House,
         FileText,
         Users,
         Ticket,
@@ -35,7 +39,9 @@ bootstrapApplication(AppRoot, {
         Building2,
         FolderOpen,
         Library,
-        Check, ArrowLeft, ArrowRight, Activity, Star})
+        Check, ArrowLeft, ArrowRight, Activity, Star, CheckCircle2,
+        List, LayoutGrid, Plus, X
+      })
     ),
   ],
 })

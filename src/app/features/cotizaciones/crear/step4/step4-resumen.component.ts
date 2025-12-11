@@ -1,28 +1,34 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CotizacionWizardStore } from '../wizard.store';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   standalone: true,
   selector: 'step4-resumen',
-  imports: [CommonModule],
-  template: `
-  <h2 class="text-2xl font-semibold mb-4">Resumen</h2>
-
-  <div class="card p-6">
-    <h3 class="text-lg font-semibold mb-2">{{ d.name || 'Nueva Cotización' }}</h3>
-
-    <p class="muted mb-4">
-      Verifica que los datos sean correctos antes de crear la cotización.
-    </p>
-
-    <pre class="text-sm bg-zinc-100 rounded p-4 overflow-auto">
-{{ d | json }}
-    </pre>
-  </div>
-  `
+  imports: [CommonModule, LucideAngularModule],
+  templateUrl: './step4-resumen.component.html',
+  styleUrls: ['./step4-resumen.component.scss']
 })
 export class Step4ResumenComponent {
   store = inject(CotizacionWizardStore);
-  d = this.store.data();
+
+  get d() {
+    return this.store.data();
+  }
+
+  get hasEntregables() {
+    return this.d.realizamosCuestionario ||
+      this.d.realizamosScript ||
+      this.d.clienteSolicitaReporte ||
+      this.d.clienteSolicitaInformeBI;
+  }
+
+  penteracionLabel(val: number | null): string {
+    if (val === null) return '-';
+    if (val >= 0.8) return 'Fácil (+80%)';
+    if (val >= 0.5) return 'Normal (50% - 80%)';
+    if (val < 0.5) return 'Difícil (-50%)';
+    return `${(val * 100).toFixed(0)}% (Personalizada)`;
+  }
 }

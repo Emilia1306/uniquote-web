@@ -6,17 +6,17 @@ import { LoginComponent } from './features/auth/login/login.component';
 import { VerifyComponent } from './features/auth/verify/verify.component';
 
 import { meReadyGuard } from './core/auth/me-ready.guard';
-import { authGuard }    from './core/auth/auth.guard';
-import { guestGuard }   from './core/auth/guest.guard';
-import { roleGuard }    from './core/auth/role.guard';
+import { authGuard } from './core/auth/auth.guard';
+import { guestGuard } from './core/auth/guest.guard';
+import { roleGuard } from './core/auth/role.guard';
 
-import { AdminDashboardComponent }   from './features/admin/dashboard/admin-dashboard/admin-dashboard';
+import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard/admin-dashboard';
 import { GerenteDashboardComponent } from './features/gerente/dashboard/gerente-dashboard/gerente-dashboard';
-import { DirectorDashboard }         from './features/director/dashboard/director-dashboard/director-dashboard';
+import { DirectorDashboard } from './features/director/dashboard/director-dashboard/director-dashboard';
 
 import { QuotesBrowsePage } from './features/cotizaciones/quotes-browse.page';
-import { AdminUsersPage }   from './features/admin/users/users.page';
-import { ClientesPage }     from './features/clientes/clientes.page';
+import { AdminUsersPage } from './features/admin/users/users.page';
+import { ClientesPage } from './features/clientes/clientes.page';
 
 // Cotizaciones
 import { CrearCotizacionPage } from './features/cotizaciones/crear/crear-cotizacion.page';
@@ -31,7 +31,7 @@ import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 
-  { path: 'login',        component: LoginComponent,  canActivate: [guestGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'verificacion', component: VerifyComponent, canActivate: [guestGuard] },
 
 
@@ -47,8 +47,8 @@ export const routes: Routes = [
         children: [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
-          { path: 'usuarios',     component: AdminUsersPage },
-          { path: 'clientes',     component: ClientesPage },
+          { path: 'usuarios', component: AdminUsersPage },
+          { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
         ]
       },
@@ -63,6 +63,11 @@ export const routes: Routes = [
           // PROYECTOS
           { path: 'proyectos', component: ProyectosBrowsePage },
           { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
+
+          // CLIENTES
+          { path: 'clientes', component: ClientesPage },
+          { path: 'clientes/:id', component: ClienteDetailPage },
+
           // COTIZACIONES
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'cotizaciones/crear', component: CrearCotizacionPage },
@@ -77,6 +82,8 @@ export const routes: Routes = [
         canMatch: [roleGuard(['DIRECTOR'])],
         children: [
           { path: '', component: DirectorDashboard },
+          { path: 'clientes', component: ClientesPage },
+          { path: 'clientes/:id', component: ClienteDetailPage },
           { path: 'cotizaciones', component: QuotesBrowsePage },
         ]
       },
