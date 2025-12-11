@@ -1,7 +1,7 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { CotizacionesApi, Cotizacion } from './cotizaciones.api';
 
-export type ViewMode = 'table'|'cards';
+export type ViewMode = 'table' | 'cards';
 
 export interface CotizacionFilters {
   search: string;
@@ -21,7 +21,9 @@ export class CotizacionesStore {
   private _loading = signal<boolean>(false);
 
   filters = signal<CotizacionFilters>({ search: '' });
-  viewMode = signal<ViewMode>('table');
+  viewMode = signal<ViewMode>(
+    (localStorage.getItem('quotes-view-mode') as ViewMode) || 'table'
+  );
 
   // 👇 TIPADO explícito
   items = computed<Cotizacion[]>(() => this._items());
@@ -36,7 +38,12 @@ export class CotizacionesStore {
       rows = rows.filter(r =>
         r.name.toLowerCase().includes(s) ||
         r.code.toLowerCase().includes(s) ||
-        r.createdBy.name.toLowerCase().includes(s)
+        r.createdBy.name.toLowerCase().includes(s) ||
+        r.createdBy.lastName.toLowerCase().includes(s) ||
+        r.contacto?.nombre?.toLowerCase().includes(s) ||
+        r.contacto?.email?.toLowerCase().includes(s) ||
+        r.project?.name?.toLowerCase().includes(s) ||
+        r.project?.cliente?.empresa?.toLowerCase().includes(s)
       );
     }
 
@@ -64,7 +71,8 @@ export class CotizacionesStore {
     });
   }
 
-  setView(mode: ViewMode) {
+  setViewMode(mode: ViewMode) {
     this.viewMode.set(mode);
+    localStorage.setItem('quotes-view-mode', mode);
   }
 }

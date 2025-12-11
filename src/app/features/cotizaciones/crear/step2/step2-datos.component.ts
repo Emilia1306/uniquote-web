@@ -83,9 +83,9 @@ export class Step2DatosComponent implements OnInit {
   ];
 
   penetracionItems: UiSelectItem[] = [
-    { value: 0.80, label: 'Fácil (+80%)' },
-    { value: 0.50, label: 'Normal (50% - 80%)' },
-    { value: 0.20, label: 'Difícil (-50%)' },
+    { value: 1, label: 'Fácil' },
+    { value: 0.50, label: 'Normal' },
+    { value: 0.20, label: 'Difícil' },
     { value: 'custom', label: 'Personalizada' },
   ];
 
@@ -198,33 +198,44 @@ export class Step2DatosComponent implements OnInit {
   }
 
   async crearContacto(data: any) {
-    const nuevo = await this.contactosApi.create(data);
+    try {
+      const nuevo = await this.contactosApi.create(data);
 
-    this.contactosFiltrados.push(nuevo);
-    this.contactosItems = this.contactosFiltrados.map((ct) => ({
-      value: ct.id,
-      label: ct.nombre,
-    }));
+      this.contactosFiltrados.push(nuevo);
+      this.contactosItems = this.contactosFiltrados.map((ct) => ({
+        value: ct.id,
+        label: ct.nombre,
+      }));
 
-    this.contactoSeleccionado = nuevo.id;
-    this.patchContacto();
+      this.contactoSeleccionado = nuevo.id;
+      this.patchContacto();
 
-    this.modalContacto.hide();
+      this.modalContacto.hide();
+    } catch (error: any) {
+      console.error('Error creating contact:', error);
+      const message = error?.error?.message || error?.message || 'Error al crear el contacto';
+      alert(`Error al crear contacto: ${message}`);
+    }
   }
 
   async crearProyecto(data: any) {
-    const nuevo = await firstValueFrom(this.proyectosApi.create(data));
+    try {
+      const nuevo = await firstValueFrom(this.proyectosApi.create(data));
 
-    this.proyectosFiltrados.push(nuevo);
-    this.proyectosItems = this.proyectosFiltrados.map((p) => ({
-      value: p.id,
-      label: p.name,
-    }));
+      this.proyectosFiltrados.push(nuevo);
+      this.proyectosItems = this.proyectosFiltrados.map((p) => ({
+        value: p.id,
+        label: p.name,
+      }));
 
-    this.proyectoSeleccionado = nuevo.id;
-    this.patchProyecto();
+      this.proyectoSeleccionado = nuevo.id;
+      this.patchProyecto();
 
-    this.modalProyecto.hide();
+      this.modalProyecto.hide();
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert('Error al crear el proyecto');
+    }
   }
 
   // ============================================================

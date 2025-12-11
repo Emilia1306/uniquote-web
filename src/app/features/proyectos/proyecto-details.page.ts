@@ -47,8 +47,8 @@ import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component'
       </div>
 
       <ng-container [ngSwitch]="view()">
-        <quotes-cards *ngSwitchCase="'cards'" [items]="project.cotizaciones"/>
-        <quotes-table *ngSwitchCase="'table'" [items]="project.cotizaciones"/>
+        <quotes-cards *ngSwitchCase="'cards'"/>
+        <quotes-table *ngSwitchCase="'table'"/>
       </ng-container>
 
     </ng-container>

@@ -25,8 +25,42 @@
 
 </div>
 
-<!-- Olas BI Input (Conditional) -->
-<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 animation-fade-in">
-    <label class="form-label">Número de olas BI</label>
-    <input type="number" class="form-input max-w-xs" [(ngModel)]="d.numeroOlasBi" (ngModelChange)="patch()" min="1" />
+<!-- Olas BI Section (Conditional) -->
+<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 p-6 bg-white border border-zinc-200 rounded-lg animation-fade-in">
+
+    <!-- Pregunta con botones Sí/No -->
+    <p class="text-sm text-zinc-600 mb-4">
+        * El informe BI cuenta con dos olas por defecto, ¿desea agregar olas extras?
+    </p>
+
+    <div class="flex gap-4 mb-6">
+        <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
+            [class.border-[var(--brand)]="tieneOlasExtras" [class.text-[var(--brand)]="tieneOlasExtras"
+            [class.bg-white]="tieneOlasExtras" [class.border-zinc-300]="!tieneOlasExtras"
+            [class.text-zinc-600]="!tieneOlasExtras" [class.bg-zinc-50]="!tieneOlasExtras"
+            (click)="setOlasExtras(true)">
+            Sí
+        </button>
+
+        <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
+            [class.border-[var(--brand)]="!tieneOlasExtras" [class.text-[var(--brand)]="!tieneOlasExtras"
+            [class.bg-white]="!tieneOlasExtras" [class.border-zinc-300]="tieneOlasExtras"
+            [class.text-zinc-600]="tieneOlasExtras" [class.bg-zinc-50]="tieneOlasExtras" (click)="setOlasExtras(false)">
+            No
+        </button>
+    </div>
+
+    <!-- Input de olas extras (solo si está activado) -->
+    <div *ngIf="tieneOlasExtras" class="animation-fade-in">
+        <label class="form-label text-zinc-700">Número de olas extra</label>
+        <input type="number" class="form-input max-w-sm" [(ngModel)]="olasExtras" (ngModelChange)="onOlasExtrasChange()"
+            min="0" placeholder="0" />
+    </div>
+
+    <!-- Total de olas (siempre visible) -->
+    <div class="mt-6 pt-4 border-t border-zinc-200">
+        <p class="text-base font-semibold text-zinc-900">
+            Total de olas BI: {{ d.numeroOlasBi || 2 }}
+        </p>
+    </div>
 </div>

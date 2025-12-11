@@ -1,8 +1,8 @@
 export const STATUS_COLORS: Record<string, string> = {
-  APROBADO:      'bg-green-100 text-green-700 border-green-300',
-  NEGOCIACION:   'bg-yellow-100 text-yellow-700 border-yellow-300',
-  ENVIADO:       'bg-blue-100 text-blue-700 border-blue-300',
-  NO_APROBADO:   'bg-red-100 text-red-700 border-red-300',
-  EN_PAUSA:      'bg-zinc-200 text-zinc-700 border-zinc-300',
-  REEMPLAZADA:   'bg-purple-100 text-purple-700 border-purple-300'
+  APROBADO: 'bg-white text-green-600 border-2 border-green-500',
+  NEGOCIACION: 'bg-white text-amber-600 border-2 border-amber-500',
+  ENVIADO: 'bg-white text-blue-600 border-2 border-blue-500',
+  NO_APROBADO: 'bg-white text-red-600 border-2 border-red-500',
+  EN_PAUSA: 'bg-white text-gray-600 border-2 border-gray-400',
+  REEMPLAZADA: 'bg-white text-purple-600 border-2 border-purple-500'
 };

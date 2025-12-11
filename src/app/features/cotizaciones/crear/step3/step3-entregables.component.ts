@@ -13,14 +13,62 @@ import { CotizacionWizardStore } from '../wizard.store';
 export class Step3EntregablesComponent {
   store = inject(CotizacionWizardStore);
 
+  // Control para olas extras
+  tieneOlasExtras = false;
+  olasExtras = 0;
+
   get d() {
     return this.store.data();
   }
 
   toggle(field: 'realizamosCuestionario' | 'realizamosScript' | 'clienteSolicitaReporte' | 'clienteSolicitaInformeBI') {
+    const newValue = !this.d[field];
+
     this.store.patch({
-      [field]: !this.d[field]
+      [field]: newValue
     });
+
+    // Si se activa BI, establecer 2 olas por defecto
+    if (field === 'clienteSolicitaInformeBI' && newValue) {
+      this.tieneOlasExtras = false;
+      this.olasExtras = 0;
+      this.store.patch({ numeroOlasBi: 2 });
+    }
+
+    // Si se desactiva BI, resetear olas
+    if (field === 'clienteSolicitaInformeBI' && !newValue) {
+      this.tieneOlasExtras = false;
+      this.olasExtras = 0;
+      this.store.patch({ numeroOlasBi: 0 });
+    }
+  }
+
+  onOlasExtrasToggle() {
+    if (this.tieneOlasExtras) {
+      this.olasExtras = 0;
+      this.actualizarTotalOlas();
+    } else {
+      // Resetear a 2 olas base
+      this.store.patch({ numeroOlasBi: 2 });
+    }
+  }
+
+  setOlasExtras(value: boolean) {
+    this.tieneOlasExtras = value;
+    if (!value) {
+      // Si selecciona "No", resetear a 2 olas base
+      this.olasExtras = 0;
+      this.store.patch({ numeroOlasBi: 2 });
+    }
+  }
+
+  onOlasExtrasChange() {
+    this.actualizarTotalOlas();
+  }
+
+  actualizarTotalOlas() {
+    const totalOlas = 2 + (this.olasExtras || 0);
+    this.store.patch({ numeroOlasBi: totalOlas });
   }
 
   patch() {

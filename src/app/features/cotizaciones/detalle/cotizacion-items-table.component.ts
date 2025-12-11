@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
           <td class="py-2 px-3">{{ i.personas }}</td>
           <td class="py-2 px-3">{{ i.dias }}</td>
           <td class="py-2 px-3">$ {{ i.costoUnitario }}</td>
-          <td class="py-2 px-3 font-semibold">$ {{ i.costoTotal }}</td>
+          <td class="py-2 px-3 font-semibold">$ {{ i.totalConComision }}</td>
         </tr>
       </tbody>
     </table>
