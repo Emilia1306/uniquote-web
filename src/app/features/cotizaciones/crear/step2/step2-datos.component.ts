@@ -83,9 +83,9 @@ export class Step2DatosComponent implements OnInit {
   ];
 
   penetracionItems: UiSelectItem[] = [
-    { value: 80, label: 'Fácil (+80%)' },
-    { value: 50, label: 'Normal (50% - 80%)' },
-    { value: 20, label: 'Difícil (-50%)' },
+    { value: 0.80, label: 'Fácil (+80%)' },
+    { value: 0.50, label: 'Normal (50% - 80%)' },
+    { value: 0.20, label: 'Difícil (-50%)' },
     { value: 'custom', label: 'Personalizada' },
   ];
 

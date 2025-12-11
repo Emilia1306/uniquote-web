@@ -17,7 +17,8 @@ import {
   Library,
   Check, ArrowLeft,
   ArrowRight,
-  Activity, Star, CheckCircle2
+  Activity, Star, CheckCircle2,
+  List, LayoutGrid, Plus, X
 } from 'lucide-angular';
 
 bootstrapApplication(AppRoot, {
@@ -38,7 +39,8 @@ bootstrapApplication(AppRoot, {
         Building2,
         FolderOpen,
         Library,
-        Check, ArrowLeft, ArrowRight, Activity, Star, CheckCircle2
+        Check, ArrowLeft, ArrowRight, Activity, Star, CheckCircle2,
+        List, LayoutGrid, Plus, X
       })
     ),
   ],

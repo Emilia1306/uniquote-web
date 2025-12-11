@@ -26,9 +26,9 @@ export class Step4ResumenComponent {
 
   penteracionLabel(val: number | null): string {
     if (val === null) return '-';
-    if (val >= 80) return 'Fácil (+80%)';
-    if (val >= 50) return 'Normal (50% - 80%)';
-    if (val < 50) return 'Difícil (-50%)';
-    return `${val}% (Personalizada)`;
+    if (val >= 0.8) return 'Fácil (+80%)';
+    if (val >= 0.5) return 'Normal (50% - 80%)';
+    if (val < 0.5) return 'Difícil (-50%)';
+    return `${(val * 100).toFixed(0)}% (Personalizada)`;
   }
 }

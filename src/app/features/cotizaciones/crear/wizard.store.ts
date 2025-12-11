@@ -8,7 +8,7 @@ export interface WizardData {
   studyType: 'Cualitativo' | 'Cuantitativo' | null;
 
   // Paso 2 — Datos técnicos
-  metodologia: string | null;                       // ⬅ Ahora sí pertenece al paso 2
+  metodologia: string | null;
   numeroOlasBi: number | null;
   totalEntrevistas: number | null;
   duracionCuestionarioMin: number | null;
@@ -176,7 +176,7 @@ export class CotizacionWizardStore {
       totalEntrevistas: d.totalEntrevistas,
       duracionCuestionarioMin: d.duracionCuestionarioMin,
       tipoEntrevista: d.metodologia, // Mapping methodology to interview type to satisfy API
-      penetracionCategoria: d.penetracionCategoria ? `${d.penetracionCategoria}%` : null,
+      penetracionCategoria: d.penetracionCategoria,
       cobertura: d.cobertura,
       supervisores: d.supervisores ?? 0,
       encuestadoresTotales: d.encuestadoresTotales ?? 0,

@@ -113,7 +113,7 @@
 
     <!-- INPUT PERSONALIZADO -->
     <div *ngIf="penetracionSeleccionada === 'custom'" class="mt-2">
-      <input class="form-input" type="number" placeholder="Ingrese porcentaje entre 0 y 100" min="0" max="100" step="1"
+      <input class="form-input" type="number" placeholder="Ingrese porcentaje entre 0 y 1" min="0" max="1" step="0.01"
         [(ngModel)]="d.penetracionCategoria"
         (ngModelChange)="patch({ penetracionCategoria: d.penetracionCategoria })" />
     </div>
