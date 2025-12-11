@@ -14,17 +14,11 @@
   <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 md:items-center mb-6">
     <!-- Buscador -->
     <div class="relative">
-      <input
-        id="clientes-search"
+      <input id="clientes-search"
         class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 pr-10 outline-none focus:border-zinc-500"
-        type="text"
-        [ngModel]="qRaw()"
-        (ngModelChange)="setQRaw($event)"
-        placeholder="Buscar por nombre, apellido o razón social"
-      />
-      <lucide-angular
-        name="search"
-        class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60">
+        type="text" [ngModel]="qRaw()" (ngModelChange)="setQRaw($event)"
+        placeholder="Buscar por nombre, apellido o razón social" />
+      <lucide-angular name="search" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60">
       </lucide-angular>
     </div>
 
@@ -32,19 +26,15 @@
     <div class="flex gap-2">
       <button type="button"
         class="h-10 w-10 rounded-lg border border-zinc-300 bg-white grid place-items-center hover:bg-zinc-50"
-        [class.bg-[var(--peach-75)]]="view()==='list'"
-        [class.text-[color:var(--accent-600)]]="view()==='list'"
-        (click)="setView('list')"
-        aria-label="Vista de lista">
+        [class.bg-[var(--peach-75)]]="view()==='list'" [class.text-[color:var(--accent-600)]]="view()==='list'"
+        (click)="setView('list')" aria-label="Vista de lista">
         <lucide-angular name="list"></lucide-angular>
       </button>
 
       <button type="button"
         class="h-10 w-10 rounded-lg border border-zinc-300 bg-white grid place-items-center hover:bg-zinc-50"
-        [class.bg-[var(--peach-75)]]="view()==='cards'"
-        [class.text-[color:var(--accent-600)]]="view()==='cards'"
-        (click)="setView('cards')"
-        aria-label="Vista de tarjetas">
+        [class.bg-[var(--peach-75)]]="view()==='cards'" [class.text-[color:var(--accent-600)]]="view()==='cards'"
+        (click)="setView('cards')" aria-label="Vista de tarjetas">
         <lucide-angular name="layout-grid"></lucide-angular>
       </button>
     </div>
@@ -52,7 +42,7 @@
     <!-- Botón crear -->
     <div class="text-right">
       <button class="rounded-lg bg-[var(--accent-600)] px-4 py-2 text-white hover:opacity-90 flex items-center gap-2"
-              (click)="openCreate()">
+        (click)="openCreate()">
         <lucide-angular name="plus"></lucide-angular>
         <span>Nuevo cliente</span>
       </button>
@@ -73,7 +63,7 @@
         <tr *ngFor="let c of filtered()" class="border-t">
           <td class="p-3 font-medium">
             <!-- 👇 link al detalle -->
-            <a [routerLink]="['/admin/clientes', c.id]" class="hover:underline">
+            <a [routerLink]="['./', c.id]" class="hover:underline">
               {{ c.empresa }}
             </a>
           </td>
@@ -97,13 +87,10 @@
   <!-- CARDS -->
   <div *ngIf="view()==='cards'">
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-      <div
-        *ngFor="let c of filtered()"
-        class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
-      >
+      <div *ngFor="let c of filtered()" class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
         <!-- Empresa (clicable) -->
         <div class="mb-2 text-lg font-semibold">
-          <a [routerLink]="['/admin/clientes', c.id]" class="hover:underline">
+          <a [routerLink]="['./', c.id]" class="hover:underline">
             {{ c.empresa }}
           </a>
         </div>
@@ -122,13 +109,13 @@
           <div>
             <div class="text-center text-[11px] uppercase tracking-wide text-zinc-500">Cotizaciones</div>
             <div class="text-center text-xl font-semibold">
-              {{ stats(c).cotizaciones }}
+              {{ c.stats?.totalCotizaciones || 0 }}
             </div>
           </div>
           <div>
             <div class="text-center text-[11px] uppercase tracking-wide text-zinc-500">Aprobaciones</div>
             <div class="text-center text-xl font-semibold text-emerald-600">
-              {{ stats(c).aprobacion }}%
+              {{ c.stats?.porcentajeAprobadas || 0 }}%
             </div>
           </div>
         </div>
@@ -137,11 +124,11 @@
         <div class="mt-2 flex flex-col sm:flex-row sm:justify-start gap-2">
           <!-- 👇 ambos van al detalle por ahora -->
           <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm"
-             [routerLink]="['/admin/clientes', c.id]">
+            [routerLink]="['./', c.id]">
             Ver contactos
           </a>
           <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm"
-             [routerLink]="['/admin/clientes', c.id]">
+            [routerLink]="['./', c.id]">
             Ver historial
           </a>
         </div>

@@ -1,0 +1,13 @@
+<ui-modal [open]="open" title="Crear cliente" (close)="hide()">
+
+  <label class="form-label">Empresa *</label>
+  <input class="input mb-3" [(ngModel)]="nombre" placeholder="Nombre comercial">
+
+  <label class="form-label">Razón social</label>
+  <input class="input mb-4" [(ngModel)]="razonSocial" placeholder="Razón social">
+
+  <button class="btn btn-primary w-full" (click)="guardar()">
+    Guardar
+  </button>
+
+</ui-modal>

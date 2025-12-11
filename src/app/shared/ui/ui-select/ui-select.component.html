@@ -1,0 +1,21 @@
+<div class="ui-select-wrapper relative">
+
+  <!-- Botón principal -->
+  <button type="button"
+          class="ui-select-btn"
+          [class.disabled]="disabled"
+          (click)="toggle()">
+    <span>{{ selectedLabel }}</span>
+    <lucide-icon name="chevron-down" class="chevron"></lucide-icon>
+  </button>
+
+  <!-- Panel dropdown -->
+  <ul *ngIf="open()" class="ui-select-panel animate-dropdown">
+    <li *ngFor="let item of items"
+        (click)="select(item)"
+        class="ui-select-item">
+      {{ item.label }}
+    </li>
+  </ul>
+
+</div>

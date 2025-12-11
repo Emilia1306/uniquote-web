@@ -1,0 +1,62 @@
+.combo-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border, #ddd);
+  background: var(--bg-card, white);
+  color: var(--text-900, #111);
+  font-size: 14px;
+  outline: none;
+
+  &:focus {
+    border-color: var(--brand, #F05546);
+    box-shadow: 0 0 0 2px rgba(240, 85, 70, 0.15);
+  }
+}
+
+.combo-icon {
+  position: absolute;
+  right: 14px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-700, #666);
+}
+
+.combo-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e5e5e5;
+  padding: 6px 0;
+  z-index: 50;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.combo-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 14px;
+
+  &:hover {
+    background: var(--peach-75, #ffe5e1);
+  }
+}
+
+.combo-empty {
+  padding: 12px 16px;
+  color: #999;
+  font-size: 13px;
+}

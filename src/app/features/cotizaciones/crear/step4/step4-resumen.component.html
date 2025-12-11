@@ -1,0 +1,140 @@
+<h3 class="step-title">Resumen</h3>
+<p class="step-subtitle">Verifica que toda la información sea correcta antes de crear</p>
+
+<div class="summary-card">
+
+    <!-- SECCIÓN 1: TIPO DE ESTUDIO -->
+    <div class="section">
+        <h4 class="section-header">Tipo de estudio</h4>
+        <p class="section-value">{{ d.studyType || '-' }}</p>
+    </div>
+
+    <!-- SECCIÓN 2: INFORMACIÓN DEL CLIENTE -->
+    <div class="section">
+        <h4 class="section-header">Información del cliente</h4>
+
+        <div class="grid grid-cols-2 gap-y-4 gap-x-8 mt-2">
+            <div>
+                <span class="label">Cliente</span>
+                <p class="value">{{ d.clientName || '-' }}</p>
+            </div>
+            <div>
+                <span class="label">Contacto</span>
+                <p class="value">{{ d.contactName || '-' }}</p>
+            </div>
+            <div class="col-span-2">
+                <span class="label">Proyecto</span>
+                <p class="value">{{ d.projectName || '-' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: DATOS DE LA COTIZACIÓN -->
+    <div class="section">
+        <h4 class="section-header">Datos de la cotización</h4>
+
+        <div class="grid grid-cols-2 gap-y-4 gap-x-8 mt-2">
+            <div class="col-span-2">
+                <span class="label">Título</span>
+                <p class="value">{{ d.name || 'Nueva Cotización' }}</p>
+            </div>
+            <div>
+                <span class="label">Total de entrevistas</span>
+                <p class="value">{{ d.totalEntrevistas || 0 }}</p>
+            </div>
+            <div>
+                <span class="label">Duración de cuestionario</span>
+                <p class="value">{{ d.duracionCuestionarioMin || 0 }} min</p>
+            </div>
+            <div>
+                <span class="label">Metodología</span>
+                <p class="value">{{ d.metodologiaLabel || d.metodologia || '-' }}</p>
+            </div>
+            <div>
+                <span class="label">Penetración de la categoría</span>
+                <p class="value">{{ penteracionLabel(d.penetracionCategoria) }}</p>
+            </div>
+            <div>
+                <span class="label">Cobertura</span>
+                <p class="value">{{ d.coberturaLabel || d.cobertura || '-' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 4: TRABAJO DE CAMPO -->
+    <div class="section">
+        <h4 class="section-header">Trabajo de campo</h4>
+
+        <div class="grid grid-cols-2 gap-y-4 gap-x-8 mt-2">
+            <div>
+                <span class="label">Realización de trabajo de campo</span>
+                <p class="value">{{ d.trabajoDeCampoRealiza ? 'Sí' : 'No' }}</p>
+            </div>
+
+            <ng-container *ngIf="d.trabajoDeCampoRealiza">
+                <div>
+                    <span class="label">Modalidad de ejecución</span>
+                    <p class="value capitalize text-zinc-900 font-medium">
+                        {{ d.trabajoDeCampoTipo || '-' }}
+                    </p>
+                </div>
+
+                <!-- Propio -->
+                <ng-container *ngIf="d.trabajoDeCampoTipo === 'propio'">
+                    <div>
+                        <span class="label">Encuestadores</span>
+                        <p class="value">{{ d.encuestadoresTotales || 0 }}</p>
+                    </div>
+                    <div>
+                        <span class="label">Supervisores</span>
+                        <p class="value">{{ d.supervisores || 0 }}</p>
+                    </div>
+                </ng-container>
+
+                <!-- Subcontratado -->
+                <ng-container *ngIf="d.trabajoDeCampoTipo === 'subcontratado'">
+                    <div>
+                        <span class="label">Costo Global</span>
+                        <p class="value">{{ d.trabajoDeCampoCosto | currency }}</p>
+                    </div>
+                </ng-container>
+
+                <!-- Incentivo -->
+                <div *ngIf="d.incentivoTotal">
+                    <span class="label">Incentivo Global</span>
+                    <p class="value">{{ d.incentivoTotal | currency }}</p>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 5: ENTREGABLES -->
+    <div class="section border-none pb-0 mb-0">
+        <h4 class="section-header">Entregables</h4>
+
+        <ul class="flex flex-col gap-2 mt-2">
+            <li *ngIf="d.realizamosCuestionario" class="flex items-center gap-2 text-sm text-zinc-700">
+                <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
+                Realización de cuestionario
+            </li>
+            <li *ngIf="d.realizamosScript" class="flex items-center gap-2 text-sm text-zinc-700">
+                <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
+                Realización de script
+            </li>
+            <li *ngIf="d.clienteSolicitaReporte" class="flex items-center gap-2 text-sm text-zinc-700">
+                <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
+                Reporte de resultados
+            </li>
+            <li *ngIf="d.clienteSolicitaInformeBI" class="flex items-center gap-2 text-sm text-zinc-700">
+                <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
+                Informe BI ({{ d.numeroOlasBi }} olas)
+            </li>
+        </ul>
+
+        <p *ngIf="!hasEntregables" class="text-sm text-zinc-400 italic mt-2">
+            No se han seleccionado entregables.
+        </p>
+
+    </div>
+
+</div>

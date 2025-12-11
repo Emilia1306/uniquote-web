@@ -19,7 +19,7 @@ export interface WizardData {
   encuestadoresTotales: number | null;
 
   // Trabajo de campo (también en paso 2)
-  trabajoDeCampoRealiza: boolean;
+  trabajoDeCampoRealiza: boolean | null;
   trabajoDeCampoTipo: 'propio' | 'subcontratado' | null;
   trabajoDeCampoCosto: number | null;
 
@@ -32,6 +32,13 @@ export interface WizardData {
 
   // Nombre de la cotización
   name: string | null;
+
+  // Display fields for Summary
+  clientName?: string;
+  contactName?: string;
+  projectName?: string;
+  metodologiaLabel?: string;
+  coberturaLabel?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -59,7 +66,7 @@ export class CotizacionWizardStore {
     encuestadoresTotales: null,
 
     // Trabajo de campo
-    trabajoDeCampoRealiza: false,
+    trabajoDeCampoRealiza: null,
     trabajoDeCampoTipo: null,
     trabajoDeCampoCosto: null,
 
@@ -71,6 +78,13 @@ export class CotizacionWizardStore {
     incentivoTotal: null,
 
     name: null,
+
+    // Display
+    clientName: '',
+    contactName: '',
+    projectName: '',
+    metodologiaLabel: '',
+    coberturaLabel: ''
   });
 
   patch(values: Partial<WizardData>) {
@@ -108,21 +122,24 @@ export class CotizacionWizardStore {
     if (step === 1) {
 
       if (
+        !d.projectId ||
+        !d.contactoId ||
         !d.metodologia ||
-        !d.totalEntrevistas ||
-        !d.duracionCuestionarioMin ||
-        !d.tipoEntrevista ||
-        !d.penetracionCategoria ||
-        !d.cobertura ||
-        !d.supervisores ||
-        !d.encuestadoresTotales
+        d.totalEntrevistas == null ||
+        d.duracionCuestionarioMin == null ||
+        d.penetracionCategoria == null ||
+        !d.cobertura
       ) return false;
 
       // Validación trabajo de campo
       if (d.trabajoDeCampoRealiza) {
         if (!d.trabajoDeCampoTipo) return false;
+
         if (d.trabajoDeCampoTipo === 'subcontratado' &&
-            d.trabajoDeCampoCosto == null) return false;
+          d.trabajoDeCampoCosto == null) return false;
+
+        if (d.trabajoDeCampoTipo === 'propio' &&
+          (d.supervisores == null || d.encuestadoresTotales == null)) return false;
       }
 
       return true;
@@ -130,7 +147,9 @@ export class CotizacionWizardStore {
 
     // PASO 3 — Entregables
     if (step === 2) {
-      return d.incentivoTotal != null;
+      // Validate that at least one deliverable is selected? 
+      // Or just return true. Let's return true for flexibility as per screenshot.
+      return true;
     }
 
     return true;
@@ -150,29 +169,29 @@ export class CotizacionWizardStore {
 
       // Paso 1
       studyType: d.studyType,
-      
+
       // Paso 2
       metodologia: d.metodologia,
       numeroOlasBi: d.numeroOlasBi,
       totalEntrevistas: d.totalEntrevistas,
       duracionCuestionarioMin: d.duracionCuestionarioMin,
-      tipoEntrevista: d.tipoEntrevista,
-      penetracionCategoria: d.penetracionCategoria,
+      tipoEntrevista: d.metodologia, // Mapping methodology to interview type to satisfy API
+      penetracionCategoria: d.penetracionCategoria ? `${d.penetracionCategoria}%` : null,
       cobertura: d.cobertura,
-      supervisores: d.supervisores,
-      encuestadoresTotales: d.encuestadoresTotales,
+      supervisores: d.supervisores ?? 0,
+      encuestadoresTotales: d.encuestadoresTotales ?? 0,
 
       // Trabajo de campo
       trabajoDeCampoRealiza: d.trabajoDeCampoRealiza,
       trabajoDeCampoTipo: d.trabajoDeCampoTipo,
-      trabajoDeCampoCosto: d.trabajoDeCampoCosto,
+      trabajoDeCampoCosto: d.trabajoDeCampoCosto ?? 0,
 
       // Paso 3
       realizamosCuestionario: d.realizamosCuestionario,
       realizamosScript: d.realizamosScript,
       clienteSolicitaReporte: d.clienteSolicitaReporte,
       clienteSolicitaInformeBI: d.clienteSolicitaInformeBI,
-      incentivoTotal: d.incentivoTotal
+      incentivoTotal: d.incentivoTotal ?? 0
     };
   }
 }

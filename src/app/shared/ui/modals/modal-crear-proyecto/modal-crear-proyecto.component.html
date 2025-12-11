@@ -1,0 +1,10 @@
+<ui-modal [open]="open" title="Crear proyecto" (close)="hide()">
+
+  <label class="form-label">Nombre del proyecto *</label>
+  <input class="input mb-4" [(ngModel)]="nombre" placeholder="Ej: Estudio de mercado 2025">
+
+  <button class="btn btn-primary w-full" (click)="guardar()">
+    Guardar
+  </button>
+
+</ui-modal>

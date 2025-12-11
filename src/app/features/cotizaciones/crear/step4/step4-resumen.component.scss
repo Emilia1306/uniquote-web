@@ -1,0 +1,35 @@
+.step-title {
+    @apply text-lg font-semibold text-gray-800 mb-1;
+}
+
+.step-subtitle {
+    @apply text-sm text-gray-500 mb-6;
+}
+
+.summary-card {
+    @apply bg-white;
+}
+
+.section {
+    @apply border-b border-gray-100 pb-6 mb-6;
+
+    &:last-child {
+        @apply border-none pb-0 mb-0;
+    }
+}
+
+.section-header {
+    @apply text-[--brand] font-medium text-sm mb-3;
+}
+
+.section-value {
+    @apply text-base text-gray-900;
+}
+
+.label {
+    @apply block text-xs font-semibold text-gray-800 mb-1;
+}
+
+.value {
+    @apply text-sm text-gray-600;
+}

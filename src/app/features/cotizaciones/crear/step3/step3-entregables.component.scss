@@ -1,0 +1,30 @@
+.step-title {
+  @apply text-lg font-semibold text-gray-800 mb-1;
+}
+
+.step-subtitle {
+  @apply text-sm text-gray-500 mb-6;
+}
+
+.cards-grid {
+  @apply flex flex-col gap-4;
+}
+
+.option-card {
+  @apply border rounded-xl p-4 cursor-pointer transition-all duration-200 select-none;
+  @apply hover:border-[--brand] hover:bg-red-50/10;
+  
+  &.active {
+    @apply border-[--brand] bg-red-50 text-[--brand];
+    box-shadow: 0 0 0 1px var(--brand);
+  }
+}
+
+.animation-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
