@@ -27,6 +27,7 @@ import { ProyectoDetailsPage } from './features/proyectos/proyecto-details.page'
 
 
 import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
+import { TarifarioPage } from './features/tarifario/tarifario.page';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -47,9 +48,11 @@ export const routes: Routes = [
         children: [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
           { path: 'usuarios', component: AdminUsersPage },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'tarifario', component: TarifarioPage },
         ]
       },
 
