@@ -61,6 +61,7 @@ import { STATUS_COLORS } from './status-colors';
             {{ q.createdAt | date:'dd/MM/yy' }}
           </td>
 
+
           <td class="px-4 py-2 relative">
             <button 
               class="h-8 w-8 rounded-full hover:bg-zinc-100 flex items-center justify-center text-zinc-500 transition-colors"
@@ -72,7 +73,9 @@ import { STATUS_COLORS } from './status-colors';
 
             <!-- Dropdown Menu -->
             <div *ngIf="activeDropdownId === q.id" 
-                 class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 py-1 z-50">
+                 class="fixed w-48 bg-white rounded-lg shadow-lg border border-zinc-200 py-1 z-[100]"
+                 [style.top.px]="dropdownPos.y"
+                 [style.left.px]="dropdownPos.x">
               
               <button (click)="verDetalles(q.id)" 
                 class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
@@ -114,14 +117,20 @@ export class QuotesTableComponent {
   route = inject(ActivatedRoute);
   STATUS_COLORS = STATUS_COLORS;
 
-  activeDropdownId: number | null = null; // No signal for simple primitive tracking in template without detection issues
+  activeDropdownId: number | null = null;
+  dropdownPos = { x: 0, y: 0 };
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    // Close dropdown when clicking outside
     if (this.activeDropdownId !== null) {
       this.activeDropdownId = null;
     }
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('window:resize')
+  closeDropdown() {
+    this.activeDropdownId = null;
   }
 
   toggleDropdown(id: number, event: MouseEvent) {
@@ -130,6 +139,15 @@ export class QuotesTableComponent {
       this.activeDropdownId = null;
     } else {
       this.activeDropdownId = id;
+      const button = event.currentTarget as HTMLElement;
+      const rect = button.getBoundingClientRect();
+
+      // Alineamos a la derecha del botón (restamos el ancho del dropdown estimado 12rem = 192px)
+      // Ajustamos un poco para que se vea bien
+      this.dropdownPos = {
+        x: rect.right - 192,
+        y: rect.bottom + 5
+      };
     }
   }
 
