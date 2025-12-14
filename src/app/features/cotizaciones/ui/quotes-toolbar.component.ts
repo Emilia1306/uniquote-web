@@ -7,7 +7,27 @@ import { CotizacionesStore } from '../data/quotes.store';
   standalone: true,
   imports: [CommonModule],
   template: `
-  <button type="button"
+  <div class="flex items-center gap-3">
+    <!-- Toggle Mis Cotizaciones -->
+    <button type="button"
+      class="h-12 px-4 rounded-xl border border-zinc-200 bg-white flex items-center justify-center gap-2 hover:bg-zinc-50 shadow-sm text-sm font-medium transition-colors"
+      [class.border-black]="store.filters().mineOnly"
+      [class.bg-zinc-50]="store.filters().mineOnly"
+      (click)="toggleMine()">
+      <span>Mis cotizaciones</span>
+      <div class="w-4 h-4 rounded-full border border-zinc-300 flex items-center justify-center"
+           [class.bg-black]="store.filters().mineOnly"
+           [class.border-black]="store.filters().mineOnly">
+          <svg *ngIf="store.filters().mineOnly" viewBox="0 0 24 24" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+      </div>
+    </button>
+
+    <div class="w-px h-8 bg-zinc-200"></div>
+
+    <!-- View Toggle -->
+    <button type="button"
     class="h-12 w-12 rounded-xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
     (click)="store.setViewMode(store.viewMode() === 'cards' ? 'table' : 'cards')"
     [title]="store.viewMode() === 'cards' ? 'Cambiar a lista' : 'Cambiar a tarjetas'">
@@ -20,8 +40,14 @@ import { CotizacionesStore } from '../data/quotes.store';
       <path fill="currentColor" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
     </svg>
   </button>
+  </div>
   `
 })
 export class QuotesToolbarComponent {
   store = inject(CotizacionesStore);
+
+  toggleMine() {
+    const current = this.store.filters().mineOnly;
+    this.store.setFilters({ mineOnly: !current });
+  }
 }

@@ -1,10 +1,13 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { CotizacionesApi, Cotizacion } from './cotizaciones.api';
 
+import { AuthService } from '../../../core/auth/auth.service';
+
 export type ViewMode = 'table' | 'cards';
 
 export interface CotizacionFilters {
   search: string;
+  mineOnly?: boolean;
   clienteId?: number;
   proyectoId?: number;
   contactoId?: number;
@@ -16,6 +19,7 @@ export interface CotizacionFilters {
 export class CotizacionesStore {
 
   private api = inject(CotizacionesApi);
+  private auth = inject(AuthService);
 
   private _items = signal<Cotizacion[]>([]);
   private _loading = signal<boolean>(false);
@@ -30,8 +34,16 @@ export class CotizacionesStore {
   loading = computed<boolean>(() => this._loading());
 
   filtered = computed<Cotizacion[]>(() => {
-    const { search } = this.filters();
+    const { search, mineOnly } = this.filters();
     let rows = this._items();
+
+    // Filtro por "Mis Cotizaciones"
+    if (mineOnly) {
+      const myId = this.auth.user()?.id;
+      if (myId) {
+        rows = rows.filter(r => r.createdBy?.id === myId);
+      }
+    }
 
     if (search.trim()) {
       const s = search.toLowerCase();

@@ -18,6 +18,8 @@ function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
 }
 
+import { AuthService } from '../../core/auth/auth.service';
+
 @Component({
   standalone: true,
   selector: 'cliente-detail-page',
@@ -28,6 +30,7 @@ export class ClienteDetailPage {
   private route = inject(ActivatedRoute);
   private clientesApi = inject(ClientesApi);
   private contactosApi = inject(ContactosApi);
+  public auth = inject(AuthService);
 
   loading = signal(false);
   error = signal<string | null>(null);

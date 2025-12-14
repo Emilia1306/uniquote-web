@@ -88,6 +88,9 @@ export const routes: Routes = [
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
           { path: 'cotizaciones', component: QuotesBrowsePage },
+          { path: 'cotizaciones/crear', component: CrearCotizacionPage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
         ]
       },
     ],
