@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, HostListener } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
 
@@ -61,16 +61,44 @@ import { STATUS_COLORS } from './status-colors';
             {{ q.createdAt | date:'dd/MM/yy' }}
           </td>
 
-          <td class="px-4 py-2">
+          <td class="px-4 py-2 relative">
             <button 
-              class="h-8 px-3 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center gap-1 text-xs font-medium"
-              (click)="verDetalles(q.id)">
-              <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+              class="h-8 w-8 rounded-full hover:bg-zinc-100 flex items-center justify-center text-zinc-500 transition-colors"
+              (click)="toggleDropdown(q.id, $event)">
+              <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
               </svg>
-              Ver Detalles
             </button>
+
+            <!-- Dropdown Menu -->
+            <div *ngIf="activeDropdownId === q.id" 
+                 class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 py-1 z-50">
+              
+              <button (click)="verDetalles(q.id)" 
+                class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 5 8.268 7.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                Ver detalles
+              </button>
+
+              <button (click)="editar(q.id)" 
+                class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Editar
+              </button>
+
+              <button (click)="clonar(q.id)" 
+                class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                </svg>
+                Clonar
+              </button>
+            </div>
           </td>
 
         </tr>
@@ -83,9 +111,46 @@ import { STATUS_COLORS } from './status-colors';
 export class QuotesTableComponent {
   store = inject(CotizacionesStore);
   router = inject(Router);
+  route = inject(ActivatedRoute);
   STATUS_COLORS = STATUS_COLORS;
 
+  activeDropdownId: number | null = null; // No signal for simple primitive tracking in template without detection issues
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // Close dropdown when clicking outside
+    if (this.activeDropdownId !== null) {
+      this.activeDropdownId = null;
+    }
+  }
+
+  toggleDropdown(id: number, event: MouseEvent) {
+    event.stopPropagation();
+    if (this.activeDropdownId === id) {
+      this.activeDropdownId = null;
+    } else {
+      this.activeDropdownId = id;
+    }
+  }
+
   verDetalles(id: number) {
-    this.router.navigate(['/gerente/cotizaciones', id]);
+    this.router.navigate([id], { relativeTo: this.route });
+  }
+
+  editar(id: number) {
+    this.router.navigate(['editar', id], { relativeTo: this.route });
+  }
+
+  async clonar(id: number) {
+    if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
+
+    try {
+      const res = await this.store.cloneQuote(id);
+      if (res?.id) {
+        this.router.navigate(['editar', res.id], { relativeTo: this.route });
+      }
+    } catch (err) {
+      console.error('Error al clonar', err);
+    }
   }
 }

@@ -49,6 +49,7 @@ export const routes: Routes = [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
           { path: 'usuarios', component: AdminUsersPage },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },

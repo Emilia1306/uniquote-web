@@ -87,4 +87,8 @@ export class CotizacionesStore {
     this.viewMode.set(mode);
     localStorage.setItem('quotes-view-mode', mode);
   }
+
+  async cloneQuote(id: number) {
+    return this.api.clone(id).toPromise();
+  }
 }

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
 
@@ -68,27 +68,65 @@ import { STATUS_COLORS } from './status-colors';
         <div class="text-xs text-zinc-500">Monto total</div>
       </div>
 
-      <!-- Botón Ver Detalles -->
-      <button 
-        class="w-full h-10 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
-        (click)="verDetalles(q.id)">
-        <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-          <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-        </svg>
-        Ver Detalles
-      </button>
+      <div class="flex gap-2">
+        <button 
+          class="flex-1 h-10 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
+          (click)="verDetalles(q.id)">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+          </svg>
+          Ver Detalles
+        </button>
+
+        <button 
+          class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
+          (click)="editar(q.id)"
+          title="Editar">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </button>
+
+        <button 
+          class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
+          (click)="clonar(q.id)"
+          title="Clonar">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+          </svg>
+        </button>
+      </div>
 
     </article>
   </div>
   `
 })
+
 export class QuotesCardsComponent {
   store = inject(CotizacionesStore);
   router = inject(Router);
+  route = inject(ActivatedRoute);
   STATUS_COLORS = STATUS_COLORS;
 
   verDetalles(id: number) {
-    this.router.navigate(['/gerente/cotizaciones', id]);
+    this.router.navigate([id], { relativeTo: this.route });
+  }
+
+  editar(id: number) {
+    this.router.navigate(['editar', id], { relativeTo: this.route });
+  }
+
+  async clonar(id: number) {
+    if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
+
+    try {
+      const res = await this.store.cloneQuote(id);
+      if (res?.id) {
+        this.router.navigate(['editar', res.id], { relativeTo: this.route });
+      }
+    } catch (err) {
+      console.error('Error al clonar', err);
+    }
   }
 }
