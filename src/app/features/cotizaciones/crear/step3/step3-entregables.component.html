@@ -4,63 +4,164 @@
 <div class="cards-grid">
 
     <!-- Cuestionario -->
-    <div class="option-card" [class.active]="d.realizamosCuestionario" (click)="toggle('realizamosCuestionario')">
+    <div class="pill-option" [class.active]="d.realizamosCuestionario" (click)="toggle('realizamosCuestionario')">
         <span class="font-medium">Realización de cuestionario</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.realizamosCuestionario" name="check" [size]="14"></lucide-angular>
+        </div>
     </div>
 
     <!-- Script -->
-    <div class="option-card" [class.active]="d.realizamosScript" (click)="toggle('realizamosScript')">
+    <div class="pill-option" [class.active]="d.realizamosScript" (click)="toggle('realizamosScript')">
         <span class="font-medium">Realización de script</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.realizamosScript" name="check" [size]="14"></lucide-angular>
+        </div>
+    </div>
+
+    <!-- Trabajo de Campo -->
+    <div class="pill-option" [class.active]="d.trabajoDeCampoRealiza" (click)="toggleTrabajoCampo()">
+        <span class="font-medium">Trabajo de Campo</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.trabajoDeCampoRealiza" name="check" [size]="14"></lucide-angular>
+        </div>
+    </div>
+
+    <!-- Trabajo de Campo Details (Moved Here) -->
+    <div *ngIf="d.trabajoDeCampoRealiza"
+        class="w-full p-6 bg-zinc-50 border border-zinc-200 rounded-lg animation-fade-in">
+        <h4 class="text-base font-semibold text-zinc-900 mb-4">Detalles de Trabajo de Campo</h4>
+
+        <!-- Tipo de trabajo -->
+        <p class="form-label mt-0.5">¿Cómo ejecutarás el trabajo de campo?</p>
+
+        <div class="flex gap-4 mb-6">
+
+            <!-- PROPIO -->
+            <div class="tc-card" [class.active]="d.trabajoDeCampoTipo === 'propio'"
+                (click)="onChangeTipoTrabajo('propio')">
+                <h4 class="tc-title">Propio</h4>
+                <p class="tc-text">
+                    Ejecutado por UNIMER con equipo propio.
+                </p>
+            </div>
+
+            <!-- SUBCONTRATADO -->
+            <div class="tc-card" [class.active]="d.trabajoDeCampoTipo === 'subcontratado'"
+                (click)="onChangeTipoTrabajo('subcontratado')">
+                <h4 class="tc-title">Subcontratado</h4>
+                <p class="tc-text">
+                    Gestionado externamente con proveedor.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- =============================== -->
+        <!-- PROPIO → Inputs operativos -->
+        <!-- =============================== -->
+        <div *ngIf="d.trabajoDeCampoTipo === 'propio'" class="p-4 border bg-white rounded-lg mb-6">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- ENCUESTADORES -->
+                <div>
+                    <label class="form-label">Encuestadores</label>
+                    <input class="form-input" type="number" min="0" [(ngModel)]="d.encuestadoresTotales"
+                        (ngModelChange)="patch({ encuestadoresTotales: d.encuestadoresTotales })">
+                </div>
+
+                <!-- SUPERVISORES -->
+                <div>
+                    <label class="form-label">Supervisores</label>
+                    <input class="form-input" type="number" min="0" [(ngModel)]="d.supervisores"
+                        (ngModelChange)="patch({ supervisores: d.supervisores })">
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <!-- =============================== -->
+        <!-- SUBCONTRATADO → Monto -->
+        <!-- =============================== -->
+        <div *ngIf="d.trabajoDeCampoTipo === 'subcontratado'" class="p-4 border bg-white rounded-lg mb-6">
+            <label class="form-label">Monto de subcontratación</label>
+            <input class="form-input" type="number" min="0" [(ngModel)]="d.trabajoDeCampoCosto"
+                (ngModelChange)="patch({ trabajoDeCampoCosto: d.trabajoDeCampoCosto })">
+        </div>
+
+        <!-- Incentivo -->
+        <div class="mb-2">
+            <label class="form-label">Incentivo</label>
+            <input class="form-input" type="number" min="0" [(ngModel)]="d.incentivoTotal"
+                (ngModelChange)="patch({ incentivoTotal: d.incentivoTotal })" />
+        </div>
+    </div>
+
+    <!-- Tablas (Nuevo) -->
+    <div class="pill-option" [class.active]="d.clienteSolicitaTablas" (click)="toggle('clienteSolicitaTablas')">
+        <span class="font-medium">Tablas</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.clienteSolicitaTablas" name="check" [size]="14"></lucide-angular>
+        </div>
     </div>
 
     <!-- Reporte -->
-    <div class="option-card" [class.active]="d.clienteSolicitaReporte" (click)="toggle('clienteSolicitaReporte')">
+    <div class="pill-option" [class.active]="d.clienteSolicitaReporte" (click)="toggle('clienteSolicitaReporte')">
         <span class="font-medium">Reporte de resultados</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.clienteSolicitaReporte" name="check" [size]="14"></lucide-angular>
+        </div>
     </div>
 
     <!-- Informe BI -->
-    <div class="option-card" [class.active]="d.clienteSolicitaInformeBI" (click)="toggle('clienteSolicitaInformeBI')">
+    <div class="pill-option" [class.active]="d.clienteSolicitaInformeBI" (click)="toggle('clienteSolicitaInformeBI')">
         <span class="font-medium">Informe BI</span>
+        <div class="checkbox-circle">
+            <lucide-angular *ngIf="d.clienteSolicitaInformeBI" name="check" [size]="14"></lucide-angular>
+        </div>
     </div>
 
-</div>
+    <!-- Olas BI Section (Conditional) -->
+    <div *ngIf="d.clienteSolicitaInformeBI"
+        class="w-full p-6 bg-zinc-50 border border-zinc-200 rounded-lg animation-fade-in">
 
-<!-- Olas BI Section (Conditional) -->
-<div *ngIf="d.clienteSolicitaInformeBI" class="mt-6 p-6 bg-zinc-50 border border-zinc-200 rounded-lg animation-fade-in">
-
-    <!-- Pregunta con botones Sí/No -->
-    <p class="text-sm text-zinc-600 mb-4">
-        * El informe BI cuenta con dos olas por defecto, ¿desea agregar olas extras?
-    </p>
-
-    <div class="flex gap-4 mb-6">
-        <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
-            [class.border-[var(--brand)]]="tieneOlasExtras" [class.text-[var(--brand)]]="tieneOlasExtras"
-            [class.bg-white]="tieneOlasExtras" [class.border-zinc-300]="!tieneOlasExtras"
-            [class.text-zinc-600]="!tieneOlasExtras" (click)="setOlasExtras(true)">
-            Sí
-        </button>
-
-        <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
-            [class.border-[var(--brand)]]="!tieneOlasExtras" [class.text-[var(--brand)]]="!tieneOlasExtras"
-            [class.bg-white]="!tieneOlasExtras" [class.border-zinc-300]="tieneOlasExtras"
-            [class.text-zinc-600]="tieneOlasExtras" (click)="setOlasExtras(false)">
-            No
-        </button>
-    </div>
-
-    <!-- Input de olas extras (solo si está activado) -->
-    <div *ngIf="tieneOlasExtras" class="mb-6 animation-fade-in">
-        <label class="form-label text-zinc-700 mb-2 block">Número de olas extra</label>
-        <input type="number"
-            class="w-full h-14 px-4 text-base border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
-            [(ngModel)]="olasExtras" (ngModelChange)="onOlasExtrasChange()" min="0" placeholder="0" />
-    </div>
-
-    <!-- Total de olas (siempre visible cuando BI está seleccionado) -->
-    <div class="pt-4 border-t border-zinc-300">
-        <p class="text-base font-semibold text-zinc-900">
-            Total de olas BI: {{ d.numeroOlasBi || 2 }}
+        <!-- Pregunta con botones Sí/No -->
+        <p class="text-sm text-zinc-600 mb-4">
+            * El informe BI cuenta con dos olas por defecto, ¿desea agregar olas extras?
         </p>
+
+        <div class="flex gap-4 mb-6">
+            <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
+                [class.border-[var(--brand)]]="tieneOlasExtras" [class.text-[var(--brand)]]="tieneOlasExtras"
+                [class.bg-white]="tieneOlasExtras" [class.border-zinc-300]="!tieneOlasExtras"
+                [class.text-zinc-600]="!tieneOlasExtras" (click)="setOlasExtras(true)">
+                Sí
+            </button>
+
+            <button type="button" class="flex-1 h-12 rounded-lg border-2 font-medium transition-all"
+                [class.border-[var(--brand)]]="!tieneOlasExtras" [class.text-[var(--brand)]]="!tieneOlasExtras"
+                [class.bg-white]="!tieneOlasExtras" [class.border-zinc-300]="tieneOlasExtras"
+                [class.text-zinc-600]="tieneOlasExtras" (click)="setOlasExtras(false)">
+                No
+            </button>
+        </div>
+
+        <!-- Input de olas extras (solo si está activado) -->
+        <div *ngIf="tieneOlasExtras" class="mb-6 animation-fade-in">
+            <label class="form-label text-zinc-700 mb-2 block">Número de olas extra</label>
+            <input type="number"
+                class="w-full h-14 px-4 text-base border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent"
+                [(ngModel)]="olasExtras" (ngModelChange)="onOlasExtrasChange()" min="0" placeholder="0" />
+        </div>
+
+        <!-- Total de olas (siempre visible cuando BI está seleccionado) -->
+        <div class="pt-4 border-t border-zinc-300">
+            <p class="text-base font-semibold text-zinc-900">
+                Total de olas BI: {{ d.numeroOlasBi || 2 }}
+            </p>
+        </div>
     </div>
 </div>

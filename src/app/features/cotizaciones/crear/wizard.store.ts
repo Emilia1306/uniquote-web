@@ -29,6 +29,7 @@ export interface WizardData {
   realizamosScript: boolean;
   clienteSolicitaReporte: boolean;
   clienteSolicitaInformeBI: boolean;
+  clienteSolicitaTablas: boolean; // NEW
   incentivoTotal: number | null;
 
   // Nombre de la cotización
@@ -58,7 +59,7 @@ export class CotizacionWizardStore {
 
     // Paso 2
     metodologia: null,
-    numeroOlasBi: 1,
+    numeroOlasBi: 2, // Default 2
     totalEntrevistas: null,
     duracionCuestionarioMin: null,
     tipoEntrevista: null,
@@ -77,6 +78,7 @@ export class CotizacionWizardStore {
     realizamosScript: false,
     clienteSolicitaReporte: false,
     clienteSolicitaInformeBI: false,
+    clienteSolicitaTablas: false, // NEW
     incentivoTotal: null,
 
     name: null,
@@ -116,7 +118,7 @@ export class CotizacionWizardStore {
 
       // Paso 2
       metodologia: null,
-      numeroOlasBi: 1,
+      numeroOlasBi: 2, // Default 2
       totalEntrevistas: null,
       duracionCuestionarioMin: null,
       tipoEntrevista: null,
@@ -135,6 +137,7 @@ export class CotizacionWizardStore {
       realizamosScript: false,
       clienteSolicitaReporte: false,
       clienteSolicitaInformeBI: false,
+      clienteSolicitaTablas: false, // NEW
       incentivoTotal: null,
 
       name: null,
@@ -160,7 +163,7 @@ export class CotizacionWizardStore {
       return !!d.studyType;
     }
 
-    // PASO 2 — Datos técnicos + metodología + trabajo de campo
+    // PASO 2 — Datos técnicos + metodología
     if (step === 1) {
 
       if (
@@ -173,6 +176,11 @@ export class CotizacionWizardStore {
         !d.cobertura
       ) return false;
 
+      return true;
+    }
+
+    // PASO 3 — Entregables + Trabajo de Campo
+    if (step === 2) {
       // Validación trabajo de campo
       if (d.trabajoDeCampoRealiza) {
         if (!d.trabajoDeCampoTipo) return false;
@@ -183,14 +191,6 @@ export class CotizacionWizardStore {
         if (d.trabajoDeCampoTipo === 'propio' &&
           (d.supervisores == null || d.encuestadoresTotales == null)) return false;
       }
-
-      return true;
-    }
-
-    // PASO 3 — Entregables
-    if (step === 2) {
-      // Validate that at least one deliverable is selected? 
-      // Or just return true. Let's return true for flexibility as per screenshot.
       return true;
     }
 
@@ -233,6 +233,7 @@ export class CotizacionWizardStore {
       realizamosScript: d.realizamosScript,
       clienteSolicitaReporte: d.clienteSolicitaReporte,
       clienteSolicitaInformeBI: d.clienteSolicitaInformeBI,
+      clienteSolicitaTablas: d.clienteSolicitaTablas,
       incentivoTotal: d.incentivoTotal ?? 0
     };
   }

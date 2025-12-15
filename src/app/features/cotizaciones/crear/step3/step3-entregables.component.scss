@@ -1,3 +1,4 @@
+// Títulos
 .step-title {
   @apply text-lg font-semibold text-gray-800 mb-1;
 }
@@ -6,20 +7,36 @@
   @apply text-sm text-gray-500 mb-6;
 }
 
+// Grid de opciones (ahora en columna para pills)
 .cards-grid {
-  @apply flex flex-col gap-4;
+  @apply flex flex-col gap-3;
 }
 
-.option-card {
-  @apply border rounded-xl p-4 cursor-pointer transition-all duration-200 select-none;
-  @apply hover:border-[--brand] hover:bg-red-50/10;
-  
+// Nueva Pill Option
+.pill-option {
+  @apply w-full h-14 px-4 rounded-xl border border-zinc-200 bg-white flex items-center justify-between cursor-pointer transition-all duration-200 select-none;
+  @apply hover:border-[--brand] hover:bg-zinc-50;
+
   &.active {
-    @apply border-[--brand] bg-red-50 text-[--brand];
-    box-shadow: 0 0 0 1px var(--brand);
+    @apply border-[--brand] bg-red-50/30 ring-1 ring-[--brand];
+
+    .checkbox-circle {
+      @apply bg-[--brand] border-[--brand] text-white;
+    }
+  }
+
+  .font-medium {
+    @apply text-zinc-700;
   }
 }
 
+// Checkbox Circle (indicador visual a la derecha)
+.checkbox-circle {
+  @apply h-5 w-5 rounded-full border border-zinc-300 bg-white flex items-center justify-center transition-colors;
+  @apply text-transparent; // Icono invisible si no está activo (a menos que usemos *ngIf)
+}
+
+// Animaciones
 .animation-fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -27,4 +44,33 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+// ==========================================
+// Estilos migrados de Step 2 (Trabajo de Campo)
+// ==========================================
+
+.form-label {
+  @apply block mb-1 text-sm font-medium text-zinc-700;
+}
+
+.form-input {
+  @apply w-full border border-zinc-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[--brand] bg-white;
+}
+
+.tc-card {
+  @apply border border-zinc-200 p-4 rounded-xl cursor-pointer transition-all duration-200 bg-white flex-1;
+  @apply hover:border-[--brand] hover:bg-zinc-50;
+
+  &.active {
+    @apply border-[--brand] bg-red-50/30 ring-1 ring-[--brand];
+  }
+}
+
+.tc-title {
+  @apply font-semibold text-zinc-800 mb-1 block;
+}
+
+.tc-text {
+  @apply text-sm text-zinc-500 block leading-snug;
 }
