@@ -25,7 +25,7 @@ export type CreateUserDto = {
   roleId: number;
 };
 
-export type UpdateUserDto = Partial<Omit<CreateUserDto,'password'>> & {
+export type UpdateUserDto = Partial<Omit<CreateUserDto, 'password'>> & {
   password?: string;
 };
 

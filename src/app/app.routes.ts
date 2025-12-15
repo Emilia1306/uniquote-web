@@ -34,6 +34,11 @@ export const routes: Routes = [
 
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'verificacion', component: VerifyComponent, canActivate: [guestGuard] },
+  {
+    path: 'cambiar-password',
+    loadComponent: () => import('./features/auth/set-initial-password/set-initial-password.component').then(m => m.SetInitialPasswordComponent),
+    canActivate: [guestGuard]
+  },
 
 
   {
