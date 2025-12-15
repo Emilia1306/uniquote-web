@@ -64,4 +64,10 @@ export class ContactosApi {
   async remove(id: number): Promise<void> {
     await this.http.delete(`${this.base}/${id}`).toPromise();
   }
+
+  async getById(id: number): Promise<ContactoEmpresa> {
+    const res = await this.http.get<ContactoEmpresa>(`${this.base}/${id}`).toPromise();
+    if (!res) throw new Error('No se pudo obtener el contacto');
+    return res;
+  }
 }

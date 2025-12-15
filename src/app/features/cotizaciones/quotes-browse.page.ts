@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QuotesToolbarComponent } from './ui/quotes-toolbar.component';
 import { QuotesTableComponent } from './ui/quotes-table.component';
@@ -6,6 +6,8 @@ import { QuotesCardsComponent } from './ui/quotes-cards.component';
 import { CotizacionesStore } from './data/quotes.store';
 import { AuthService } from '../../core/auth/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ContactosApi } from '../clientes/data/contactos.api';
+import { ClientesApi } from '../clientes/data/clientes.api';
 
 @Component({
   standalone: true,
@@ -21,8 +23,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
     <!-- HEADER -->
     <div class="mb-6">
-      <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">Cotizaciones</h1>
-      <p class="text-zinc-500">Resumen general de cotizaciones y aprobaciones</p>
+      <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">{{ pageTitle() }}</h1>
+      <p class="text-zinc-500">{{ pageSubtitle() }}</p>
     </div>
 
     <!-- TOOLBAR -->
@@ -68,10 +70,40 @@ export class QuotesBrowsePage {
   router = inject(Router);
   route = inject(ActivatedRoute);
 
+  // APIs para metadata del header
+  contactosApi = inject(ContactosApi);
+  clientesApi = inject(ClientesApi);
+
+  pageTitle = signal('Cotizaciones');
+  pageSubtitle = signal('Resumen general de cotizaciones y aprobaciones');
+
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       if (params['contactoId']) {
-        this.store.setFilters({ contactoId: Number(params['contactoId']) });
+        const cid = Number(params['contactoId']);
+        this.store.setFilters({ contactoId: cid });
+
+        // Cargar datos para el header
+        try {
+          const contact = await this.contactosApi.getById(cid);
+          this.pageTitle.set(`Cotizaciones de ${contact.nombre}`);
+
+          // Intentar obtener empresa
+          if (contact.clienteId) {
+            const client = await this.clientesApi.getById(contact.clienteId);
+            this.pageSubtitle.set(`${client.empresa}`);
+          } else {
+            this.pageSubtitle.set(contact.email);
+          }
+        } catch (err) {
+          console.error('Error cargando metadata de contacto', err);
+        }
+
+      } else {
+        // Reset defaults
+        this.store.setFilters({ contactoId: undefined });
+        this.pageTitle.set('Cotizaciones');
+        this.pageSubtitle.set('Resumen general de cotizaciones y aprobaciones');
       }
     });
 
