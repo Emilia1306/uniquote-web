@@ -129,6 +129,10 @@
                 <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
                 Informe BI ({{ d.numeroOlasBi }} olas)
             </li>
+            <li *ngIf="d.clienteSolicitaTablas" class="flex items-center gap-2 text-sm text-zinc-700">
+                <lucide-icon name="check-circle-2" class="w-4 h-4 text-[--brand]"></lucide-icon>
+                Tablas
+            </li>
         </ul>
 
         <p *ngIf="!hasEntregables" class="text-sm text-zinc-400 italic mt-2">

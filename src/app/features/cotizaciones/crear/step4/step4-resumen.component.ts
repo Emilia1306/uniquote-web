@@ -21,7 +21,8 @@ export class Step4ResumenComponent {
     return this.d.realizamosCuestionario ||
       this.d.realizamosScript ||
       this.d.clienteSolicitaReporte ||
-      this.d.clienteSolicitaInformeBI;
+      this.d.clienteSolicitaInformeBI ||
+      this.d.clienteSolicitaTablas;
   }
 
   penteracionLabel(val: number | null): string {
