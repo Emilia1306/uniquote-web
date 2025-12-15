@@ -54,7 +54,7 @@ import { STATUS_COLORS } from './status-colors';
           </td>
 
           <td class="px-4 py-2">
-            {{ q.totalCobrar | currency:'USD':'symbol':'1.0-0' }}
+            {{ q.totalCobrar | currency:'USD':'symbol':'1.2-2' }}
           </td>
 
           <td class="px-4 py-2">

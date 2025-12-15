@@ -11,6 +11,11 @@ export interface ContactoEmpresa {
   telefono: string;
   createdAt?: string;
   updatedAt?: string;
+  stats?: {
+    totalCotizaciones: number;
+    aprobadas: number;
+    porcentajeAprobadas: number;
+  };
 }
 
 export interface CreateContactoDto {
@@ -33,7 +38,9 @@ export class ContactosApi {
 
   async listByCliente(clienteId: number): Promise<ContactoEmpresa[]> {
     const res = await this.http
-      .get<ContactoEmpresa[]>(`${this.base}?clienteId=${clienteId}`)
+      .get<ContactoEmpresa[]>(this.base, {
+        params: { clienteId: clienteId.toString() },
+      })
       .toPromise();
     return res ?? [];
   }

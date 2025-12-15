@@ -1,177 +1,233 @@
-<div class="mx-auto max-w-[1400px] px-6 py-6">
+<div class="page">
 
   <!-- Encabezado -->
-  <div class="mb-4">
-    <h1 class="text-3xl font-semibold text-[color:var(--accent-600)]">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">
       {{ cliente()?.empresa || 'Cliente' }}
     </h1>
-    <p class="muted">{{ cliente()?.razonSocial || 'Razón social' }}</p>
+    <p class="text-zinc-500">{{ cliente()?.razonSocial || 'Razón social' }}</p>
   </div>
 
-  <!-- Alert de error -->
+  <!-- Error -->
   <div *ngIf="error()" class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-red-700">
     {{ error() }}
   </div>
 
   <!-- Toolbar -->
-  <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3 md:items-center mb-6">
+  <div class="flex flex-col md:flex-row gap-4 mb-8">
     <!-- Buscador -->
-    <div class="relative">
+    <div class="relative flex-1">
       <input
-        class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 pr-10 outline-none focus:border-zinc-500"
-        type="text" [ngModel]="qRaw()" (ngModelChange)="setQRaw($event)"
-        placeholder="Buscar por nombre, email o teléfono" />
-      <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60">🔍</span>
+        class="w-full h-12 rounded-xl border border-zinc-200 bg-white px-5 pr-12 outline-none focus:border-zinc-400 focus:ring-0 shadow-sm"
+        type="text" [ngModel]="qRaw()" (ngModelChange)="setQRaw($event)" placeholder="Buscar por nombre, apellido" />
+      <lucide-angular name="search" class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400"
+        [size]="20">
+      </lucide-angular>
     </div>
 
-    <!-- Toggle vista único -->
-    <button type="button" class="btn-outline md:w-auto w-full" (click)="setView(view()==='cards' ? 'list' : 'cards')">
-      {{ view()==='cards' ? 'Ver lista' : 'Ver cards' }}
-    </button>
+    <!-- Acciones derecha -->
+    <div class="flex items-center gap-3">
+      <!-- Toggle vista (solo 1 botón) -->
+      <button type="button"
+        class="h-12 w-12 rounded-xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
+        (click)="setView(view() === 'cards' ? 'list' : 'cards')"
+        [title]="view() === 'cards' ? 'Cambiar a lista' : 'Cambiar a tarjetas'">
+        <lucide-angular [name]="view() === 'cards' ? 'list' : 'layout-grid'" [size]="20"></lucide-angular>
+      </button>
 
-    <!-- Nuevo contacto -->
-    <div class="text-right">
-      <button class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" (click)="openCreate()">+
-        Nuevo contacto</button>
+      <!-- Botón crear (Negro) -->
+      <button
+        class="h-12 px-6 rounded-xl bg-black text-white font-medium hover:bg-zinc-900 transition-colors flex items-center gap-2 shadow-sm"
+        (click)="openCreate()">
+        <lucide-angular name="plus" [size]="18"></lucide-angular>
+        <span>Nuevo Contacto</span>
+      </button>
     </div>
   </div>
 
   <!-- Vista CARDS -->
   <div *ngIf="view()==='cards'">
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div *ngFor="let c of filtered()"
-        class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-        <!-- Título -->
-        <div class="mb-3">
-          <div class="text-lg font-semibold">{{ c.nombre }}</div>
-          <div class="mt-1 h-px bg-zinc-200"></div>
-        </div>
+        class="relative flex flex-col rounded-2xl border border-zinc-100 bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-shadow duration-300">
 
-        <!-- Datos -->
-        <ul class="space-y-2 text-sm text-zinc-700 mb-4">
-          <li class="flex items-center gap-2">
-            <span class="inline-block h-2 w-2 rounded-full bg-zinc-400"></span>
-            <span class="text-zinc-500">{{ c.email }}</span>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="inline-block h-2 w-2 rounded-full bg-zinc-400"></span>
-            <span class="text-zinc-500">{{ c.telefono }}</span>
-          </li>
-        </ul>
-
-        <!-- Métricas (placeholder opcional) -->
-        <div class="flex items-center justify-center gap-10 mb-4">
-          <div class="text-center">
-            <div class="text-base font-semibold text-[color:var(--accent-600)]">—</div>
-            <div class="text-xs text-zinc-500">Cotizaciones</div>
-          </div>
-          <div class="text-center">
-            <div class="text-base font-semibold text-green-600">—%</div>
-            <div class="text-xs text-zinc-500">Aprobaciones</div>
+        <!-- Header Card: Nombre + Actions -->
+        <div class="flex items-start justify-between mb-4">
+          <h3 class="text-xl font-bold text-zinc-900 leading-tight">
+            {{ c.nombre }}
+          </h3>
+          <div class="flex items-center gap-2">
+            <button (click)="openEdit(c)" class="text-zinc-400 hover:text-zinc-700 transition-colors">
+              <lucide-angular name="pencil" [size]="18"></lucide-angular>
+            </button>
+            <button *ngIf="auth.role() === 'ADMIN'" (click)="remove(c)"
+              class="text-zinc-400 hover:text-red-600 transition-colors">
+              <lucide-angular name="trash-2" [size]="18"></lucide-angular>
+            </button>
           </div>
         </div>
 
-        <!-- Acciones -->
-        <div class="flex justify-between items-center">
-          <div class="flex gap-2">
-            <button class="btn-outline" (click)="openEdit(c)">Editar</button>
-            <button *ngIf="auth.role() === 'ADMIN'" class="btn-danger" (click)="remove(c)">Eliminar</button>
+        <div class="h-px w-full bg-zinc-100 mb-6"></div>
+
+        <!-- Info + Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+          <!-- Info -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500">
+                <lucide-angular name="mail" [size]="16"></lucide-angular>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Correo Electrónico
+                </div>
+                <div class="text-sm text-zinc-600 truncate" title="{{ c.email }}">{{ c.email }}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-8 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-500">
+                <lucide-angular name="phone" [size]="16"></lucide-angular>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Teléfono</div>
+                <div class="text-sm text-zinc-600">{{ c.telefono || '-' }}</div>
+              </div>
+            </div>
           </div>
-          <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" [routerLink]="['.']">Ver
-            historial</a>
+
+          <!-- Stats -->
+          <div class="flex items-center justify-end gap-6 sm:gap-8">
+            <div class="text-center">
+              <div class="text-2xl font-bold text-[color:var(--brand)]">{{ c.stats?.totalCotizaciones || 0 }}</div>
+              <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-1">Cotizaciones</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold text-green-500">{{ c.stats?.porcentajeAprobadas || 0 }}%</div>
+              <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mt-1">Aprobaciones</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Buttons -->
+        <div class="mt-auto">
+          <a [routerLink]="['../../cotizaciones']" [queryParams]="{ contactoId: c.id }"
+            class="flex items-center justify-center h-10 w-full rounded-lg border border-[#ffcdca] text-[var(--brand)] text-sm font-medium hover:bg-[#fff5f4] transition-colors">
+            Ver Historial
+          </a>
         </div>
       </div>
 
-      <!-- Estados -->
+      <!-- Empty states -->
       <div *ngIf="!loading() && filtered().length === 0" class="col-span-full">
-        <div class="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-          Sin resultados
+        <div class="rounded-2xl border border-zinc-200 bg-white p-12 text-center text-zinc-500">
+          No se encontraron contactos.
         </div>
       </div>
       <div *ngIf="loading()" class="col-span-full">
-        <div class="rounded-lg border border-zinc-200 bg-white p-8 text-center text-zinc-500">
-          Cargando…
+        <div class="rounded-2xl border border-zinc-200 bg-white p-12 text-center text-zinc-400 animate-pulse">
+          Cargando contactos...
         </div>
       </div>
     </div>
   </div>
 
   <!-- Vista LISTA -->
-  <div *ngIf="view()==='list'" class="rounded-lg border border-zinc-200 bg-white overflow-hidden">
+  <div *ngIf="view()==='list'" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
     <table class="w-full text-sm">
-      <thead class="bg-zinc-50">
-        <tr class="text-left">
-          <th class="p-3">Nombre</th>
-          <th class="p-3">Correo</th>
-          <th class="p-3">Teléfono</th>
-          <th class="p-3 w-44"></th>
+      <thead class="bg-zinc-50/50 border-b border-zinc-100">
+        <tr class="text-left text-zinc-500">
+          <th class="p-4 font-medium">Nombre</th>
+          <th class="p-4 font-medium">Correo</th>
+          <th class="p-4 font-medium">Teléfono</th>
+          <th class="p-4 w-40"></th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let c of filtered()" class="border-t">
-          <td class="p-3 font-medium">{{ c.nombre }}</td>
-          <td class="p-3">{{ c.email }}</td>
-          <td class="p-3">{{ c.telefono }}</td>
-          <td class="p-3 text-right">
-            <button class="btn-outline mr-2" (click)="openEdit(c)">Editar</button>
-            <button *ngIf="auth.role() === 'ADMIN'" class="btn-danger" (click)="remove(c)">Eliminar</button>
+      <tbody class="divide-y divide-zinc-100">
+        <tr *ngFor="let c of filtered()" class="hover:bg-zinc-50/50 transition-colors">
+          <td class="p-4 font-medium text-zinc-900">{{ c.nombre }}</td>
+          <td class="p-4 text-zinc-600">{{ c.email }}</td>
+          <td class="p-4 text-zinc-600">{{ c.telefono }}</td>
+          <td class="p-4 flex justify-end gap-3">
+            <button class="text-zinc-500 hover:text-[var(--brand)]" (click)="openEdit(c)">
+              <lucide-angular name="pencil" [size]="16"></lucide-angular>
+            </button>
+            <button *ngIf="auth.role() === 'ADMIN'" class="text-zinc-500 hover:text-red-600" (click)="remove(c)">
+              <lucide-angular name="trash-2" [size]="16"></lucide-angular>
+            </button>
           </td>
         </tr>
 
         <tr *ngIf="!loading() && filtered().length === 0">
-          <td class="p-6 text-center text-zinc-500" colspan="4">Sin resultados</td>
+          <td class="p-8 text-center text-zinc-500" colspan="4">Sin resultados</td>
         </tr>
         <tr *ngIf="loading()">
-          <td class="p-6 text-center text-zinc-500" colspan="4">Cargando…</td>
+          <td class="p-8 text-center text-zinc-500" colspan="4">Cargando…</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Footer: contador -->
-  <div class="mt-4 text-sm text-zinc-600">
-    Mostrando {{ totalMostrados() }} contacto(s)
+  <!-- Pagination (Mock) -->
+  <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+    <div>
+      Mostrando {{ totalMostrados() }} de {{ filtered().length }}
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button class="px-3 py-1 hover:text-zinc-800 disabled:opacity-50" disabled>Anterior</button>
+      <button
+        class="h-8 w-8 rounded-full bg-[var(--brand)] text-white font-medium flex items-center justify-center shadow-sm">1</button>
+      <button class="px-3 py-1 hover:text-zinc-800 disabled:opacity-50" disabled>Siguiente</button>
+    </div>
   </div>
 
   <!-- Modal crear/editar -->
-  <div *ngIf="showForm()" class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" data-overlay="true"
-    (click)="onOverlayClick($event)">
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden" (click)="$event.stopPropagation()">
-      <!-- Header -->
-      <div class="px-6 py-5 border-b">
-        <h2 class="text-xl font-semibold">
+  <div *ngIf="showForm()"
+    class="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4 transition-opacity">
+    <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden transform transition-all">
+      <div class="px-6 py-5 border-b border-zinc-100 flex items-center justify-between bg-zinc-50/50">
+        <h2 class="text-lg font-bold text-zinc-800">
           {{ editingId() ? 'Editar contacto' : 'Nuevo contacto' }}
         </h2>
-      </div>
-
-      <!-- Body (scrolleable) -->
-      <div class="max-h-[70vh] overflow-y-auto px-6 py-5">
-        <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="md:col-span-1">
-            <label class="block text-xs mb-1">Nombre</label>
-            <input class="input w-full" [(ngModel)]="f.nombre" name="nombre" required />
-          </div>
-          <div class="md:col-span-1">
-            <label class="block text-xs mb-1">Correo</label>
-            <input class="input w-full" type="email" [(ngModel)]="f.email" name="email" required />
-          </div>
-
-          <div class="md:col-span-1">
-            <label class="block text-xs mb-1">Teléfono</label>
-            <input class="input w-full" [(ngModel)]="f.telefono" name="telefono" />
-          </div>
-
-          <!-- Spacer para mantener la grilla pareja -->
-          <div class="md:col-span-1"></div>
-        </form>
-      </div>
-
-      <!-- Footer sticky -->
-      <div class="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-2">
-        <button type="button" class="btn-outline bg-zinc-50" (click)="cancelForm()">Cancelar</button>
-        <button class="btn bg-[var(--accent-600)] text-white" (click)="submit()" [disabled]="loading()">
-          {{ loading() ? 'Guardando…' : 'Guardar' }}
+        <button (click)="cancelForm()" class="text-zinc-400 hover:text-zinc-600">
+          <lucide-angular name="x" [size]="20"></lucide-angular>
         </button>
+      </div>
+
+      <div class="p-6">
+        <form (ngSubmit)="submit()" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Nombre</label>
+            <input
+              class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all placeholder:text-zinc-400"
+              [(ngModel)]="f.nombre" name="nombre" required placeholder="Nombre completo" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Correo</label>
+            <input
+              class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all placeholder:text-zinc-400"
+              type="email" [(ngModel)]="f.email" name="email" required placeholder="correo@ejemplo.com" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Teléfono</label>
+            <input
+              class="w-full h-11 px-4 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all placeholder:text-zinc-400"
+              [(ngModel)]="f.telefono" name="telefono" placeholder="+504 0000-0000" />
+          </div>
+
+          <div class="flex justify-end gap-3 pt-4">
+            <button type="button"
+              class="px-5 h-11 rounded-full border border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-medium transition-colors"
+              (click)="cancelForm()">
+              Cancelar
+            </button>
+            <button
+              class="px-6 h-11 rounded-full bg-[var(--brand)] text-white hover:bg-opacity-90 font-medium shadow-md shadow-orange-500/20 transition-all disabled:opacity-70"
+              [disabled]="loading()">
+              {{ loading() ? 'Guardando…' : 'Guardar Contacto' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

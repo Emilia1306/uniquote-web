@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
 import { ProyectosStore } from './data/proyectos.store';
@@ -31,6 +31,7 @@ export class ProyectosBrowsePage {
 
   private store = inject(ProyectosStore);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private clientesApi = inject(ClientesApi);
   private contactosApi = inject(ContactosApi);
 
@@ -48,6 +49,11 @@ export class ProyectosBrowsePage {
   contactosItems = signal<UiComboboxItem[]>([]);
   editContactosItems = signal<UiComboboxItem[]>([]);
 
+  // Contexto de cliente (si estamos viendo el historial de un cliente especifico)
+  clienteId = signal<number | null>(null);
+
+  // EDITAR
+
   // EDITAR
   editId: number | null = null;
   editName = '';
@@ -55,7 +61,13 @@ export class ProyectosBrowsePage {
   editContactoId: number | null = null;
 
   async ngOnInit() {
-    await this.store.loadAll();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.clienteId.set(Number(id));
+      await this.store.loadByCliente(Number(id));
+    } else {
+      await this.store.loadAll();
+    }
     await this.loadClientes();
   }
 
@@ -129,9 +141,14 @@ export class ProyectosBrowsePage {
 
   openCreateModal() {
     this.modalName = '';
-    this.modalClienteId = null;
+    this.modalClienteId = this.clienteId();
     this.modalContactoId = null;
     this.contactosItems.set([]);
+
+    if (this.modalClienteId) {
+      this.onClienteChange(this.modalClienteId);
+    }
+
     (document.getElementById('modal-create') as HTMLDialogElement).showModal();
   }
 
