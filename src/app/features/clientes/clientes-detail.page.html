@@ -110,7 +110,7 @@
 
         <!-- Actions Buttons -->
         <div class="mt-auto">
-          <a [routerLink]="['proyectos']"
+          <a [routerLink]="['../../cotizaciones']" [queryParams]="{ contactoId: c.id }"
             class="flex items-center justify-center h-10 w-full rounded-lg border border-[#ffcdca] text-[var(--brand)] text-sm font-medium hover:bg-[#fff5f4] transition-colors">
             Ver Historial
           </a>

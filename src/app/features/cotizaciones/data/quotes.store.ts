@@ -45,6 +45,11 @@ export class CotizacionesStore {
       }
     }
 
+    // Filtro por Contacto
+    if (this.filters().contactoId) {
+      rows = rows.filter(r => r.contacto?.id === this.filters().contactoId);
+    }
+
     if (search.trim()) {
       const s = search.toLowerCase();
       rows = rows.filter(r =>

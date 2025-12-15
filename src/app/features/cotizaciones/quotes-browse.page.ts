@@ -5,7 +5,7 @@ import { QuotesTableComponent } from './ui/quotes-table.component';
 import { QuotesCardsComponent } from './ui/quotes-cards.component';
 import { CotizacionesStore } from './data/quotes.store';
 import { AuthService } from '../../core/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -66,8 +66,15 @@ export class QuotesBrowsePage {
   store = inject(CotizacionesStore);
   auth = inject(AuthService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['contactoId']) {
+        this.store.setFilters({ contactoId: Number(params['contactoId']) });
+      }
+    });
+
     // Cargar todas las cotizaciones
     this.store.loadGlobal({});
   }
