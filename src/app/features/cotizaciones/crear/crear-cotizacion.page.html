@@ -2,11 +2,11 @@
 
   <!-- TÍTULO -->
   <h1 class="text-center text-[--brand] text-4xl font-semibold mb-1">
-    Nueva Cotización
+    {{ editMode ? 'Editar Cotización' : 'Nueva Cotización' }}
   </h1>
 
   <p class="text-center text-zinc-500 mb-10">
-    Sigue los pasos para crear la cotización
+    {{ editMode ? 'Sigue los pasos para editar la cotización' : 'Sigue los pasos para crear la cotización' }}
   </p>
 
   <!-- CARD -->
@@ -63,7 +63,7 @@
 
         <!-- Crear -->
         <ng-container *ngIf="stepIndex() === 3">
-          {{ editMode ? 'Editar' : 'Crear' }}
+          {{ editMode ? 'Editar cotización' : 'Crear' }}
           <lucide-icon name="check" class="w-4 h-4 ml-1"></lucide-icon>
         </ng-container>
 
