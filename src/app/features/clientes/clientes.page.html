@@ -64,7 +64,8 @@
           <td class="p-4 flex justify-end gap-3">
             <button class="text-zinc-500 hover:text-[var(--brand)] text-xs font-medium uppercase tracking-wide"
               (click)="openEdit(c)">Editar</button>
-            <button class="text-zinc-500 hover:text-red-600 text-xs font-medium uppercase tracking-wide"
+            <button *ngIf="auth.role() === 'ADMIN'"
+              class="text-zinc-500 hover:text-red-600 text-xs font-medium uppercase tracking-wide"
               (click)="remove(c)">Eliminar</button>
           </td>
         </tr>

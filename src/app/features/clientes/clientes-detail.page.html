@@ -19,35 +19,28 @@
     <div class="relative">
       <input
         class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 pr-10 outline-none focus:border-zinc-500"
-        type="text"
-        [ngModel]="qRaw()"
-        (ngModelChange)="setQRaw($event)"
-        placeholder="Buscar por nombre, email o teléfono"
-      />
+        type="text" [ngModel]="qRaw()" (ngModelChange)="setQRaw($event)"
+        placeholder="Buscar por nombre, email o teléfono" />
       <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60">🔍</span>
     </div>
 
     <!-- Toggle vista único -->
-    <button
-      type="button"
-      class="btn-outline md:w-auto w-full"
-      (click)="setView(view()==='cards' ? 'list' : 'cards')">
+    <button type="button" class="btn-outline md:w-auto w-full" (click)="setView(view()==='cards' ? 'list' : 'cards')">
       {{ view()==='cards' ? 'Ver lista' : 'Ver cards' }}
     </button>
 
     <!-- Nuevo contacto -->
     <div class="text-right">
-      <button class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" (click)="openCreate()">+ Nuevo contacto</button>
+      <button class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" (click)="openCreate()">+
+        Nuevo contacto</button>
     </div>
   </div>
 
   <!-- Vista CARDS -->
   <div *ngIf="view()==='cards'">
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-      <div
-        *ngFor="let c of filtered()"
-        class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-      >
+      <div *ngFor="let c of filtered()"
+        class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md">
         <!-- Título -->
         <div class="mb-3">
           <div class="text-lg font-semibold">{{ c.nombre }}</div>
@@ -82,9 +75,10 @@
         <div class="flex justify-between items-center">
           <div class="flex gap-2">
             <button class="btn-outline" (click)="openEdit(c)">Editar</button>
-            <button class="btn-danger" (click)="remove(c)">Eliminar</button>
+            <button *ngIf="auth.role() === 'ADMIN'" class="btn-danger" (click)="remove(c)">Eliminar</button>
           </div>
-          <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" [routerLink]="['.']">Ver historial</a>
+          <a class="btn bg-[var(--accent-600)] text-white hover:opacity-90 px-4 py-2 text-sm" [routerLink]="['.']">Ver
+            historial</a>
         </div>
       </div>
 
@@ -120,7 +114,7 @@
           <td class="p-3">{{ c.telefono }}</td>
           <td class="p-3 text-right">
             <button class="btn-outline mr-2" (click)="openEdit(c)">Editar</button>
-            <button class="btn-danger" (click)="remove(c)">Eliminar</button>
+            <button *ngIf="auth.role() === 'ADMIN'" class="btn-danger" (click)="remove(c)">Eliminar</button>
           </td>
         </tr>
 
@@ -140,16 +134,9 @@
   </div>
 
   <!-- Modal crear/editar -->
-  <div
-    *ngIf="showForm()"
-    class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
-    data-overlay="true"
-    (click)="onOverlayClick($event)"
-  >
-    <div
-      class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden"
-      (click)="$event.stopPropagation()"
-    >
+  <div *ngIf="showForm()" class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" data-overlay="true"
+    (click)="onOverlayClick($event)">
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden" (click)="$event.stopPropagation()">
       <!-- Header -->
       <div class="px-6 py-5 border-b">
         <h2 class="text-xl font-semibold">

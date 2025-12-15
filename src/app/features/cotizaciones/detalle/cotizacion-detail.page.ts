@@ -5,6 +5,8 @@ import { CotizacionesApi } from '../data/cotizaciones.api';
 import { CotizacionStatusPillComponent } from './cotizacion-status-pill.component';
 import { CotizacionItemsTableComponent } from './cotizacion-items-table.component';
 
+import { AuthService } from '../../../core/auth/auth.service';
+
 @Component({
   standalone: true,
   selector: 'cotizacion-detail',
@@ -16,9 +18,29 @@ export class CotizacionDetailPage {
   api = inject(CotizacionesApi);
   route = inject(ActivatedRoute);
   router = inject(Router);
+  auth = inject(AuthService);
 
   cotizacion: any = null;
   loading = true;
+
+  get canEdit() {
+    if (!this.cotizacion) return false;
+    const role = this.auth.role();
+    const isAdmin = role === 'ADMIN';
+    const isGerente = role === 'GERENTE';
+    const isOwner = this.cotizacion.createdBy?.id === this.auth.user()?.id;
+    return isAdmin || isGerente || isOwner;
+  }
+
+  get canEditItems() {
+    if (!this.cotizacion) return false;
+    const role = this.auth.role();
+    return role === 'ADMIN' || role === 'GERENTE';
+  }
+
+  get canDelete() {
+    return this.auth.role() === 'ADMIN';
+  }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -45,8 +67,8 @@ export class CotizacionDetailPage {
     const clone = await this.api.clone(this.cotizacion.id).toPromise();
 
     if (!clone) {
-        console.error('Error: clone es undefined');
-        return;
+      console.error('Error: clone es undefined');
+      return;
     }
 
     this.router.navigate(['/cotizaciones', clone.id]);

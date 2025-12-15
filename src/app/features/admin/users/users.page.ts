@@ -80,11 +80,11 @@ export class AdminUsersPage {
   // ------------ CRUD ------------
   showForm = signal(false);
   editingId = signal<number | string | null>(null);
-  f = { name:'', lastName:'', email:'', phone:'', password:'', roleId: 1 };
+  f = { name: '', lastName: '', email: '', phone: '', password: '', roleId: 1 };
 
   // Dropdown de rol en MODAL
   isFormRoleOpen = signal(false);
-  formRolePlacement = signal<'down'|'up'>('down'); // auto re-ubicar
+  formRolePlacement = signal<'down' | 'up'>('down'); // auto re-ubicar
   readonly formRoleOptions = [
     { id: 1, label: 'ADMIN' },
     { id: 2, label: 'GERENTE' },
@@ -132,13 +132,13 @@ export class AdminUsersPage {
 
   openCreate() {
     this.editingId.set(null);
-    this.f = { name:'', lastName:'', email:'', phone:'', password:'', roleId: 1 };
+    this.f = { name: '', lastName: '', email: '', phone: '', password: '', roleId: 1 };
     this.showForm.set(true);
   }
   openEdit(u: User) {
     this.editingId.set(u.id);
     const inferredRoleId = u.role === 'ADMIN' ? 1 : u.role === 'GERENTE' ? 2 : 3;
-    this.f = { name: u.name, lastName: u.lastName, email: u.email, phone: (u as any).phone || '', password:'', roleId: inferredRoleId };
+    this.f = { name: u.name, lastName: u.lastName, email: u.email, phone: (u as any).phone || '', password: '', roleId: inferredRoleId };
     this.showForm.set(true);
   }
   cancelForm() {

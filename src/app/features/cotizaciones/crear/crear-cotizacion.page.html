@@ -2,20 +2,18 @@
 
   <!-- TÍTULO -->
   <h1 class="text-center text-[--brand] text-4xl font-semibold mb-1">
-    Nueva Cotización
+    {{ editMode ? 'Editar Cotización' : 'Nueva Cotización' }}
   </h1>
 
   <p class="text-center text-zinc-500 mb-10">
-    Sigue los pasos para crear la cotización
+    {{ editMode ? 'Sigue los pasos para editar la cotización' : 'Sigue los pasos para crear la cotización' }}
   </p>
 
   <!-- CARD -->
   <div class="card max-w-5xl mx-auto p-10 rounded-3xl shadow-lg">
 
     <!-- STEPPER -->
-    <wizard-stepper
-      [current]="stepIndex()"
-      (stepChange)="stepIndex.set($event)">
+    <wizard-stepper [current]="stepIndex()" (stepChange)="stepIndex.set($event)">
     </wizard-stepper>
 
     <div class="divider"></div>
@@ -42,18 +40,12 @@
       <div>
 
         <!-- Paso 0 → Cancelar -->
-        <button
-          *ngIf="stepIndex() === 0"
-          class="btn btn-outline"
-          (click)="cancel()">
+        <button *ngIf="stepIndex() === 0" class="btn btn-outline" (click)="cancel()">
           Cancelar
         </button>
 
         <!-- Paso 1+ → Anterior -->
-        <button
-          *ngIf="stepIndex() > 0"
-          class="btn btn-outline"
-          (click)="prev()">
+        <button *ngIf="stepIndex() > 0" class="btn btn-outline" (click)="prev()">
           <lucide-icon name="arrow-left" class="w-4 h-4 mr-1"></lucide-icon>
           Anterior
         </button>
@@ -71,7 +63,7 @@
 
         <!-- Crear -->
         <ng-container *ngIf="stepIndex() === 3">
-          Crear
+          {{ editMode ? 'Editar cotización' : 'Crear' }}
           <lucide-icon name="check" class="w-4 h-4 ml-1"></lucide-icon>
         </ng-container>
 

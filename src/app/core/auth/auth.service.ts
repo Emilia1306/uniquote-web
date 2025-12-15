@@ -19,13 +19,17 @@ export class AuthService {
   private router = inject(Router);
 
   private _user = signal<User | null>(null);
-  readonly user     = computed(() => this._user());
+  readonly user = computed(() => this._user());
   readonly isLogged = computed(() => !!this._user());
-  readonly role     = computed<Role | null>(() => this._user()?.role ?? null);
+  readonly role = computed<Role | null>(() => this._user()?.role ?? null);
 
   // email pendiente cuando la API pide MFA
   private _pendingEmail = signal<string | null>(null);
   readonly pendingEmail = computed(() => this._pendingEmail());
+
+  // Token para cambio de contraseña inicial
+  private _tempPwdToken = signal<string | null>(null);
+  readonly tempPwdToken = computed(() => this._tempPwdToken());
 
   // Para evitar múltiples rehidrataciones concurrentes
   private _loadOncePromise: Promise<void> | null = null;
@@ -33,16 +37,24 @@ export class AuthService {
   // ---------- LOGIN con MFA opcional ----------
   async loginOrAskMfa(dto: LoginDto) {
     const url = `${environment.apiUrl}/auth/login`;
-    const res = await this.http.post<LoginResponse>(url, dto).toPromise();
+    const res = await this.http.post<LoginResponse | { status: 'PASSWORD_CHANGE_REQUIRED'; token: string; message: string }>(url, dto).toPromise();
 
-    // Caso 1: API pide MFA
+    // Caso 1: Cambio de contraseña requerido
+    if (res && 'status' in res && res.status === 'PASSWORD_CHANGE_REQUIRED') {
+      const pwdRes = res as { status: 'PASSWORD_CHANGE_REQUIRED'; token: string; message: string };
+      this._tempPwdToken.set(pwdRes.token);
+      await this.router.navigateByUrl('/cambiar-password');
+      return;
+    }
+
+    // Caso 2: API pide MFA
     if (res && 'status' in res && res.status === 'MFA_REQUIRED') {
       this._pendingEmail.set(dto.email.trim());
       await this.router.navigateByUrl('/verificacion');
       return;
     }
 
-    // Caso 2: token directo
+    // Caso 3: token directo
     const ok = res as LoginOk;
     if (!ok?.accessToken) throw new Error('La API no devolvió accessToken');
 
@@ -55,6 +67,18 @@ export class AuthService {
     user = { ...user, role: normalizeRole(rawRole) };
     this._user.set(user);
     await this.router.navigateByUrl(roleHome(user.role));
+  }
+
+  // ---------- Establecer contraseña inicial ----------
+  async setInitialPassword(newPassword: string) {
+    const token = this._tempPwdToken();
+    if (!token) throw new Error('No hay token de cambio de contraseña');
+
+    const url = `${environment.apiUrl}/auth/set-initial-password`;
+    await this.http.post(url, { token, newPassword }).toPromise();
+
+    // Limpiamos el token temporal
+    this._tempPwdToken.set(null);
   }
 
   // ---------- Verificar código MFA ----------
@@ -133,6 +157,7 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     this._user.set(null);
     this._pendingEmail.set(null);
+    this._tempPwdToken.set(null);
     this.router.navigateByUrl('/login');
   }
 }

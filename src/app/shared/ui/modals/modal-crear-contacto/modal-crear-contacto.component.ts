@@ -15,7 +15,6 @@ export class ModalCrearContactoComponent {
   open = false;
 
   nombre = '';
-  cargo = '';
   telefono = '';
   email = '';
 
@@ -36,18 +35,16 @@ export class ModalCrearContactoComponent {
     this.creado.emit({
       clienteId: this.clienteId,
       nombre: this.nombre,
-      cargo: this.cargo,
       telefono: this.telefono,
       email: this.email
     });
 
     this.hide();
-    this.resetForm(); 
+    this.resetForm();
   }
 
   resetForm() {
     this.nombre = '';
-    this.cargo = '';
     this.telefono = '';
     this.email = '';
   }

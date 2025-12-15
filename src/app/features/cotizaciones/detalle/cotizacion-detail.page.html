@@ -79,7 +79,7 @@
     </div>
 
     <!-- Tabla de Ítems -->
-    <cotizacion-items-table [items]="cotizacion.items" />
+    <cotizacion-items-table [items]="cotizacion.items" [canEdit]="canEditItems" />
 
     <!-- Totales -->
     <div class="card p-6 mt-8">
@@ -98,9 +98,9 @@
 
     <!-- Botones -->
     <div class="flex justify-end mt-8 gap-3">
-      <button class="btn btn-outline" (click)="editar()">Editar</button>
+      <button *ngIf="canEdit" class="btn btn-outline" (click)="editar()">Editar</button>
       <button class="btn btn-outline" (click)="clonar()">Clonar</button>
-      <button class="btn btn-danger" (click)="eliminar()">Eliminar</button>
+      <button *ngIf="canDelete" class="btn btn-danger" (click)="eliminar()">Eliminar</button>
     </div>
 
   </ng-container>

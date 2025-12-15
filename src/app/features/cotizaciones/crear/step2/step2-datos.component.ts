@@ -83,19 +83,82 @@ export class Step2DatosComponent implements OnInit {
   ];
 
   penetracionItems: UiSelectItem[] = [
-    { value: 0.80, label: 'Fácil (+80%)' },
-    { value: 0.50, label: 'Normal (50% - 80%)' },
-    { value: 0.20, label: 'Difícil (-50%)' },
+    { value: 1, label: 'Fácil' },
+    { value: 0.50, label: 'Normal' },
+    { value: 0.20, label: 'Difícil' },
     { value: 'custom', label: 'Personalizada' },
   ];
 
   penetracionSeleccionada: any = null;
 
+  constructor() {
+    // Escuchar cambios en el store para inicializar penetracion si no está seteada
+    // (O hacerlo en ngOnInit)
+  }
+
   // ============================================================
   // INIT
   // ============================================================
   async ngOnInit() {
+    console.log('Step2DatosComponent: ngOnInit START');
     await this.cargarClientes();
+
+    const current = this.store.data();
+    console.log('Step2DatosComponent: Store Data:', current);
+
+    // 🔥 PRE-FILL FROM STORE
+    if (current.projectId) {
+      console.log('Step2DatosComponent: Has projectId', current.projectId);
+      try {
+        const project: any = await firstValueFrom(this.proyectosApi.getOne(current.projectId));
+        console.log('Step2DatosComponent: Fetched Project:', project);
+
+        // Fallback: check project.clienteId directly OR project.cliente.id
+        const cId = project.clienteId ?? project.cliente?.id;
+
+        if (project && cId) {
+          console.log('Step2DatosComponent: Found clienteId', cId);
+          this.clienteIdSeleccionado = cId;
+
+          // Cargar dependientes (contactos y proyectos del cliente)
+          console.log('Step2DatosComponent: Loading dependents...');
+          // Pass false to NOT reset selections
+          await this.onClienteChange(this.clienteIdSeleccionado, false);
+          console.log('Step2DatosComponent: Dependents loaded.');
+
+          // Setear proyecto y contacto
+          this.proyectoSeleccionado = current.projectId;
+          this.contactoSeleccionado = current.contactoId;
+
+          console.log('Step2DatosComponent: Setting selections:', {
+            proyecto: this.proyectoSeleccionado,
+            contacto: this.contactoSeleccionado
+          });
+
+          // Actualizar labels en local
+          this.patchProyecto();
+          this.patchContacto();
+        } else {
+          console.error('Step2DatosComponent: MISSING clienteId in project response!', project);
+        }
+      } catch (e) {
+        console.error('Error pre-filling wizard step 2', e);
+      }
+    } else {
+      console.warn('Step2DatosComponent: No projectId in store initially.');
+    }
+
+    // Penetración
+    if (current.penetracionCategoria) {
+      const val = current.penetracionCategoria;
+      const exists = this.penetracionItems.find(i => i.value === val);
+      if (exists) {
+        this.penetracionSeleccionada = val;
+      } else {
+        this.penetracionSeleccionada = 'custom';
+      }
+    }
+    console.log('Step2DatosComponent: ngOnInit END');
   }
 
   async cargarClientes() {
@@ -111,7 +174,7 @@ export class Step2DatosComponent implements OnInit {
   // ============================================================
   // CAMBIO DE CLIENTE
   // ============================================================
-  async onClienteChange(clienteId: number | null) {
+  async onClienteChange(clienteId: number | null, resetSelections = true) {
     if (!clienteId) {
       this.clienteIdSeleccionado = null;
 
@@ -134,13 +197,15 @@ export class Step2DatosComponent implements OnInit {
 
     this.clienteIdSeleccionado = clienteId;
 
-    this.contactoSeleccionado = null;
-    this.proyectoSeleccionado = null;
+    if (resetSelections) {
+      this.contactoSeleccionado = null;
+      this.proyectoSeleccionado = null;
 
-    this.store.patch({
-      contactoId: null,
-      projectId: null,
-    });
+      this.store.patch({
+        contactoId: null,
+        projectId: null,
+      });
+    }
 
     this.contactosFiltrados = await this.contactosApi.listByCliente(clienteId);
     this.contactosItems = this.contactosFiltrados.map((ct) => ({
@@ -198,33 +263,44 @@ export class Step2DatosComponent implements OnInit {
   }
 
   async crearContacto(data: any) {
-    const nuevo = await this.contactosApi.create(data);
+    try {
+      const nuevo = await this.contactosApi.create(data);
 
-    this.contactosFiltrados.push(nuevo);
-    this.contactosItems = this.contactosFiltrados.map((ct) => ({
-      value: ct.id,
-      label: ct.nombre,
-    }));
+      this.contactosFiltrados.push(nuevo);
+      this.contactosItems = this.contactosFiltrados.map((ct) => ({
+        value: ct.id,
+        label: ct.nombre,
+      }));
 
-    this.contactoSeleccionado = nuevo.id;
-    this.patchContacto();
+      this.contactoSeleccionado = nuevo.id;
+      this.patchContacto();
 
-    this.modalContacto.hide();
+      this.modalContacto.hide();
+    } catch (error: any) {
+      console.error('Error creating contact:', error);
+      const message = error?.error?.message || error?.message || 'Error al crear el contacto';
+      alert(`Error al crear contacto: ${message}`);
+    }
   }
 
   async crearProyecto(data: any) {
-    const nuevo = await firstValueFrom(this.proyectosApi.create(data));
+    try {
+      const nuevo = await firstValueFrom(this.proyectosApi.create(data));
 
-    this.proyectosFiltrados.push(nuevo);
-    this.proyectosItems = this.proyectosFiltrados.map((p) => ({
-      value: p.id,
-      label: p.name,
-    }));
+      this.proyectosFiltrados.push(nuevo);
+      this.proyectosItems = this.proyectosFiltrados.map((p) => ({
+        value: p.id,
+        label: p.name,
+      }));
 
-    this.proyectoSeleccionado = nuevo.id;
-    this.patchProyecto();
+      this.proyectoSeleccionado = nuevo.id;
+      this.patchProyecto();
 
-    this.modalProyecto.hide();
+      this.modalProyecto.hide();
+    } catch (error) {
+      console.error('Error creating project:', error);
+      alert('Error al crear el proyecto');
+    }
   }
 
   // ============================================================

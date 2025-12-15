@@ -1,10 +1,13 @@
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { CotizacionesApi, Cotizacion } from './cotizaciones.api';
 
-export type ViewMode = 'table'|'cards';
+import { AuthService } from '../../../core/auth/auth.service';
+
+export type ViewMode = 'table' | 'cards';
 
 export interface CotizacionFilters {
   search: string;
+  mineOnly?: boolean;
   clienteId?: number;
   proyectoId?: number;
   contactoId?: number;
@@ -16,27 +19,43 @@ export interface CotizacionFilters {
 export class CotizacionesStore {
 
   private api = inject(CotizacionesApi);
+  private auth = inject(AuthService);
 
   private _items = signal<Cotizacion[]>([]);
   private _loading = signal<boolean>(false);
 
   filters = signal<CotizacionFilters>({ search: '' });
-  viewMode = signal<ViewMode>('table');
+  viewMode = signal<ViewMode>(
+    (localStorage.getItem('quotes-view-mode') as ViewMode) || 'table'
+  );
 
   // 👇 TIPADO explícito
   items = computed<Cotizacion[]>(() => this._items());
   loading = computed<boolean>(() => this._loading());
 
   filtered = computed<Cotizacion[]>(() => {
-    const { search } = this.filters();
+    const { search, mineOnly } = this.filters();
     let rows = this._items();
+
+    // Filtro por "Mis Cotizaciones"
+    if (mineOnly) {
+      const myId = this.auth.user()?.id;
+      if (myId) {
+        rows = rows.filter(r => r.createdBy?.id === myId);
+      }
+    }
 
     if (search.trim()) {
       const s = search.toLowerCase();
       rows = rows.filter(r =>
         r.name.toLowerCase().includes(s) ||
         r.code.toLowerCase().includes(s) ||
-        r.createdBy.name.toLowerCase().includes(s)
+        r.createdBy.name.toLowerCase().includes(s) ||
+        r.createdBy.lastName.toLowerCase().includes(s) ||
+        r.contacto?.nombre?.toLowerCase().includes(s) ||
+        r.contacto?.email?.toLowerCase().includes(s) ||
+        r.project?.name?.toLowerCase().includes(s) ||
+        r.project?.cliente?.empresa?.toLowerCase().includes(s)
       );
     }
 
@@ -64,7 +83,12 @@ export class CotizacionesStore {
     });
   }
 
-  setView(mode: ViewMode) {
+  setViewMode(mode: ViewMode) {
     this.viewMode.set(mode);
+    localStorage.setItem('quotes-view-mode', mode);
+  }
+
+  async cloneQuote(id: number) {
+    return this.api.clone(id).toPromise();
   }
 }

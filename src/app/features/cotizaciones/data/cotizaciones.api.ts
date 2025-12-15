@@ -14,10 +14,23 @@ export interface Cotizacion {
 
   createdAt: string;
 
+  studyType?: string;
+  metodologia?: string;
+
   contacto?: {
     id: number;
     nombre: string;
     email: string;
+  };
+
+  project?: {
+    id: number;
+    name: string;
+    cliente: {
+      id: number;
+      empresa: string;
+      razonSocial: string;
+    };
   };
 
   createdBy: {
@@ -43,8 +56,7 @@ export class CotizacionesApi {
   }
 
   getAllFiltered(params: any) {
-    return this.http.get<Cotizacion[]>(`${this.base}-global`, {
-      params,
+    return this.http.get<Cotizacion[]>(`${this.base}/all`, {
       withCredentials: true
     });
   }

@@ -26,7 +26,7 @@ import { Proyecto } from '../data/proyectos.types';
           <td class="px-4 py-2 font-semibold">{{ p.name }}</td>
           <td class="px-4 py-2">{{ p.cliente.empresa }}</td>
           <td class="px-4 py-2">{{ p.contacto?.nombre || '—' }}</td>
-          <td class="px-4 py-2 text-center">{{ p._count?.cotizaciones || 0 }}</td>
+          <td class="px-4 py-2 text-center">{{ p._count.cotizaciones || 0 }}</td>
           <td class="px-4 py-2">{{ p.createdAt | date:'dd/MM/yy' }}</td>
 
           <!-- ACCIONES -->

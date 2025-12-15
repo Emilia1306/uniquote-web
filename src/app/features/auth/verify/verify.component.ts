@@ -17,7 +17,7 @@ export class VerifyComponent {
   rememberDevice = true;
   loading = signal(false);
   error = signal<string | null>(null);
-  email = this.auth.pendingEmail(); // solo lectura/mostrar
+  email = this.auth.pendingEmail(); 
 
   async submit() {
     this.error.set(null);

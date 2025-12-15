@@ -27,12 +27,18 @@ import { ProyectoDetailsPage } from './features/proyectos/proyecto-details.page'
 
 
 import { ClienteDetailPage } from './features/clientes/clientes-detail.page';
+import { TarifarioPage } from './features/tarifario/tarifario.page';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
 
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'verificacion', component: VerifyComponent, canActivate: [guestGuard] },
+  {
+    path: 'cambiar-password',
+    loadComponent: () => import('./features/auth/set-initial-password/set-initial-password.component').then(m => m.SetInitialPasswordComponent),
+    canActivate: [guestGuard]
+  },
 
 
   {
@@ -47,9 +53,12 @@ export const routes: Routes = [
         children: [
           { path: '', component: AdminDashboardComponent },
           { path: 'cotizaciones', component: QuotesBrowsePage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
           { path: 'usuarios', component: AdminUsersPage },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'tarifario', component: TarifarioPage },
         ]
       },
 
@@ -85,6 +94,9 @@ export const routes: Routes = [
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
           { path: 'cotizaciones', component: QuotesBrowsePage },
+          { path: 'cotizaciones/crear', component: CrearCotizacionPage },
+          { path: 'cotizaciones/:id', component: CotizacionDetailPage },
+          { path: 'cotizaciones/editar/:id', component: CrearCotizacionPage },
         ]
       },
     ],

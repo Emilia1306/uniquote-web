@@ -12,6 +12,8 @@ function norm(s: string) {
 }
 type ViewMode = 'cards' | 'list';
 
+import { AuthService } from '../../core/auth/auth.service';
+
 @Component({
   standalone: true,
   selector: 'clientes-page',
@@ -20,6 +22,7 @@ type ViewMode = 'cards' | 'list';
 })
 export class ClientesPage {
   private api = inject(ClientesApi);
+  public auth = inject(AuthService);
 
   loading = signal(false);
   error = signal<string | null>(null);

@@ -9,11 +9,9 @@
     <div class="md:col-span-7">
       <label class="sr-only" for="users-search">Buscar</label>
       <div class="relative">
-        <input
-          id="users-search"
+        <input id="users-search"
           class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-2 pr-10 outline-none focus:border-zinc-500"
-          [ngModel]="_searchRaw()"
-          (ngModelChange)="onSearchChange($event)"
+          [ngModel]="_searchRaw()" (ngModelChange)="onSearchChange($event)"
           placeholder="Buscar por nombre, apellido o correo" />
         <lucide-angular name="search"
           class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-60"></lucide-angular>
@@ -24,20 +22,16 @@
     <div class="md:col-span-3 relative">
       <button type="button"
         class="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-left flex items-center justify-between focus:border-zinc-500"
-        (click)="toggleRoleDropdown()"
-        aria-haspopup="listbox"
-        [attr.aria-expanded]="isRoleOpen()">
+        (click)="toggleRoleDropdown()" aria-haspopup="listbox" [attr.aria-expanded]="isRoleOpen()">
         <span>{{ roleLabel(roleFilter()) }}</span>
         <lucide-angular name="chevron-down" class="opacity-60"></lucide-angular>
       </button>
 
-      <ul *ngIf="isRoleOpen()" role="listbox"
-          class="absolute z-50 mt-2 w-full rounded-xl border border-zinc-200 bg-white shadow-lg p-2
+      <ul *ngIf="isRoleOpen()" role="listbox" class="absolute z-50 mt-2 w-full rounded-xl border border-zinc-200 bg-white shadow-lg p-2
                  max-h-56 overflow-auto overscroll-contain">
-        <li *ngFor="let r of roleOptions" role="option"
-            (click)="setRole(r)"
-            class="px-3 py-2 rounded-lg cursor-pointer flex items-center gap-2 hover:bg-[var(--peach-75)]"
-            [class.text-[color:var(--accent-600)]]="roleFilter()===r">
+        <li *ngFor="let r of roleOptions" role="option" (click)="setRole(r)"
+          class="px-3 py-2 rounded-lg cursor-pointer flex items-center gap-2 hover:bg-[var(--peach-75)]"
+          [class.text-[color:var(--accent-600)]]="roleFilter()===r">
           <span class="text-sm">{{ roleLabel(r) }}</span>
         </li>
       </ul>
@@ -46,7 +40,7 @@
     <!-- Botón nuevo -->
     <div class="md:col-span-2">
       <button class="w-full md:w-auto rounded-lg bg-[var(--accent-600)] px-4 py-2 text-white hover:opacity-90"
-              (click)="openCreate()">
+        (click)="openCreate()">
         + Nuevo usuario
       </button>
     </div>
@@ -71,8 +65,7 @@
           <td class="p-3">{{ u.email }}</td>
           <td class="p-3">
             <!-- Chips del rol como en dashboard -->
-            <span
-              class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-white"
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-white"
               [ngClass]="{
                 'bg-red-500': u.role==='ADMIN',
                 'bg-orange-500': u.role==='GERENTE',
@@ -83,21 +76,19 @@
           </td>
           <td class="p-3 text-right">
             <!-- Editar -->
-            <button type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-full
+            <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full
                      text-[color:var(--accent-600)]
                      hover:bg-[var(--peach-75)] focus:outline-none focus-visible:ring-2
-                     ring-[color:var(--accent-600)] transition"
-              (click)="openEdit(u)" aria-label="Editar usuario" title="Editar">
+                     ring-[color:var(--accent-600)] transition" (click)="openEdit(u)" aria-label="Editar usuario"
+              title="Editar">
               <lucide-angular name="pencil" class="h-4 w-4"></lucide-angular>
             </button>
             <!-- Eliminar -->
-            <button type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-full
+            <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full
                      text-[color:var(--accent-600)]
                      hover:bg-[var(--peach-75)] focus:outline-none focus-visible:ring-2
-                     ring-[color:var(--accent-600)] transition ml-1.5"
-              (click)="remove(u)" aria-label="Eliminar usuario" title="Eliminar">
+                     ring-[color:var(--accent-600)] transition ml-1.5" (click)="remove(u)"
+              aria-label="Eliminar usuario" title="Eliminar">
               <lucide-angular name="trash-2" class="h-4 w-4"></lucide-angular>
             </button>
           </td>
@@ -122,32 +113,25 @@
     <ng-container *ngIf="totalPages() > 1">
       <div class="flex items-center gap-3">
         <button class="px-4 py-2 rounded-full border border-zinc-200 text-zinc-700 disabled:opacity-50"
-                [disabled]="!hasPrev()" (click)="prevPage()" aria-label="Página anterior">Prev</button>
+          [disabled]="!hasPrev()" (click)="prevPage()" aria-label="Página anterior">Prev</button>
 
         <div class="flex items-center gap-2">
-          <button *ngFor="let i of pagesArray()"
-                  class="h-8 w-8 rounded-full border border-zinc-200 text-sm"
-                  [class.bg-[var(--accent-600)]]="page() === i"
-                  [class.text-white]="page() === i"
-                  [class.text-zinc-600]="page() !== i"
-                  (click)="goPage(i)"
-                  [attr.aria-current]="page() === i ? 'page' : null">
+          <button *ngFor="let i of pagesArray()" class="h-8 w-8 rounded-full border border-zinc-200 text-sm"
+            [class.bg-[var(--accent-600)]]="page() === i" [class.text-white]="page() === i"
+            [class.text-zinc-600]="page() !== i" (click)="goPage(i)" [attr.aria-current]="page() === i ? 'page' : null">
             <span class="sr-only">Página {{ i + 1 }}</span>
           </button>
         </div>
 
         <button class="px-4 py-2 rounded-full border border-zinc-200 text-zinc-700 disabled:opacity-50"
-                [disabled]="!hasNext()" (click)="nextPage()" aria-label="Página siguiente">Next</button>
+          [disabled]="!hasNext()" (click)="nextPage()" aria-label="Página siguiente">Next</button>
       </div>
     </ng-container>
   </div>
 
   <!-- Modal crear/editar (backdrop-click para cerrar) -->
-  <div *ngIf="showForm()"
-       class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
-       (click)="cancelForm()">
-    <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden"
-         (click)="$event.stopPropagation()">
+  <div *ngIf="showForm()" class="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" (click)="cancelForm()">
+    <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
 
       <!-- Header -->
       <div class="px-6 py-5 border-b">
@@ -182,7 +166,8 @@
             </div>
             <div>
               <label class="block text-sm mb-1">Contraseña (opcional al editar)</label>
-              <input class="input w-full" type="password" [(ngModel)]="f.password" name="password" [required]="!editingId()" />
+              <input class="input w-full" type="password" [(ngModel)]="f.password" name="password"
+                [required]="!editingId()" />
             </div>
           </div>
 
@@ -190,28 +175,20 @@
           <div class="relative">
             <label class="block text-sm mb-1">Rol</label>
 
-            <button type="button" #roleBtn
-              class="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-left
-                     flex items-center justify-between focus:border-zinc-500"
-              (click)="toggleFormRole(roleBtn)">
+            <button type="button" #roleBtn class="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-left
+                     flex items-center justify-between focus:border-zinc-500" (click)="toggleFormRole(roleBtn)">
               <span>{{ formRoleLabel() }}</span>
               <lucide-angular name="chevron-down" class="opacity-60"></lucide-angular>
             </button>
 
             <!-- Menú (no provoca scroll del contenedor) -->
-            <ul *ngIf="isFormRoleOpen()"
-                class="absolute z-[60] w-full rounded-xl border border-zinc-200 bg-white shadow-xl p-2
-                       max-h-60 overflow-auto overscroll-contain"
-                [ngClass]="{
+            <ul *ngIf="isFormRoleOpen()" class="absolute z-[60] w-full rounded-xl border border-zinc-200 bg-white shadow-xl p-2
+                       max-h-60 overflow-auto overscroll-contain" [ngClass]="{
                   'top-full mt-2': formRolePlacement()==='down',
                   'bottom-full mb-2': formRolePlacement()==='up'
-                }"
-                (wheel)="$event.stopPropagation()">
-              <li *ngFor="let opt of formRoleOptions"
-                  (click)="pickFormRole(opt.id)"
-                  class="px-3 py-2 rounded-lg cursor-pointer hover:bg-[var(--peach-75)]
-                         flex items-center gap-2"
-                  [class.text-[color:var(--accent-600)]]="f.roleId===opt.id">
+                }" (wheel)="$event.stopPropagation()">
+              <li *ngFor="let opt of formRoleOptions" (click)="pickFormRole(opt.id)" class="px-3 py-2 rounded-lg cursor-pointer hover:bg-[var(--peach-75)]
+                         flex items-center gap-2" [class.text-[color:var(--accent-600)]]="f.roleId===opt.id">
                 {{ opt.label }}
               </li>
             </ul>
@@ -221,11 +198,10 @@
 
       <!-- Footer sticky -->
       <div class="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-3">
-        <button type="button"
-                class="h-10 px-5 rounded-full bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-                (click)="cancelForm()">Cancelar</button>
-        <button class="h-10 px-5 rounded-full bg-[var(--accent-600)] text-white hover:opacity-90 disabled:opacity-50"
-                (click)="submit()" [disabled]="loading()">
+        <button type="button" class="h-10 px-5 rounded-full bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+          (click)="cancelForm()">Cancelar</button>
+        <button class="h-10 px-5 rounded-full bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50"
+          (click)="submit()" [disabled]="loading()">
           {{ loading() ? 'Guardando…' : 'Guardar' }}
         </button>
       </div>
