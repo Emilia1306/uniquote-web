@@ -63,7 +63,7 @@ import { STATUS_COLORS } from './status-colors';
       <!-- Monto total -->
       <div class="mb-4">
         <div class="text-2xl font-bold text-[var(--brand)]">
-          {{ q.totalCobrar | currency:'USD':'symbol':'1.0-0' }}
+          {{ q.totalCobrar | currency:'USD':'symbol':'1.2-2' }}
         </div>
         <div class="text-xs text-zinc-500">Monto total</div>
       </div>
