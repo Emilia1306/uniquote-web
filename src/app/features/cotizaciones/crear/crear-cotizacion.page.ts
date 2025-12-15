@@ -15,7 +15,7 @@ import { Step4ResumenComponent } from './step4/step4-resumen.component';
 import { CotizacionWizardStore } from './wizard.store';
 import { CotizacionesApi } from '../../cotizaciones/data/cotizaciones.api';
 
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { firstValueFrom } from 'rxjs';
 
@@ -40,10 +40,71 @@ import { firstValueFrom } from 'rxjs';
 export class CrearCotizacionPage {
 
   stepIndex = signal(0);
+  editMode = false;
+  editId: number | null = null;
+  loading = false;
 
   private store = inject(CotizacionWizardStore);
   private api = inject(CotizacionesApi);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  async ngOnInit() {
+    this.store.reset();
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.editMode = true;
+      this.editId = Number(id);
+      await this.loadForEdit(this.editId);
+    }
+  }
+
+  async loadForEdit(id: number) {
+    this.loading = true;
+    try {
+      const cot: any = await firstValueFrom(this.api.getById(id));
+
+      // Patch store
+      this.store.patch({
+        projectId: cot.project?.id || cot.projectId,
+        contactoId: cot.contacto?.id || cot.contactoId,
+        name: cot.name,
+
+        studyType: cot.studyType,
+        metodologia: cot.metodologia,
+        numeroOlasBi: cot.numeroOlasBi ?? 1,
+        totalEntrevistas: cot.totalEntrevistas,
+        duracionCuestionarioMin: cot.duracionCuestionarioMin,
+        tipoEntrevista: cot.tipoEntrevista,
+        penetracionCategoria: cot.penetracionCategoria,
+        cobertura: cot.cobertura,
+        supervisores: cot.supervisores,
+        encuestadoresTotales: cot.encuestadoresTotales,
+
+        trabajoDeCampoRealiza: cot.trabajoDeCampoRealiza,
+        trabajoDeCampoTipo: cot.trabajoDeCampoTipo,
+        trabajoDeCampoCosto: cot.trabajoDeCampoCosto,
+
+        realizamosCuestionario: cot.realizamosCuestionario,
+        realizamosScript: cot.realizamosScript,
+        clienteSolicitaReporte: cot.clienteSolicitaReporte,
+        clienteSolicitaInformeBI: cot.clienteSolicitaInformeBI,
+        incentivoTotal: cot.incentivoTotal,
+
+        // Display
+        clientName: cot.project?.cliente?.empresa,
+        contactName: cot.contacto?.nombre,
+        projectName: cot.project?.name
+      });
+
+    } catch (error) {
+      console.error(error);
+      alert('Error cargando la cotización para editar.');
+      this.router.navigate(['/cotizaciones']);
+    } finally {
+      this.loading = false;
+    }
+  }
 
   cancel() {
     window.history.back();
@@ -58,7 +119,7 @@ export class CrearCotizacionPage {
   async onNext() {
     const step = this.stepIndex();
 
-    // 🔥 VALIDAR EL PASO ACTUAL (CORRECTO)
+    // 🔥 VALIDAR EL PASO ACTUAL
     if (!this.store.isValidStep(step)) {
       alert('Completa todos los campos antes de continuar.');
       return;
@@ -72,14 +133,21 @@ export class CrearCotizacionPage {
 
     // Último paso → enviar al API
     const payload = this.store.finalPayload();
-    console.log('PAYLOAD SENDING TO API:', payload);
 
     try {
-      const res = await firstValueFrom(this.api.create(payload));
-      this.router.navigate(['/cotizaciones', res.id]);
+      if (this.editMode && this.editId) {
+        // UPDATE
+        await firstValueFrom(this.api.update(this.editId, payload));
+        alert('Cotización actualizada correctamente');
+        this.router.navigate(['/cotizaciones', this.editId]);
+      } else {
+        // CREATE
+        const res = await firstValueFrom(this.api.create(payload));
+        this.router.navigate(['/cotizaciones', res.id]);
+      }
     } catch (error) {
       console.error(error);
-      alert('Error creando la cotización.');
+      alert('Error guardando la cotización.');
     }
   }
 }

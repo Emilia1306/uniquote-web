@@ -25,9 +25,17 @@ export class CotizacionDetailPage {
 
   get canEdit() {
     if (!this.cotizacion) return false;
-    const isAdmin = this.auth.role() === 'ADMIN';
+    const role = this.auth.role();
+    const isAdmin = role === 'ADMIN';
+    const isGerente = role === 'GERENTE';
     const isOwner = this.cotizacion.createdBy?.id === this.auth.user()?.id;
-    return isAdmin || isOwner;
+    return isAdmin || isGerente || isOwner;
+  }
+
+  get canEditItems() {
+    if (!this.cotizacion) return false;
+    const role = this.auth.role();
+    return role === 'ADMIN' || role === 'GERENTE';
   }
 
   get canDelete() {

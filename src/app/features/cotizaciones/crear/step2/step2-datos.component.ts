@@ -91,11 +91,74 @@ export class Step2DatosComponent implements OnInit {
 
   penetracionSeleccionada: any = null;
 
+  constructor() {
+    // Escuchar cambios en el store para inicializar penetracion si no está seteada
+    // (O hacerlo en ngOnInit)
+  }
+
   // ============================================================
   // INIT
   // ============================================================
   async ngOnInit() {
+    console.log('Step2DatosComponent: ngOnInit START');
     await this.cargarClientes();
+
+    const current = this.store.data();
+    console.log('Step2DatosComponent: Store Data:', current);
+
+    // 🔥 PRE-FILL FROM STORE
+    if (current.projectId) {
+      console.log('Step2DatosComponent: Has projectId', current.projectId);
+      try {
+        const project: any = await firstValueFrom(this.proyectosApi.getOne(current.projectId));
+        console.log('Step2DatosComponent: Fetched Project:', project);
+
+        // Fallback: check project.clienteId directly OR project.cliente.id
+        const cId = project.clienteId ?? project.cliente?.id;
+
+        if (project && cId) {
+          console.log('Step2DatosComponent: Found clienteId', cId);
+          this.clienteIdSeleccionado = cId;
+
+          // Cargar dependientes (contactos y proyectos del cliente)
+          console.log('Step2DatosComponent: Loading dependents...');
+          // Pass false to NOT reset selections
+          await this.onClienteChange(this.clienteIdSeleccionado, false);
+          console.log('Step2DatosComponent: Dependents loaded.');
+
+          // Setear proyecto y contacto
+          this.proyectoSeleccionado = current.projectId;
+          this.contactoSeleccionado = current.contactoId;
+
+          console.log('Step2DatosComponent: Setting selections:', {
+            proyecto: this.proyectoSeleccionado,
+            contacto: this.contactoSeleccionado
+          });
+
+          // Actualizar labels en local
+          this.patchProyecto();
+          this.patchContacto();
+        } else {
+          console.error('Step2DatosComponent: MISSING clienteId in project response!', project);
+        }
+      } catch (e) {
+        console.error('Error pre-filling wizard step 2', e);
+      }
+    } else {
+      console.warn('Step2DatosComponent: No projectId in store initially.');
+    }
+
+    // Penetración
+    if (current.penetracionCategoria) {
+      const val = current.penetracionCategoria;
+      const exists = this.penetracionItems.find(i => i.value === val);
+      if (exists) {
+        this.penetracionSeleccionada = val;
+      } else {
+        this.penetracionSeleccionada = 'custom';
+      }
+    }
+    console.log('Step2DatosComponent: ngOnInit END');
   }
 
   async cargarClientes() {
@@ -111,7 +174,7 @@ export class Step2DatosComponent implements OnInit {
   // ============================================================
   // CAMBIO DE CLIENTE
   // ============================================================
-  async onClienteChange(clienteId: number | null) {
+  async onClienteChange(clienteId: number | null, resetSelections = true) {
     if (!clienteId) {
       this.clienteIdSeleccionado = null;
 
@@ -134,13 +197,15 @@ export class Step2DatosComponent implements OnInit {
 
     this.clienteIdSeleccionado = clienteId;
 
-    this.contactoSeleccionado = null;
-    this.proyectoSeleccionado = null;
+    if (resetSelections) {
+      this.contactoSeleccionado = null;
+      this.proyectoSeleccionado = null;
 
-    this.store.patch({
-      contactoId: null,
-      projectId: null,
-    });
+      this.store.patch({
+        contactoId: null,
+        projectId: null,
+      });
+    }
 
     this.contactosFiltrados = await this.contactosApi.listByCliente(clienteId);
     this.contactosItems = this.contactosFiltrados.map((ct) => ({

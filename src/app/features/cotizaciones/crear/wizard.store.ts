@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 export interface WizardData {
   projectId: number | null;
+  clienteId: number | null; // Added field
   contactoId: number | null;
 
   // Paso 1 — Tipo de estudio
@@ -49,6 +50,7 @@ export class CotizacionWizardStore {
 
   data = signal<WizardData>({
     projectId: null,
+    clienteId: null,
     contactoId: null,
 
     // Paso 1
@@ -104,6 +106,46 @@ export class CotizacionWizardStore {
 
   reset() {
     this.step.set(0);
+    this.data.set({
+      projectId: null,
+      clienteId: null,
+      contactoId: null,
+
+      // Paso 1
+      studyType: null,
+
+      // Paso 2
+      metodologia: null,
+      numeroOlasBi: 1,
+      totalEntrevistas: null,
+      duracionCuestionarioMin: null,
+      tipoEntrevista: null,
+      penetracionCategoria: null,
+      cobertura: null,
+      supervisores: null,
+      encuestadoresTotales: null,
+
+      // Trabajo de campo
+      trabajoDeCampoRealiza: null,
+      trabajoDeCampoTipo: null,
+      trabajoDeCampoCosto: null,
+
+      // Paso 3 — entregables
+      realizamosCuestionario: false,
+      realizamosScript: false,
+      clienteSolicitaReporte: false,
+      clienteSolicitaInformeBI: false,
+      incentivoTotal: null,
+
+      name: null,
+
+      // Display
+      clientName: '',
+      contactName: '',
+      projectName: '',
+      metodologiaLabel: '',
+      coberturaLabel: ''
+    });
   }
 
   // ======================

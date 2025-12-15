@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
       
       <div class="flex gap-2">
         <button 
-          *ngIf="!isEditMode"
+          *ngIf="canEdit && !isEditMode"
           (click)="isEditMode = true"
           class="px-4 py-2 bg-[var(--brand)] text-white rounded-lg hover:opacity-90 transition-opacity">
           Editar
@@ -106,6 +106,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class CotizacionItemsTableComponent {
   @Input() items: any[] = [];
+  @Input() canEdit = false;
   isEditMode = false;
 
   get categories(): string[] {

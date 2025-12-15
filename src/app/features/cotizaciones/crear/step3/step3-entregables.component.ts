@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CotizacionWizardStore } from '../wizard.store';
@@ -10,7 +10,7 @@ import { CotizacionWizardStore } from '../wizard.store';
   templateUrl: './step3-entregables.component.html',
   styleUrls: ['./step3-entregables.component.scss']
 })
-export class Step3EntregablesComponent {
+export class Step3EntregablesComponent implements OnInit {
   store = inject(CotizacionWizardStore);
 
   // Control para olas extras
@@ -19,6 +19,16 @@ export class Step3EntregablesComponent {
 
   get d() {
     return this.store.data();
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      const data = this.store.data();
+      if (data.clienteSolicitaInformeBI && (data.numeroOlasBi ?? 0) > 2) {
+        this.tieneOlasExtras = true;
+        this.olasExtras = (data.numeroOlasBi ?? 2) - 2;
+      }
+    });
   }
 
   toggle(field: 'realizamosCuestionario' | 'realizamosScript' | 'clienteSolicitaReporte' | 'clienteSolicitaInformeBI') {
