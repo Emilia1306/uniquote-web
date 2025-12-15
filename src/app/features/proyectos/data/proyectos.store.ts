@@ -21,6 +21,14 @@ export class ProyectosStore {
     this._loading.set(false);
   }
 
+  /** Cargar por cliente */
+  async loadByCliente(clienteId: number) {
+    this._loading.set(true);
+    const res = await firstValueFrom(this.api.listByCliente(clienteId));
+    this._list.set(res);
+    this._loading.set(false);
+  }
+
   /** Crear */
   async create(data: { name: string; clienteId: number; contactoId?: number }) {
     const result = await firstValueFrom(this.api.create(data));

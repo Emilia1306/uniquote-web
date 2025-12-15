@@ -58,6 +58,9 @@ export const routes: Routes = [
           { path: 'usuarios', component: AdminUsersPage },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'clientes/:id/proyectos', component: ProyectosBrowsePage },
+          { path: 'proyectos', component: ProyectosBrowsePage },
+          { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
           { path: 'tarifario', component: TarifarioPage },
         ]
       },
@@ -76,6 +79,7 @@ export const routes: Routes = [
           // CLIENTES
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'clientes/:id/proyectos', component: ProyectosBrowsePage },
 
           // COTIZACIONES
           { path: 'cotizaciones', component: QuotesBrowsePage },
@@ -93,6 +97,7 @@ export const routes: Routes = [
           { path: '', component: DirectorDashboard },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
+          { path: 'clientes/:id/proyectos', component: ProyectosBrowsePage },
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'cotizaciones/crear', component: CrearCotizacionPage },
           { path: 'cotizaciones/:id', component: CotizacionDetailPage },

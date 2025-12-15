@@ -20,10 +20,12 @@ function norm(s: string) {
 
 import { AuthService } from '../../core/auth/auth.service';
 
+import { LucideAngularModule } from 'lucide-angular';
+
 @Component({
   standalone: true,
   selector: 'cliente-detail-page',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
   templateUrl: './clientes-detail.page.html',
 })
 export class ClienteDetailPage {

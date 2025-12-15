@@ -3,6 +3,7 @@ export type MenuItem = { label: string; path: string; icon: string };
 export const ROLE_MENU = {
   ADMIN: [
     { label: 'Inicio', path: '/admin', icon: 'house' },
+    { label: 'Proyectos', path: '/admin/proyectos', icon: 'folder-kanban' },
     { label: 'Cotizaciones', path: '/admin/cotizaciones', icon: 'file-text' },
     { label: 'Usuarios', path: '/admin/usuarios', icon: 'users' },
     { label: 'Clientes', path: '/admin/clientes', icon: 'users' },
