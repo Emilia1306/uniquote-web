@@ -24,7 +24,7 @@ export class VerifyComponent {
     this.loading.set(true);
     try {
       await this.auth.verifyEmailCode(this.code.trim(), this.rememberDevice);
-      // al éxito, el service guarda token y redirige por rol
+      //al éxito, el service guarda token y redirige por rol
     } catch (e: any) {
       this.error.set(e?.message ?? 'No se pudo verificar el código');
     } finally {
