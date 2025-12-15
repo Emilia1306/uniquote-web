@@ -15,6 +15,8 @@ import { Step4ResumenComponent } from './step4/step4-resumen.component';
 import { CotizacionWizardStore } from './wizard.store';
 import { CotizacionesApi } from '../../cotizaciones/data/cotizaciones.api';
 
+import { Location } from '@angular/common'; // Added import
+import { ClientesApi } from '../../clientes/data/clientes.api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { firstValueFrom } from 'rxjs';
@@ -27,9 +29,7 @@ import { firstValueFrom } from 'rxjs';
     NgIf,
     NgSwitch,
     NgSwitchCase,
-
     LucideAngularModule,
-
     WizardStepperComponent,
     Step1TipoEstudioComponent,
     Step2DatosComponent,
@@ -46,8 +46,10 @@ export class CrearCotizacionPage {
 
   private store = inject(CotizacionWizardStore);
   private api = inject(CotizacionesApi);
+  private clientesApi = inject(ClientesApi); // Inject ClientesApi
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private location = inject(Location); // Inject Location
 
   async ngOnInit() {
     this.store.reset();
@@ -107,7 +109,7 @@ export class CrearCotizacionPage {
   }
 
   cancel() {
-    window.history.back();
+    this.location.back();
   }
 
   prev() {
@@ -139,11 +141,16 @@ export class CrearCotizacionPage {
         // UPDATE
         await firstValueFrom(this.api.update(this.editId, payload));
         alert('Cotización actualizada correctamente');
-        this.router.navigate(['/cotizaciones', this.editId]);
+        // Invalidar cache de clientes para refrescar contadores
+        this.clientesApi.clearCache();
+        this.location.back();
       } else {
         // CREATE
-        const res = await firstValueFrom(this.api.create(payload));
-        this.router.navigate(['/cotizaciones', res.id]);
+        await firstValueFrom(this.api.create(payload));
+        // alert('Cotización creada correctamente'); // Opcional
+        // Invalidar cache de clientes para refrescar contadores
+        this.clientesApi.clearCache();
+        this.location.back();
       }
     } catch (error) {
       console.error(error);
