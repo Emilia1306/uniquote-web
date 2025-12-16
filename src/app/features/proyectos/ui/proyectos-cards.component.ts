@@ -8,7 +8,7 @@ import { Proyecto } from '../data/proyectos.types';
   imports: [CommonModule, DatePipe],
   template: `
   <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-    <article *ngFor="let p of items" class="card card-hover p-6 relative">
+    <article *ngFor="let p of items" class="card card-hover p-6 relative h-full flex flex-col">
 
       <!-- Acciones -->
       <div class="absolute top-3 right-3">
@@ -27,12 +27,12 @@ import { Proyecto } from '../data/proyectos.types';
         </div>
       </div>
 
-      <div class="flex justify-between items-start">
-        <h2 class="text-xl font-semibold">{{ p.name }}</h2>
-        <span class="pill pill--blue text-sm">{{ p._count?.cotizaciones || 0 }} cot.</span>
+      <!-- Header sin count -->
+      <div class="flex justify-between items-start mb-2">
+        <h2 class="text-xl font-semibold pr-8 min-h-[3.5rem] line-clamp-2">{{ p.name }}</h2>
       </div>
 
-      <p class="muted mt-1 text-sm">
+      <p class="muted text-sm">
         Cliente: <b>{{ p.cliente.empresa }}</b>
       </p>
 
@@ -40,11 +40,17 @@ import { Proyecto } from '../data/proyectos.types';
         Contacto: {{ p.contacto?.nombre || '—' }}
       </p>
 
-      <div class="divider"></div>
+      <!-- Fecha movida aquí -->
+      <p class="muted text-sm mt-1">
+        Creado: {{ p.createdAt | date:'dd/MM/yy' }}
+      </p>
 
-      <div class="text-right">
-        <div class="text-sm text-zinc-500">Creado:</div>
-        <div class="text-lg font-bold">{{ p.createdAt | date:'dd/MM/yy' }}</div>
+      <div class="divider mt-auto"></div>
+
+      <!-- Footer con count -->
+      <div class="flex flex-col items-center ml-auto w-fit">
+        <div class="text-3xl font-bold text-[color:var(--brand)] leading-none">{{ p._count?.cotizaciones || 0 }}</div>
+        <div class="text-xs text-black font-medium mt-1">cot.</div>
       </div>
 
     </article>

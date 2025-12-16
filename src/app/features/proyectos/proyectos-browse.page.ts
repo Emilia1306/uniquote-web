@@ -37,7 +37,13 @@ export class ProyectosBrowsePage {
 
   // Estado
   searchText = signal('');
-  view = signal<'cards' | 'table'>('table');
+  view = signal<'cards' | 'table'>((localStorage.getItem('proyectos-view-mode') as 'cards' | 'table') || 'table');
+
+  toggleView() {
+    const newVal = this.view() === 'cards' ? 'table' : 'cards';
+    this.view.set(newVal);
+    localStorage.setItem('proyectos-view-mode', newVal);
+  }
 
   // CREAR
   modalName = '';
