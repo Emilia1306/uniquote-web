@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConstantesApi, Constante, UpdateConstanteDto } from './data/constantes.api';
@@ -204,7 +204,7 @@ interface GroupedData {
     @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
   `]
 })
-export class TarifarioPage implements OnInit {
+export class TarifarioPage implements OnInit, OnDestroy {
   private api = inject(ConstantesApi);
 
   constantes: Constante[] = [];
@@ -220,6 +220,11 @@ export class TarifarioPage implements OnInit {
   // Global methods
   async ngOnInit() {
     await this.loadData();
+  }
+
+  ngOnDestroy() {
+    // Ensure scroll is restored if component is destroyed while modal is open
+    document.body.style.overflow = '';
   }
 
   async loadData() {
@@ -314,11 +319,15 @@ export class TarifarioPage implements OnInit {
   openEditModal(item: Constante) {
     this.editingItem = item;
     this.tempValue = item.valor;
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
   }
 
   closeEditModal() {
     this.editingItem = null;
     this.tempValue = 0;
+    // Restore background scrolling
+    document.body.style.overflow = '';
   }
 
   async saveEdit() {
