@@ -51,8 +51,7 @@ export class ProyectosBrowsePage {
 
   // Contexto de cliente (si estamos viendo el historial de un cliente especifico)
   clienteId = signal<number | null>(null);
-
-  // EDITAR
+  clienteName = signal<string>(''); // Nuevo signal para el nombre
 
   // EDITAR
   editId: number | null = null;
@@ -63,8 +62,20 @@ export class ProyectosBrowsePage {
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.clienteId.set(Number(id));
-      await this.store.loadByCliente(Number(id));
+      const cId = Number(id);
+      this.clienteId.set(cId);
+      await this.store.loadByCliente(cId);
+
+      // Cargar info del cliente para el titulo
+      try {
+        const clientData = await this.clientesApi.getById(cId);
+        if (clientData) {
+          this.clienteName.set(clientData.empresa);
+        }
+      } catch (err) {
+        console.error('Error cargando info de cliente', err);
+      }
+
     } else {
       await this.store.loadAll();
     }

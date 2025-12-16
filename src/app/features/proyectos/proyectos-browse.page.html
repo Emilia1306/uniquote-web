@@ -2,7 +2,9 @@
 
   <!-- HEADER -->
   <div class="mb-6">
-    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">Proyectos</h1>
+    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">
+      {{ clienteName() ? 'Proyectos de ' + clienteName() : 'Proyectos' }}
+    </h1>
     <p class="text-zinc-500">Listado de proyectos del cliente</p>
   </div>
 
