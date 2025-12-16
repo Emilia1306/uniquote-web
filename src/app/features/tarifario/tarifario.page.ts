@@ -135,8 +135,8 @@ interface GroupedData {
 
     <!-- Edit Modal -->
     @if (editingItem) {
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-scale-up">
+        <div class="fixed inset-0 z-[100] w-screen h-screen flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-scale-up" (click)="$event.stopPropagation()">
                 <div class="px-6 py-4 border-b border-zinc-100 flex justify-between items-center bg-zinc-50">
                     <h3 class="font-bold text-lg text-zinc-900">Editar Tarifa</h3>
                     <button (click)="closeEditModal()" class="text-zinc-400 hover:text-zinc-600">
@@ -319,18 +319,19 @@ export class TarifarioPage implements OnInit {
     if (!this.editingItem) return;
 
     try {
+      // Ensure value is a number and only send what we want to update
       const dto: UpdateConstanteDto = {
-        valor: this.tempValue,
-        unidad: this.editingItem.unidad // Keep existing unit
+        valor: Number(this.tempValue)
       };
 
       await firstValueFrom(this.api.update(this.editingItem.id, dto));
 
       // Update local state
-      this.editingItem.valor = this.tempValue;
+      this.editingItem.valor = Number(this.tempValue);
       this.closeEditModal();
     } catch (err) {
       console.error('Error saving changes:', err);
+      // Optionally show a toast or alert
       alert('Error al guardar los cambios');
     }
   }
