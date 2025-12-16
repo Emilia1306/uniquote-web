@@ -14,9 +14,7 @@ interface SubGroup {
 }
 
 interface GroupedData {
-  [department: string]: {
-    [category: string]: Constante[];
-  };
+  [category: string]: Constante[];
 }
 
 @Component({
@@ -37,16 +35,16 @@ interface GroupedData {
 
       <!-- Operations Bar: Tabs & Search -->
       <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
-        <!-- Department Tabs -->
+        <!-- Category Tabs -->
         <div class="flex overflow-x-auto gap-2 scrollbar-hide w-full md:w-auto p-1">
-            @for (dept of departments; track dept) {
+            @for (tab of tabs; track tab) {
             <button 
-                (click)="selectedDepartment = dept"
+                (click)="selectedTab = tab"
                 class="px-6 py-2 rounded-full whitespace-nowrap font-medium transition-all duration-200 text-sm"
-                [ngClass]="selectedDepartment === dept 
+                [ngClass]="selectedTab === tab 
                 ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/10' 
                 : 'bg-white text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'">
-                {{ dept | titlecase }}
+                {{ tab | titlecase }}
             </button>
             }
         </div>
@@ -69,10 +67,9 @@ interface GroupedData {
 
       <!-- Content Area -->
       <div class="space-y-10">
-        @if (groupedData[selectedDepartment]) {
-          @for (category of getCategories(selectedDepartment); track category) {
+          @for (category of getCategoriesToShow(); track category) {
             <!-- Hide category if no items match in any subgroup -->
-            @if (hasCategoryMatches(selectedDepartment, category)) {
+            @if (hasCategoryMatches(category)) {
                 <section class="animate-fade-in">
                     <!-- Category Title -->
                     <div class="flex items-center gap-3 mb-6">
@@ -81,7 +78,7 @@ interface GroupedData {
                     </div>
 
                     <div class="grid gap-6 pl-0 md:pl-4">
-                        @for (group of getSubgroups(groupedData[selectedDepartment][category]); track group.name) {
+                        @for (group of getSubgroups(groupedData[category]); track group.name) {
                             @if (getMatchingItems(group).length > 0) {
                                 <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
                                     <!-- Subgroup Header -->
@@ -138,13 +135,7 @@ interface GroupedData {
                 </section>
             }
           }
-        } @else {
-          <div class="flex flex-col items-center justify-center py-20 text-zinc-400">
-            <p>No hay items en este departamento</p>
-          </div>
-        }
       </div>
-    </div>
 
     <!-- Edit Modal -->
     @if (editingItem) {
@@ -217,8 +208,8 @@ export class TarifarioPage implements OnInit {
 
   constantes: Constante[] = [];
   groupedData: GroupedData = {};
-  departments: string[] = [];
-  selectedDepartment: string = '';
+  tabs: string[] = ['Todos'];
+  selectedTab: string = 'Todos';
   searchTerm: string = '';
 
   // Modal State
@@ -242,25 +233,22 @@ export class TarifarioPage implements OnInit {
     const grouped: GroupedData = {};
 
     this.constantes.forEach(item => {
-      const dept = getDepartment(item.categoria);
       const cat = item.categoria;
-
-      if (!grouped[dept]) grouped[dept] = {};
-      if (!grouped[dept][cat]) grouped[dept][cat] = [];
-
-      grouped[dept][cat].push(item);
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(item);
     });
 
     this.groupedData = grouped;
-    this.departments = Object.keys(grouped).sort();
-    if (this.departments.length > 0 && !this.selectedDepartment) {
-      this.selectedDepartment = this.departments[0];
-    }
+    this.tabs = ['Todos', ...Object.keys(grouped).sort()];
   }
 
-  getCategories(department: string): string[] {
-    return this.groupedData[department] ? Object.keys(this.groupedData[department]).sort() : [];
+  getCategoriesToShow(): string[] {
+    if (this.selectedTab === 'Todos') {
+      return Object.keys(this.groupedData).sort();
+    }
+    return [this.selectedTab];
   }
+
 
   getSubgroups(items: Constante[]): SubGroup[] {
     const groups: { [key: string]: SubGroup } = {};
@@ -313,10 +301,10 @@ export class TarifarioPage implements OnInit {
     return group.items.filter(item => this.matchesSearch(item.displayName, group.name));
   }
 
-  hasCategoryMatches(department: string, category: string): boolean {
+  hasCategoryMatches(category: string): boolean {
     // If searching, check if any group in this category has matches
     if (!this.searchTerm) return true;
-    const subgroups = this.getSubgroups(this.groupedData[department][category]);
+    const subgroups = this.getSubgroups(this.groupedData[category]);
     return subgroups.some(group => this.getMatchingItems(group).length > 0);
   }
 
