@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
+import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
 @Component({
   selector: 'quotes-cards',
@@ -10,7 +11,7 @@ import { STATUS_COLORS } from './status-colors';
   imports: [CommonModule, CurrencyPipe, DatePipe],
   template: `
   <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-    <article *ngFor="let q of store.filtered()" class="card card-hover p-6">
+    <article *ngFor="let q of (quoteList || store.filtered())" class="card card-hover p-6">
 
       <!-- Header: Título + Estado -->
       <div class="flex items-start justify-between gap-2 mb-4">
@@ -22,7 +23,7 @@ import { STATUS_COLORS } from './status-colors';
 
       <!-- Información detallada -->
       <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="!hideContextColumns">
           <span class="text-zinc-500">Cliente:</span>
           <span class="font-medium">{{ q.project?.cliente?.empresa || 'N/A' }}</span>
         </div>
@@ -32,12 +33,12 @@ import { STATUS_COLORS } from './status-colors';
           <span>{{ q.createdAt | date:'dd/MM/yy' }}</span>
         </div>
         
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="q.metodologia || q.studyType">
           <span class="text-zinc-500">Tipo de estudio:</span>
-          <span>{{ q.metodologia || q.studyType || 'N/A'}}</span>
+          <span>{{ q.metodologia || q.studyType }}</span>
         </div>
         
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="!hideContextColumns">
           <span class="text-zinc-500">Proyecto:</span>
           <span class="font-medium">{{ q.project?.name || 'N/A' }}</span>
         </div>
@@ -102,8 +103,9 @@ import { STATUS_COLORS } from './status-colors';
   </div>
   `
 })
-
 export class QuotesCardsComponent {
+  @Input() quoteList: Cotizacion[] | null = null;
+  @Input() hideContextColumns = false; // Add input
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);

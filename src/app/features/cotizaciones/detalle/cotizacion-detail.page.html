@@ -9,16 +9,18 @@
   <ng-container *ngIf="!loading && cotizacion">
 
     <!-- Encabezado -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-3xl font-semibold">
+        <h1 class="text-3xl font-semibold text-[color:var(--brand)]">
           {{ cotizacion.name }}
         </h1>
         <p class="muted">Código: {{ cotizacion.code }}</p>
       </div>
 
       <!-- Estado -->
-      <cotizacion-status-pill [status]="cotizacion.status" />
+      <span class="self-start px-3 py-1 rounded-full text-xs font-medium" [ngClass]="STATUS_COLORS[cotizacion.status]">
+        {{ cotizacion.status | titlecase }}
+      </span>
     </div>
 
     <!-- Info general -->

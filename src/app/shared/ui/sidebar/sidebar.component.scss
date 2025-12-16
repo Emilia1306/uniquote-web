@@ -1,34 +1,32 @@
 .menu-link {
-  color: var(--text-900);
+  color: #52525b;
+  /* zinc-600 */
+  font-weight: 500;
 
   &:hover {
-    background: var(--peach-75);
+    background: rgba(0, 0, 0, 0.04);
+    color: #18181b;
+    /* zinc-900 */
 
-    .icon,
-    .label {
-      color: var(--brand) !important;
+    .icon {
+      color: #18181b;
     }
   }
 }
 
 .active-link {
-  background: var(--peach-100) !important;
-  font-weight: 600;
-  position: relative;
+  background: #ffffff !important;
   color: var(--brand) !important;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 
   .icon {
     color: var(--brand) !important;
   }
 
+  /* Remove old vertical bar */
   &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 6px;
-    bottom: 6px;
-    width: 4px;
-    border-radius: 0 4px 4px 0;
-    background: var(--accent-600);
+    display: none;
   }
 }

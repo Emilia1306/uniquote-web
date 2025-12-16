@@ -20,6 +20,7 @@ import { ClientesApi } from '../../clientes/data/clientes.api';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { firstValueFrom } from 'rxjs';
+import { ProyectosApi } from '../../proyectos/data/proyectos.api';
 
 @Component({
   selector: 'crear-cotizacion-page',
@@ -49,15 +50,44 @@ export class CrearCotizacionPage {
   private clientesApi = inject(ClientesApi); // Inject ClientesApi
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private proyectosApi = inject(ProyectosApi); // Inject ProyectosApi
   private location = inject(Location); // Inject Location
 
   async ngOnInit() {
     this.store.reset();
     const id = this.route.snapshot.paramMap.get('id');
+    const projectId = this.route.snapshot.queryParamMap.get('projectId');
+
     if (id) {
       this.editMode = true;
       this.editId = Number(id);
       await this.loadForEdit(this.editId);
+    } else if (projectId) {
+      // Pre-fill from Project
+      await this.loadFromProject(Number(projectId));
+    }
+  }
+
+  async loadFromProject(projectId: number) {
+    this.loading = true;
+    try {
+      const project: any = await firstValueFrom(this.proyectosApi.getOne(projectId));
+      if (project) {
+        this.store.patch({
+          projectId: project.id,
+          clienteId: project.cliente?.id,
+          contactoId: project.contacto?.id,
+
+          // Display
+          clientName: project.cliente?.empresa,
+          contactName: project.contacto?.nombre,
+          projectName: project.name
+        });
+      }
+    } catch (error) {
+      console.error('Error loading project details', error);
+    } finally {
+      this.loading = false;
     }
   }
 

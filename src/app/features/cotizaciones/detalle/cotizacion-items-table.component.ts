@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'cotizacion-items-table',
   imports: [CommonModule, FormsModule],
   template: `
-  <div class="card p-6 overflow-x-auto">
+  <div class="card p-6 overflow-hidden"> 
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-lg">Desglose de costos</h3>
       
@@ -35,72 +35,74 @@ import { FormsModule } from '@angular/forms';
       </div>
     </div>
 
-    <table class="w-full text-sm">
-      <thead class="text-left text-zinc-500 border-b">
-        <tr>
-          <th class="py-2 px-3">Descripción</th>
-          <th class="py-2 px-3 text-center">Personas</th>
-          <th class="py-2 px-3 text-center">Días</th>
-          <th class="py-2 px-3 text-right">Costo Unitario</th>
-          <th class="py-2 px-3 text-right">Total</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <ng-container *ngFor="let category of categories">
-          <!-- Category Header Row -->
-          <tr class="bg-zinc-100 border-t-2 border-zinc-300">
-            <td colspan="5" class="py-2 px-3 font-semibold text-zinc-800 uppercase text-xs">
-              {{ category }}
-            </td>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[600px]">
+        <thead class="text-left text-zinc-500 border-b">
+          <tr>
+            <th class="py-2 px-3">Descripción</th>
+            <th class="py-2 px-3 text-center">Personas</th>
+            <th class="py-2 px-3 text-center">Días</th>
+            <th class="py-2 px-3 text-right">Costo Unitario</th>
+            <th class="py-2 px-3 text-right">Total</th>
           </tr>
+        </thead>
 
-          <!-- Item Rows -->
-          <tr *ngFor="let item of getItemsByCategory(category)" class="border-b hover:bg-zinc-50">
-            <!-- Description -->
-            <td class="py-2 px-3">
-              <span *ngIf="!isEditMode">{{ item.description }}</span>
-              <input *ngIf="isEditMode"
-                     type="text"
-                     [(ngModel)]="item.description"
-                     class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)]">
-            </td>
+        <tbody>
+          <ng-container *ngFor="let category of categories">
+            <!-- Category Header Row -->
+            <tr class="bg-zinc-100 border-t-2 border-zinc-300">
+              <td colspan="5" class="py-2 px-3 font-semibold text-zinc-800 uppercase text-xs">
+                {{ category }}
+              </td>
+            </tr>
 
-            <!-- Personas -->
-            <td class="py-2 px-3 text-center">
-              <span *ngIf="!isEditMode">{{ item.personas }}</span>
-              <input *ngIf="isEditMode"
-                     type="number"
-                     [(ngModel)]="item.personas"
-                     class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
-            </td>
+            <!-- Item Rows -->
+            <tr *ngFor="let item of getItemsByCategory(category)" class="border-b hover:bg-zinc-50">
+              <!-- Description -->
+              <td class="py-2 px-3">
+                <span *ngIf="!isEditMode">{{ item.description }}</span>
+                <input *ngIf="isEditMode"
+                      type="text"
+                      [(ngModel)]="item.description"
+                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)]">
+              </td>
 
-            <!-- Días -->
-            <td class="py-2 px-3 text-center">
-              <span *ngIf="!isEditMode">{{ item.dias }}</span>
-              <input *ngIf="isEditMode"
-                     type="number"
-                     [(ngModel)]="item.dias"
-                     class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
-            </td>
+              <!-- Personas -->
+              <td class="py-2 px-3 text-center">
+                <span *ngIf="!isEditMode">{{ item.personas }}</span>
+                <input *ngIf="isEditMode"
+                      type="number"
+                      [(ngModel)]="item.personas"
+                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
+              </td>
 
-            <!-- Costo Unitario -->
-            <td class="py-2 px-3 text-right">
-              <span *ngIf="!isEditMode">$ {{ item.costoUnitario }}</span>
-              <input *ngIf="isEditMode"
-                     type="number"
-                     [(ngModel)]="item.costoUnitario"
-                     class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-right">
-            </td>
+              <!-- Días -->
+              <td class="py-2 px-3 text-center">
+                <span *ngIf="!isEditMode">{{ item.dias }}</span>
+                <input *ngIf="isEditMode"
+                      type="number"
+                      [(ngModel)]="item.dias"
+                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
+              </td>
 
-            <!-- Total (Read-only) -->
-            <td class="py-2 px-3 text-right font-semibold">
-              $ {{ item.totalConComision }}
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+              <!-- Costo Unitario -->
+              <td class="py-2 px-3 text-right">
+                <span *ngIf="!isEditMode">$ {{ item.costoUnitario }}</span>
+                <input *ngIf="isEditMode"
+                      type="number"
+                      [(ngModel)]="item.costoUnitario"
+                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-right">
+              </td>
+
+              <!-- Total (Read-only) -->
+              <td class="py-2 px-3 text-right font-semibold">
+                $ {{ item.totalConComision }}
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
   </div>
   `
 })

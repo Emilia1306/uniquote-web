@@ -7,6 +7,8 @@ import { CotizacionItemsTableComponent } from './cotizacion-items-table.componen
 
 import { AuthService } from '../../../core/auth/auth.service';
 
+import { STATUS_COLORS } from '../ui/status-colors';
+
 @Component({
   standalone: true,
   selector: 'cotizacion-detail',
@@ -14,6 +16,8 @@ import { AuthService } from '../../../core/auth/auth.service';
   templateUrl: './cotizacion-detail.page.html'
 })
 export class CotizacionDetailPage {
+
+  STATUS_COLORS = STATUS_COLORS;
 
   api = inject(CotizacionesApi);
   route = inject(ActivatedRoute);

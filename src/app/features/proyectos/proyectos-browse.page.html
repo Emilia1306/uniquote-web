@@ -2,7 +2,9 @@
 
   <!-- HEADER -->
   <div class="mb-6">
-    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">Proyectos</h1>
+    <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">
+      {{ clienteName() ? 'Proyectos de ' + clienteName() : 'Proyectos' }}
+    </h1>
     <p class="text-zinc-500">Listado de proyectos del cliente</p>
   </div>
 
@@ -22,8 +24,7 @@
       <!-- Toggle vista (solo 1 botón) -->
       <button type="button"
         class="h-12 w-12 rounded-xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
-        (click)="view.set(view() === 'cards' ? 'table' : 'cards')"
-        [title]="view() === 'cards' ? 'Cambiar a lista' : 'Cambiar a tarjetas'">
+        (click)="toggleView()" [title]="view() === 'cards' ? 'Cambiar a lista' : 'Cambiar a tarjetas'">
         <lucide-angular [name]="view() === 'cards' ? 'list' : 'layout-grid'" [size]="20"></lucide-angular>
       </button>
 
