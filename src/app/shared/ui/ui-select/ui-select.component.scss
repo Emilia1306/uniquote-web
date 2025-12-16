@@ -2,12 +2,14 @@
   width: 100%;
   position: relative;
   z-index: 1;
+
+  &.is-open {
+    z-index: 100;
+  }
 }
 
 .ui-select-btn {
-  @apply w-full rounded-xl border border-zinc-300 bg-white 
-         px-3 py-2 text-left flex items-center justify-between
-         shadow-sm cursor-pointer select-none;
+  @apply w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-left flex items-center justify-between shadow-sm cursor-pointer select-none;
 
   &:focus {
     @apply border-brand-500 ring-2 ring-brand-200;
@@ -19,8 +21,7 @@
 }
 
 .ui-select-panel {
-  @apply absolute z-50 mt-2 w-full rounded-xl border border-zinc-200 
-         bg-white shadow-xl p-2 max-h-60 overflow-auto;
+  @apply absolute z-50 mt-2 w-full rounded-xl border border-zinc-200 bg-white shadow-xl p-2 max-h-60 overflow-auto;
 
   top: 100%;
   left: 0;
@@ -32,8 +33,15 @@
 
 /* Animación */
 @keyframes dropdownFade {
-  0%   { opacity: 0; transform: translateY(-6px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-dropdown {

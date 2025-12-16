@@ -72,9 +72,12 @@ export class Step2DatosComponent implements OnInit {
 
   // Selects de cobertura, metodología y penetración
   coberturaItems: UiSelectItem[] = [
+    { value: 'AMSS', label: 'AMSS' },
     { value: 'Nacional', label: 'Nacional' },
-    { value: 'Nacional Urbano', label: 'Nacional Urbano' },
-    { value: 'Área metropolitana', label: 'Área metropolitana' },
+    { value: 'Urbano', label: 'Urbano' },
+    { value: 'Ciudades Principales', label: 'Ciudades Principales' },
+    { value: 'Cede UNIMER', label: 'Cede UNIMER' },
+    { value: 'Custom', label: 'Custom' },
   ];
 
   metodologiaItems: UiSelectItem[] = [
