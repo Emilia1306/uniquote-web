@@ -22,13 +22,13 @@ interface GroupedData {
   selector: 'tarifario-page',
   imports: [CommonModule, FormsModule],
   template: `
-  <div class="min-h-screen bg-zinc-50 p-6">
+  <div class="min-h-screen bg-white p-6">
     <div class="max-w-7xl mx-auto space-y-6">
       
       <!-- Header -->
-      <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-zinc-100">
+      <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 py-2">
         <div>
-          <h1 class="text-3xl font-bold text-zinc-900 tracking-tight">Tarifario</h1>
+          <h1 class="text-4xl font-bold text-[var(--brand)] tracking-tight">Tarifario</h1>
           <p class="text-zinc-500 mt-1">Gestiona los costos y tarifas base del sistema</p>
         </div>
       </header>
@@ -43,7 +43,7 @@ interface GroupedData {
                 class="px-6 py-2 rounded-full whitespace-nowrap font-medium transition-all duration-200 text-sm"
                 [ngClass]="selectedTab === tab 
                 ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-900/10' 
-                : 'bg-white text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900'">
+                : 'bg-zinc-50 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 border border-transparent'">
                 {{ tab | titlecase }}
             </button>
             }
@@ -60,7 +60,7 @@ interface GroupedData {
                 [(ngModel)]="searchTerm"
                 type="text" 
                 placeholder="Buscar tarifa..." 
-                class="w-full pl-11 pr-4 py-2.5 rounded-full bg-zinc-100 border-2 border-transparent focus:bg-white focus:border-[var(--brand)]/20 focus:ring-4 focus:ring-[var(--brand)]/10 text-sm transition-all"
+                class="w-full pl-11 pr-4 py-2.5 rounded-full bg-zinc-50 border-2 border-transparent focus:bg-white focus:border-[var(--brand)]/20 focus:ring-4 focus:ring-[var(--brand)]/10 text-sm transition-all"
             >
         </div>
       </div>
@@ -80,12 +80,12 @@ interface GroupedData {
                     <div class="grid gap-6 pl-0 md:pl-4">
                         @for (group of getSubgroups(groupedData[category]); track group.name) {
                             @if (getMatchingItems(group).length > 0) {
-                                <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                                <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
                                     <!-- Subgroup Header -->
                                     @if (group.name !== 'General' && group.name !== category) {
-                                        <div class="px-6 py-4 bg-zinc-50/80 border-b border-zinc-100 flex items-center justify-between">
+                                        <div class="px-6 py-4 bg-zinc-50/50 border-b border-zinc-100 flex items-center justify-between">
                                             <span class="font-semibold text-zinc-900">{{ group.name }}</span>
-                                            <span class="text-xs font-medium bg-white px-2.5 py-1 rounded-md text-zinc-500 border border-zinc-100">
+                                            <span class="text-xs font-medium bg-white px-2.5 py-1 rounded-md text-zinc-500 border border-zinc-200">
                                                 {{ getMatchingItems(group).length }} tarifas
                                             </span>
                                         </div>
@@ -97,7 +97,6 @@ interface GroupedData {
                                                 <tr>
                                                     <th class="py-3 px-6 w-1/2">Descripción</th>
                                                     <th class="py-3 px-6 text-right">Valor</th>
-                                                    <th class="py-3 px-6 text-center w-24">Unidad</th>
                                                     <th class="py-3 px-6 text-right w-20"></th>
                                                 </tr>
                                             </thead>
@@ -109,9 +108,6 @@ interface GroupedData {
                                                         </td>
                                                         <td class="py-3 px-6 text-right font-mono font-medium text-zinc-900">
                                                             {{ item.original.valor | number:'1.2-2' }}
-                                                        </td>
-                                                        <td class="py-3 px-6 text-center text-zinc-500 text-xs">
-                                                            {{ item.original.unidad || '-' }}
                                                         </td>
                                                         <td class="py-3 px-6 text-right">
                                                             <button 
