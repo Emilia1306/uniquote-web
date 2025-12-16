@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
+import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
 @Component({
   selector: 'quotes-cards',
@@ -10,7 +11,7 @@ import { STATUS_COLORS } from './status-colors';
   imports: [CommonModule, CurrencyPipe, DatePipe],
   template: `
   <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-    <article *ngFor="let q of store.filtered()" class="card card-hover p-6">
+    <article *ngFor="let q of (quoteList || store.filtered())" class="card card-hover p-6">
 
       <!-- Header: Título + Estado -->
       <div class="flex items-start justify-between gap-2 mb-4">
@@ -102,8 +103,8 @@ import { STATUS_COLORS } from './status-colors';
   </div>
   `
 })
-
 export class QuotesCardsComponent {
+  @Input() quoteList: Cotizacion[] | null = null;
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);

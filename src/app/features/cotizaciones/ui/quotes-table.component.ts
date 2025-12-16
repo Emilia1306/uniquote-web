@@ -1,8 +1,9 @@
-import { Component, inject, HostListener } from '@angular/core';
+import { Component, inject, HostListener, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
+import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
 @Component({
   selector: 'quotes-table',
@@ -27,7 +28,7 @@ import { STATUS_COLORS } from './status-colors';
 
       <tbody class="divide-y divide-zinc-200">
 
-        <tr *ngFor="let q of store.filtered()" class="hover:bg-zinc-50">
+        <tr *ngFor="let q of (quoteList || store.filtered())" class="hover:bg-zinc-50">
 
           <td class="px-4 py-2">{{ q.code }}</td>
 
@@ -112,6 +113,7 @@ import { STATUS_COLORS } from './status-colors';
   `
 })
 export class QuotesTableComponent {
+  @Input() quoteList: Cotizacion[] | null = null;
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);

@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { ProyectosApi } from './data/proyectos.api';
 import { QuotesCardsComponent } from '../cotizaciones/ui/quotes-cards.component';
 import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component';
+import { CotizacionesStore } from '../cotizaciones/data/quotes.store';
 
 @Component({
   standalone: true,
@@ -36,19 +37,26 @@ import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component'
       </button>
 
       <div class="flex justify-end gap-2 mb-4">
-        <button class="btn-icon" [class.opacity-60]="view()!=='cards'" (click)="view.set('cards')">
-          <svg viewBox="0 0 24 24" class="h-5 w-5"><path fill="currentColor"
-          d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/></svg>
+        <button 
+          class="h-10 w-10 rounded-lg border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
+          [class.bg-zinc-100]="view() === 'cards'"
+          (click)="toggleView('cards')"
+          title="Vista Tarjetas">
+          <!-- Using inline SVG or lucide if available. Keeping it simple matching previous style but cleaner -->
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
         </button>
-        <button class="btn-icon" [class.opacity-60]="view()!=='table'" (click)="view.set('table')">
-          <svg viewBox="0 0 24 24" class="h-5 w-5"><path fill="currentColor"
-          d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/></svg>
+        <button 
+          class="h-10 w-10 rounded-lg border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
+          [class.bg-zinc-100]="view() === 'table'"
+          (click)="toggleView('table')"
+          title="Vista Tabla">
+           <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
         </button>
       </div>
 
       <ng-container [ngSwitch]="view()">
-        <quotes-cards *ngSwitchCase="'cards'"/>
-        <quotes-table *ngSwitchCase="'table'"/>
+        <quotes-cards *ngSwitchCase="'cards'" [quoteList]="quotes()"/>
+        <quotes-table *ngSwitchCase="'table'" [quoteList]="quotes()"/>
       </ng-container>
 
     </ng-container>
@@ -58,15 +66,29 @@ import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component'
 export class ProyectoDetailsPage {
 
   private api = inject(ProyectosApi);
+  private quotesStore = inject(CotizacionesStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   project: any = null;
-  view = signal<'cards' | 'table'>('table');
+
+  // View state with persistence
+  view = signal<'cards' | 'table'>((localStorage.getItem('project-details-view-mode') as 'cards' | 'table') || 'table');
+
+  // Expose quotes from store
+  quotes = this.quotesStore.items; // or .filtered if filtering is needed later
 
   async ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('projectId'));
     this.project = await firstValueFrom(this.api.getOne(id));
+
+    // Load quotes for this project
+    await this.quotesStore.loadByProject(id);
+  }
+
+  toggleView(mode: 'cards' | 'table') {
+    this.view.set(mode);
+    localStorage.setItem('project-details-view-mode', mode);
   }
 
   goCrearCotizacion() {

@@ -16,7 +16,7 @@ import { Proyecto } from '../data/proyectos.types';
 
         <div *ngIf="openMenu === p.id" class="card absolute right-0 mt-2 p-2 z-50 w-36">
 
-          <button class="dropdown-item" (click)="onVer(p.id)">Ver detalle</button>
+          <button class="dropdown-item" (click)="onVer(p.id)">Ver cotizaciones</button>
           <button class="dropdown-item" (click)="onEditar(p)">Editar</button>
           <button class="dropdown-item text-red-500"
                   [disabled]="p._count.cotizaciones > 0"
