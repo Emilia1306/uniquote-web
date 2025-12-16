@@ -8,7 +8,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 @Component({
   selector: 'quotes-table',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, CurrencyPipe, DatePipe], // CommonModule includes NgIf
   template: `
   <div class="card card-hover p-4 overflow-x-auto">
     <table class="w-full text-sm">
@@ -16,8 +16,8 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
         <tr class="text-left text-zinc-500">
           <th class="px-4 py-2 font-medium">Código</th>
           <th class="px-4 py-2 font-medium">Título</th>
-          <th class="px-4 py-2 font-medium">Cliente</th>
-          <th class="px-4 py-2 font-medium">Proyecto</th>
+          <th *ngIf="!hideContextColumns" class="px-4 py-2 font-medium">Cliente</th>
+          <th *ngIf="!hideContextColumns" class="px-4 py-2 font-medium">Proyecto</th>
           <th class="px-4 py-2 font-medium">Contacto</th>
           <th class="px-4 py-2 font-medium">Estado</th>
           <th class="px-4 py-2 font-medium">Monto</th>
@@ -34,11 +34,11 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
           <td class="px-4 py-2">{{ q.name }}</td>
 
-          <td class="px-4 py-2">
+          <td *ngIf="!hideContextColumns" class="px-4 py-2">
             {{ q.project?.cliente?.empresa || 'N/A' }}
           </td>
 
-          <td class="px-4 py-2">
+          <td *ngIf="!hideContextColumns" class="px-4 py-2">
             {{ q.project?.name || 'N/A' }}
           </td>
 
@@ -114,6 +114,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 })
 export class QuotesTableComponent {
   @Input() quoteList: Cotizacion[] | null = null;
+  @Input() hideContextColumns = false;
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);

@@ -23,7 +23,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
       <!-- Información detallada -->
       <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="!hideContextColumns">
           <span class="text-zinc-500">Cliente:</span>
           <span class="font-medium">{{ q.project?.cliente?.empresa || 'N/A' }}</span>
         </div>
@@ -33,12 +33,12 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           <span>{{ q.createdAt | date:'dd/MM/yy' }}</span>
         </div>
         
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="q.metodologia || q.studyType">
           <span class="text-zinc-500">Tipo de estudio:</span>
-          <span>{{ q.metodologia || q.studyType || 'N/A'}}</span>
+          <span>{{ q.metodologia || q.studyType }}</span>
         </div>
         
-        <div class="flex justify-between">
+        <div class="flex justify-between" *ngIf="!hideContextColumns">
           <span class="text-zinc-500">Proyecto:</span>
           <span class="font-medium">{{ q.project?.name || 'N/A' }}</span>
         </div>
@@ -105,6 +105,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 })
 export class QuotesCardsComponent {
   @Input() quoteList: Cotizacion[] | null = null;
+  @Input() hideContextColumns = false; // Add input
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);
