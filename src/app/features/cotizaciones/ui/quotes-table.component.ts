@@ -7,6 +7,8 @@ import { STATUS_COLORS } from './status-colors';
 import { QuoteStatusModalComponent } from './quote-status-modal.component';
 import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
+import { AuthService } from '../../../core/auth/auth.service';
+
 @Component({
   selector: 'quotes-table',
   standalone: true,
@@ -90,7 +92,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
                   Ver detalles
                 </button>
 
-                <button *ngIf="!isFinalized(q.status)" (click)="cambiarEstado(q)" 
+                <button *ngIf="canChangeStatus(q)" (click)="cambiarEstado(q)" 
                   class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -98,7 +100,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
                   Editar estado
                 </button>
 
-                <button *ngIf="q.status === 'APROBADO'" (click)="clonar(q)" 
+                <button *ngIf="canClone(q)" (click)="clonar(q)" 
                   class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
@@ -132,6 +134,7 @@ export class QuotesTableComponent {
   router = inject(Router);
   route = inject(ActivatedRoute);
   dialog = inject(Dialog);
+  auth = inject(AuthService);
   STATUS_COLORS = STATUS_COLORS;
 
   formatStatus(status: string): string {
@@ -142,6 +145,21 @@ export class QuotesTableComponent {
 
   isFinalized(status: string): boolean {
     return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
+  }
+
+  canChangeStatus(q: Cotizacion): boolean {
+    if (this.isFinalized(q.status)) return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    if (isAdmin) return false; // Admin cannot edit status
+
+    const userId = this.auth.user()?.id;
+    return q.createdBy?.id === userId;
+  }
+
+  canClone(q: Cotizacion): boolean {
+    if (q.status !== 'APROBADO') return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    return !isAdmin; // Admin cannot clone
   }
 
   cambiarEstado(q: Cotizacion) {

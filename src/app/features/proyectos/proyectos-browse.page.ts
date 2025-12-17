@@ -13,6 +13,7 @@ import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox
 
 import { ClientesApi } from '../clientes/data/clientes.api';
 import { ContactosApi } from '../clientes/data/contactos.api';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'proyectos-browse',
@@ -34,6 +35,7 @@ export class ProyectosBrowsePage {
   private route = inject(ActivatedRoute);
   private clientesApi = inject(ClientesApi);
   private contactosApi = inject(ContactosApi);
+  auth = inject(AuthService);
 
   // Estado
   searchText = signal('');

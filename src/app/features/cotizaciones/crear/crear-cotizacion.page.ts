@@ -96,6 +96,12 @@ export class CrearCotizacionPage {
     try {
       const cot: any = await firstValueFrom(this.api.getById(id));
 
+      if (['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(cot.status)) {
+        alert('No se puede editar una cotización con estado ' + cot.status);
+        this.router.navigate(['/cotizaciones', id]);
+        return;
+      }
+
       // Patch store
       this.store.patch({
         projectId: cot.project?.id || cot.projectId,

@@ -88,7 +88,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           </button>
 
           <!-- Editar Estado (Solo si NO es final) -->
-          <button *ngIf="!isFinalized(q.status)"
+          <button *ngIf="canChangeStatus(q)"
             class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
             (click)="cambiarEstado(q)"
             title="Cambiar Estado">
@@ -97,9 +97,9 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             </svg>
           </button>
 
-          <!-- Clonar (Solo aprobadas) -->
+          <!-- Clonar (Solo aprobadas, NO admin) -->
           <button 
-            *ngIf="q.status === 'APROBADO'"
+            *ngIf="canClone(q)"
             (click)="clonar(q)"
             class="h-8 w-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
             title="Clonar cotización">
@@ -142,6 +142,21 @@ export class QuotesCardsComponent {
 
   isFinalized(status: string): boolean {
     return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
+  }
+
+  canChangeStatus(q: Cotizacion): boolean {
+    if (this.isFinalized(q.status)) return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    if (isAdmin) return false; // Admin cannot edit status
+
+    const userId = this.auth.user()?.id;
+    return q.createdBy?.id === userId;
+  }
+
+  canClone(q: Cotizacion): boolean {
+    if (q.status !== 'APROBADO') return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    return !isAdmin; // Admin cannot clone
   }
 
   cambiarEstado(q: Cotizacion) {

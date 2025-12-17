@@ -28,7 +28,7 @@
         <lucide-angular [name]="view() === 'cards' ? 'list' : 'layout-grid'" [size]="20"></lucide-angular>
       </button>
 
-      <button
+      <button *ngIf="auth.role() !== 'ADMIN'"
         class="h-12 px-6 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm"
         (click)="openCreateModal()">
         <lucide-angular name="plus" [size]="18"></lucide-angular>
