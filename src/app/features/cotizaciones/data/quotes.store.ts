@@ -50,6 +50,11 @@ export class CotizacionesStore {
       rows = rows.filter(r => r.contacto?.id === this.filters().contactoId);
     }
 
+    // Filtro por Estado (Status)
+    if (this.filters().status) {
+      rows = rows.filter(r => r.status === this.filters().status);
+    }
+
     if (search.trim()) {
       const s = search.toLowerCase();
       rows = rows.filter(r =>
