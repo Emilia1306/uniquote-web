@@ -23,8 +23,6 @@ export const ROLE_MENU = {
     { label: 'Inicio', path: '/director', icon: 'house' },
     { label: 'Proyectos', path: '/director/proyectos', icon: 'folder-kanban' },
     { label: 'Cotizaciones', path: '/director/cotizaciones', icon: 'file-text' },
-    { label: 'Estadísticas', path: '/director/estadisticas', icon: 'bar-chart' },
-    { label: 'Estadísticas de Equipo', path: '/director/estadisticas-equipo', icon: 'users' },
     { label: 'Clientes', path: '/director/clientes', icon: 'building-2' },
   ],
 } as const;
