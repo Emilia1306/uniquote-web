@@ -13,44 +13,24 @@
       </label>
 
       <!-- Input centrado y compacto -->
-      <input
-        class="input tracking-[0.4em] text-center text-lg mx-auto block max-w-xs"
-        type="text"
-        name="code"
-        [(ngModel)]="code"
-        placeholder="••••••"
-        maxlength="6"
-        inputmode="numeric"
-        pattern="\\d{6}"
-        required
-      />
+      <input class="input tracking-[0.4em] text-center text-lg mx-auto block max-w-xs" type="text" name="code"
+        [(ngModel)]="code" placeholder="••••••" maxlength="6" inputmode="numeric" pattern="\\d{6}" required />
 
       <!-- Checkbox centrado; acento naranja (tick blanco por defecto) -->
       <label class="flex items-center justify-center gap-3 text-sm select-none">
-        <input
-          type="checkbox"
-          class="h-5 w-5 accent-[var(--accent-600)] rounded"
-          [(ngModel)]="rememberDevice"
-          name="rememberDevice"
-        />
+        <input type="checkbox" class="h-5 w-5 accent-[var(--brand)] rounded" [(ngModel)]="rememberDevice"
+          name="rememberDevice" />
         <span>Recordar este dispositivo por 30 días</span>
       </label>
 
       <!-- Botón como el de login -->
       <div class="flex justify-center">
-        <button
-          class="btn btn--md btn--primary px-8"
-          [disabled]="loading() || code.length !== 6"
-        >
+        <button class="btn btn-primary px-8" [disabled]="loading() || code.length !== 6">
           {{ loading() ? 'Verificando…' : 'Confirmar' }}
         </button>
       </div>
 
-      <button
-        type="button"
-        class="w-full text-xs muted hover:underline text-center"
-        (click)="resend()"
-      >
+      <button type="button" class="w-full text-xs muted hover:underline text-center" (click)="resend()">
         Reenviar código
       </button>
 
