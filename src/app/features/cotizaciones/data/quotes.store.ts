@@ -146,4 +146,12 @@ export class CotizacionesStore {
   async cloneQuote(id: number) {
     return this.api.clone(id).toPromise();
   }
+
+  async updateStatus(id: number, status: string) {
+    await this.api.updateStatus(id, { status }).toPromise();
+    // Update local state
+    this._items.update(items =>
+      items.map(i => i.id === id ? { ...i, status } : i)
+    );
+  }
 }

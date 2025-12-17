@@ -7,37 +7,33 @@ import { UiSelectComponent, UiSelectItem } from '../../../shared/ui/ui-select/ui
 @Component({
   selector: 'quotes-toolbar',
   standalone: true,
-  imports: [CommonModule, UiSelectComponent],
+  imports: [CommonModule],
   template: `
   <div class="flex items-center gap-3">
     
-    <!-- ADMIN: Filtro por Estado -->
-    <div *ngIf="auth.role() === 'ADMIN'; else notAdmin" class="w-56">
-      <ui-select 
-        [items]="statusItems" 
-        [value]="store.filters().status ?? null" 
-        (valueChange)="setFilter($event)"
-        placeholder="Todos los estados">
-      </ui-select>
-    </div>
 
-    <!-- NO ADMIN: Toggle Mis Cotizaciones -->
-    <ng-template #notAdmin>
-      <button type="button"
-        class="h-12 px-4 rounded-xl border border-zinc-200 bg-white flex items-center justify-center gap-2 hover:bg-zinc-50 shadow-sm text-sm font-medium transition-colors"
-        [class.border-black]="store.filters().mineOnly"
-        [class.bg-zinc-50]="store.filters().mineOnly"
-        (click)="toggleMine()">
-        <span>Mis cotizaciones</span>
-        <div class="w-4 h-4 rounded-full border border-zinc-300 flex items-center justify-center"
-             [class.bg-black]="store.filters().mineOnly"
-             [class.border-black]="store.filters().mineOnly">
-            <svg *ngIf="store.filters().mineOnly" viewBox="0 0 24 24" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-        </div>
+
+    <!-- NO ADMIN: Tabs (Biblioteca / Mis Cotizaciones) -->
+    <div *ngIf="auth.role() !== 'ADMIN'" class="flex p-1 bg-zinc-100 rounded-xl">
+      <button 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all"
+        [class.bg-white]="!store.filters().mineOnly"
+        [class.shadow-sm]="!store.filters().mineOnly"
+        [class.text-zinc-900]="!store.filters().mineOnly"
+        [class.text-zinc-500]="store.filters().mineOnly"
+        (click)="store.setFilters({ mineOnly: false })">
+        Biblioteca
       </button>
-    </ng-template>
+      <button 
+        class="px-4 py-2 text-sm font-medium rounded-lg transition-all"
+        [class.bg-white]="store.filters().mineOnly"
+        [class.shadow-sm]="store.filters().mineOnly"
+        [class.text-zinc-900]="store.filters().mineOnly"
+        [class.text-zinc-500]="!store.filters().mineOnly"
+        (click)="store.setFilters({ mineOnly: true })">
+        Mis Cotizaciones
+      </button>
+    </div>
 
     <div class="w-px h-8 bg-zinc-200"></div>
 
@@ -62,22 +58,5 @@ export class QuotesToolbarComponent {
   store = inject(CotizacionesStore);
   auth = inject(AuthService);
 
-  statusItems: UiSelectItem[] = [
-    { value: null, label: 'Todos' },
-    { value: 'ENVIADO', label: 'Enviado' },
-    { value: 'NEGOCIACION', label: 'Negociación' },
-    { value: 'APROBADO', label: 'Aprobado' },
-    { value: 'NO_APROBADO', label: 'No Aprobado' },
-    { value: 'EN_PAUSA', label: 'En Pausa' },
-    { value: 'REEMPLAZADA', label: 'Reemplazada' },
-  ];
 
-  setFilter(val: any) {
-    this.store.setFilters({ status: val });
-  }
-
-  toggleMine() {
-    const current = this.store.filters().mineOnly;
-    this.store.setFilters({ mineOnly: !current });
-  }
 }

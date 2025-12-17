@@ -1,9 +1,11 @@
 import { Component, inject, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Dialog } from '@angular/cdk/dialog';
 import { CotizacionesStore } from '../data/quotes.store';
 import { AuthService } from '../../../core/auth/auth.service';
 import { STATUS_COLORS } from './status-colors';
+import { QuoteStatusModalComponent } from './quote-status-modal.component';
 import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
 @Component({
@@ -47,9 +49,8 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           
           <div class="flex justify-between">
             <span class="text-zinc-500">Creador:</span>
-            <span>
-              {{ q.createdBy?.name ? q.createdBy.name + ' ' + q.createdBy.lastName : (auth.user()?.name + ' ' + auth.user()?.lastName) }}
-            </span>
+              {{ (q.createdBy && q.createdBy.name) ? (q.createdBy.name + ' ' + q.createdBy.lastName) : (auth.user()?.name + ' ' + auth.user()?.lastName) }}
+
           </div>
           
           <div class="flex justify-between">
@@ -74,6 +75,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
         </div>
 
         <div class="flex gap-2">
+          <!-- Detalles -->
           <button 
             class="flex-1 h-10 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center gap-2 text-sm font-medium"
             (click)="verDetalles(q.id)">
@@ -84,10 +86,11 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             Ver Detalles
           </button>
 
-          <button 
+          <!-- Editar Estado (Solo si NO es final) -->
+          <button *ngIf="!isFinalized(q.status)"
             class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
-            (click)="editar(q.id)"
-            title="Editar">
+            (click)="cambiarEstado(q)"
+            title="Cambiar Estado">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
@@ -123,8 +126,27 @@ export class QuotesCardsComponent {
   store = inject(CotizacionesStore);
   auth = inject(AuthService);
   router = inject(Router);
+  dialog = inject(Dialog);
   route = inject(ActivatedRoute);
+
   STATUS_COLORS = STATUS_COLORS;
+
+  isFinalized(status: string): boolean {
+    return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
+  }
+
+  cambiarEstado(q: Cotizacion) {
+    this.dialog.open(QuoteStatusModalComponent, {
+      data: {
+        id: q.id,
+        code: q.code,
+        currentStatus: q.status
+      },
+      width: '400px',
+      disableClose: false,
+      backdropClass: 'blur-backdrop'
+    });
+  }
 
   verDetalles(id: number) {
     this.router.navigate([id], { relativeTo: this.route });

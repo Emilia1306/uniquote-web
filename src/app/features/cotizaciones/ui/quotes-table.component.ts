@@ -1,8 +1,10 @@
 import { Component, inject, HostListener, Input } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Dialog } from '@angular/cdk/dialog';
 import { CotizacionesStore } from '../data/quotes.store';
 import { STATUS_COLORS } from './status-colors';
+import { QuoteStatusModalComponent } from './quote-status-modal.component';
 import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
 
 @Component({
@@ -88,12 +90,12 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
                   Ver detalles
                 </button>
 
-                <button (click)="editar(q.id)" 
+                <button *ngIf="!isFinalized(q.status)" (click)="cambiarEstado(q)" 
                   class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  Editar
+                  Editar estado
                 </button>
 
                 <button (click)="clonar(q.id)" 
@@ -129,7 +131,26 @@ export class QuotesTableComponent {
   store = inject(CotizacionesStore);
   router = inject(Router);
   route = inject(ActivatedRoute);
+  dialog = inject(Dialog);
   STATUS_COLORS = STATUS_COLORS;
+
+  isFinalized(status: string): boolean {
+    return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
+  }
+
+  cambiarEstado(q: Cotizacion) {
+    this.activeDropdownId = null; // close dropdown
+    this.dialog.open(QuoteStatusModalComponent, {
+      data: {
+        id: q.id,
+        code: q.code,
+        currentStatus: q.status
+      },
+      width: '400px',
+      disableClose: false,
+      backdropClass: 'blur-backdrop'
+    });
+  }
 
   activeDropdownId: number | null = null;
   dropdownPos = { x: 0, y: 0 };

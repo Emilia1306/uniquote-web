@@ -9,6 +9,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ContactosApi } from '../clientes/data/contactos.api';
 import { ClientesApi } from '../clientes/data/clientes.api';
 
+import { UiSelectComponent, UiSelectItem } from '../../shared/ui/ui-select/ui-select.component';
+
 @Component({
   standalone: true,
   selector: 'quotes-browse',
@@ -16,7 +18,8 @@ import { ClientesApi } from '../clientes/data/clientes.api';
     CommonModule,
     QuotesToolbarComponent,
     QuotesTableComponent,
-    QuotesCardsComponent
+    QuotesCardsComponent,
+    UiSelectComponent
   ],
   template: `
   <div class="page">
@@ -52,6 +55,18 @@ import { ClientesApi } from '../clientes/data/clientes.api';
           (click)="goCreate()">
           <span>+ Nueva Cotización</span>
         </button>
+      </div>
+    </div>
+
+    <!-- FILTERS ROW (Visible only for Admin or My Quotes tab) -->
+    <div *ngIf="auth.role() === 'ADMIN' || store.filters().mineOnly" class="mb-6 flex justify-end animate-dropdown">
+      <div class="w-56">
+        <ui-select 
+          [items]="statusItems" 
+          [value]="store.filters().status ?? null" 
+          (valueChange)="setFilter($event)"
+          placeholder="Todos los estados">
+        </ui-select>
       </div>
     </div>
 
@@ -109,6 +124,21 @@ export class QuotesBrowsePage {
 
     // Cargar todas las cotizaciones
     this.store.loadGlobal({});
+  }
+
+
+  statusItems: UiSelectItem[] = [
+    { value: null, label: 'Todos' },
+    { value: 'ENVIADO', label: 'Enviado' },
+    { value: 'NEGOCIACION', label: 'Negociación' },
+    { value: 'APROBADO', label: 'Aprobado' },
+    { value: 'NO_APROBADO', label: 'No Aprobado' },
+    { value: 'EN_PAUSA', label: 'En Pausa' },
+    { value: 'REEMPLAZADA', label: 'Reemplazada' },
+  ];
+
+  setFilter(val: any) {
+    this.store.setFilters({ status: val });
   }
 
   goCreate() {
