@@ -1,38 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   standalone: true,
   selector: 'cotizacion-items-table',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   template: `
   <div class="card p-6 overflow-hidden"> 
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-lg">Desglose de costos</h3>
-      
-      <div class="flex gap-2">
-        <button 
-          *ngIf="canEdit && !isEditMode"
-          (click)="isEditMode = true"
-          class="px-4 py-2 bg-[var(--brand)] text-white rounded-lg hover:opacity-90 transition-opacity">
-          Editar
-        </button>
-        
-        <button 
-          *ngIf="isEditMode"
-          (click)="isEditMode = false"
-          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:opacity-90 transition-opacity">
-          Guardar
-        </button>
-        
-        <button 
-          *ngIf="isEditMode"
-          (click)="isEditMode = false"
-          class="px-4 py-2 bg-zinc-500 text-white rounded-lg hover:opacity-90 transition-opacity">
-          Cancelar
-        </button>
-      </div>
     </div>
 
     <div class="overflow-x-auto">
@@ -44,6 +20,7 @@ import { FormsModule } from '@angular/forms';
             <th class="py-2 px-3 text-center">Días</th>
             <th class="py-2 px-3 text-right">Costo Unitario</th>
             <th class="py-2 px-3 text-right">Total</th>
+            <th *ngIf="canEdit" class="py-2 px-3 w-10"></th>
           </tr>
         </thead>
 
@@ -51,52 +28,48 @@ import { FormsModule } from '@angular/forms';
           <ng-container *ngFor="let category of categories">
             <!-- Category Header Row -->
             <tr class="bg-zinc-100 border-t-2 border-zinc-300">
-              <td colspan="5" class="py-2 px-3 font-semibold text-zinc-800 uppercase text-xs">
+              <td [attr.colspan]="canEdit ? 6 : 5" class="py-2 px-3 font-semibold text-zinc-800 uppercase text-xs">
                 {{ category }}
               </td>
             </tr>
 
             <!-- Item Rows -->
-            <tr *ngFor="let item of getItemsByCategory(category)" class="border-b hover:bg-zinc-50">
+            <tr *ngFor="let item of getItemsByCategory(category)" class="border-b hover:bg-zinc-50 group">
               <!-- Description -->
               <td class="py-2 px-3">
-                <span *ngIf="!isEditMode">{{ item.description }}</span>
-                <input *ngIf="isEditMode"
-                      type="text"
-                      [(ngModel)]="item.description"
-                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)]">
+                {{ item.description }}
               </td>
 
               <!-- Personas -->
               <td class="py-2 px-3 text-center">
-                <span *ngIf="!isEditMode">{{ item.personas }}</span>
-                <input *ngIf="isEditMode"
-                      type="number"
-                      [(ngModel)]="item.personas"
-                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
+                {{ item.personas }}
               </td>
 
               <!-- Días -->
               <td class="py-2 px-3 text-center">
-                <span *ngIf="!isEditMode">{{ item.dias }}</span>
-                <input *ngIf="isEditMode"
-                      type="number"
-                      [(ngModel)]="item.dias"
-                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-center">
+                {{ item.dias }}
               </td>
 
               <!-- Costo Unitario -->
               <td class="py-2 px-3 text-right">
-                <span *ngIf="!isEditMode">$ {{ item.costoUnitario }}</span>
-                <input *ngIf="isEditMode"
-                      type="number"
-                      [(ngModel)]="item.costoUnitario"
-                      class="w-full px-2 py-1 border border-zinc-300 rounded focus:outline-none focus:border-[var(--brand)] text-right">
+                $ {{ getNumber(item.costoUnitario) | number:'1.2-2' }}
               </td>
 
-              <!-- Total (Read-only) -->
+              <!-- Total -->
               <td class="py-2 px-3 text-right font-semibold">
-                $ {{ item.totalConComision }}
+                $ {{ getNumber(item.totalConComision) | number:'1.2-2' }}
+              </td>
+
+              <!-- Actions -->
+               <td *ngIf="canEdit" class="py-2 px-3 text-right">
+                <button 
+                  (click)="editItem.emit(item)"
+                  class="p-1.5 rounded-full hover:bg-[var(--brand)]/10 text-zinc-300 hover:text-[var(--brand)] transition-all"
+                  title="Editar">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                </button>
               </td>
             </tr>
           </ng-container>
@@ -109,7 +82,7 @@ import { FormsModule } from '@angular/forms';
 export class CotizacionItemsTableComponent {
   @Input() items: any[] = [];
   @Input() canEdit = false;
-  isEditMode = false;
+  @Output() editItem = new EventEmitter<any>();
 
   get categories(): string[] {
     const cats = new Set<string>();
@@ -121,5 +94,10 @@ export class CotizacionItemsTableComponent {
 
   getItemsByCategory(category: string): any[] {
     return this.items.filter(item => (item.category || 'SIN CATEGORÍA') === category);
+  }
+
+  getNumber(val: any): number {
+    if (val === null || val === undefined || val === '') return 0;
+    return Number(val) || 0;
   }
 }

@@ -91,6 +91,12 @@ export class CotizacionesApi {
     });
   }
 
+  updateItem(id: number, itemId: number, body: any) {
+    return this.http.patch(`${this.base}/${id}/items/${itemId}`, body, {
+      withCredentials: true
+    });
+  }
+
   updateStatus(id: number, body: any) {
     return this.http.patch(`${this.base}/${id}/status`, body, {
       withCredentials: true
