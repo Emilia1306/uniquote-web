@@ -52,7 +52,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             <td class="px-4 py-2">
               <span class="px-3 py-1 rounded-full text-xs font-medium inline-block"
                 [ngClass]="STATUS_COLORS[q.status]">
-            {{ q.status | titlecase }}
+            {{ formatStatus(q.status) }}
           </span>
 
             </td>
@@ -133,6 +133,12 @@ export class QuotesTableComponent {
   route = inject(ActivatedRoute);
   dialog = inject(Dialog);
   STATUS_COLORS = STATUS_COLORS;
+
+  formatStatus(status: string): string {
+    if (!status) return '';
+    const text = status.replace(/_/g, ' ').toLowerCase();
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
 
   isFinalized(status: string): boolean {
     return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);

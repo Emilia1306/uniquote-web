@@ -86,14 +86,14 @@ export class CotizacionesStore {
     if (search.trim()) {
       const s = search.toLowerCase();
       rows = rows.filter(r =>
-        r.name.toLowerCase().includes(s) ||
-        r.code.toLowerCase().includes(s) ||
-        r.createdBy.name.toLowerCase().includes(s) ||
-        r.createdBy.lastName.toLowerCase().includes(s) ||
-        r.contacto?.nombre?.toLowerCase().includes(s) ||
-        r.contacto?.email?.toLowerCase().includes(s) ||
-        r.project?.name?.toLowerCase().includes(s) ||
-        r.project?.cliente?.empresa?.toLowerCase().includes(s)
+        (r.name || '').toLowerCase().includes(s) ||
+        (r.code || '').toLowerCase().includes(s) ||
+        (r.createdBy?.name || '').toLowerCase().includes(s) ||
+        (r.createdBy?.lastName || '').toLowerCase().includes(s) ||
+        (r.contacto?.nombre || '').toLowerCase().includes(s) ||
+        (r.contacto?.email || '').toLowerCase().includes(s) ||
+        (r.project?.name || '').toLowerCase().includes(s) ||
+        (r.project?.cliente?.empresa || '').toLowerCase().includes(s)
       );
     }
 
