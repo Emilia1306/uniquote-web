@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ProyectosApi } from './data/proyectos.api';
 import { QuotesCardsComponent } from '../cotizaciones/ui/quotes-cards.component';
 import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component';
+import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
 import { CotizacionesStore } from '../cotizaciones/data/quotes.store';
 import { AuthService } from '../../core/auth/auth.service';
 import Swal from 'sweetalert2';
@@ -16,7 +17,8 @@ import { Location } from '@angular/common';
   imports: [
     CommonModule,
     QuotesCardsComponent,
-    QuotesTableComponent
+    QuotesTableComponent,
+    UiPaginationComponent
   ],
   template: `
   <div class="page">
@@ -170,15 +172,23 @@ import { Location } from '@angular/common';
       <ng-container [ngSwitch]="view()">
         <quotes-cards 
           *ngSwitchCase="'cards'" 
-          [quoteList]="quotes()"
+          [quoteList]="paginatedQuotes()"
           [hideContextColumns]="true"
         />
         <quotes-table 
           *ngSwitchCase="'table'" 
-          [quoteList]="quotes()" 
+          [quoteList]="paginatedQuotes()" 
           [hideContextColumns]="true"
         />
       </ng-container>
+
+      <ui-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalItems]="quotes().length"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="currentPage.set($event)"
+      />
 
     </ng-container>
   </div>
@@ -201,6 +211,10 @@ export class ProyectoDetailsPage {
   // Filter for "Mis cotizaciones"
   showOnlyMyQuotes = signal<boolean>(false);
 
+  // Pagination state
+  currentPage = signal<number>(1);
+  itemsPerPage = 10;
+
   // Expose quotes from store with optional filtering
   quotes = computed(() => {
     const allQuotes = this.quotesStore.items();
@@ -213,6 +227,19 @@ export class ProyectoDetailsPage {
     // Filter to show only quotes created by the logged-in user
     const userId = this.auth.user()?.id;
     return allQuotes.filter(q => q.createdBy?.id === userId);
+  });
+
+  // Paginated quotes
+  paginatedQuotes = computed(() => {
+    const allQuotes = this.quotes();
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return allQuotes.slice(start, end);
+  });
+
+  // Total pages
+  totalPages = computed(() => {
+    return Math.ceil(this.quotes().length / this.itemsPerPage);
   });
 
   totalAmount = computed(() => {
@@ -273,6 +300,7 @@ export class ProyectoDetailsPage {
 
   toggleMyQuotes() {
     this.showOnlyMyQuotes.update(v => !v);
+    this.currentPage.set(1); // Reset to first page when filter changes
   }
 
   goCrearCotizacion() {
