@@ -16,10 +16,7 @@
         <p class="text-sm muted">{{ usuarios().length }} usuarios registrados</p>
       </div>
 
-      <a
-        [routerLink]="['/admin/usuarios']"
-        class="btn btn-dark h-9 px-4 rounded-full"
-      >
+      <a [routerLink]="['/admin/usuarios']" class="btn btn-dark h-9 px-4 rounded-full">
         Ver más
       </a>
     </div>
@@ -45,10 +42,8 @@
             <td>{{ u.name }} {{ u.lastName }}</td>
             <td class="truncate max-w-[260px] md:max-w-none">{{ u.email }}</td>
             <td>
-              <span
-                *ngIf="u.role"
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white bg-[--brand]"
-              >
+              <span *ngIf="u.role"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white bg-[--brand]">
                 {{ u.role | titlecase }}
               </span>
             </td>
@@ -64,15 +59,45 @@
   </section>
 
   <!-- Card: Actividad reciente -->
+  <!-- Card: Actividad reciente -->
   <section class="card">
-    <h3 class="text-lg font-semibold mb-4">Actividad reciente</h3>
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold">Actividad reciente</h3>
+      <a routerLink="/admin/auditoria" class="text-sm text-[--brand] hover:underline">Ver todo</a>
+    </div>
 
-    <ul class="space-y-3 text-sm">
-      <li *ngFor="let log of auditoria" class="flex justify-between border-b last:border-b-0 pb-2">
-        <span>{{ log.mensaje }}</span>
-        <span class="muted">{{ log.hace }}</span>
-      </li>
-    </ul>
+    <!-- Loading -->
+    <div *ngIf="loadingAudit()" class="py-4 text-sm muted">Cargando actividad...</div>
+
+    <!-- Empty -->
+    <div *ngIf="!loadingAudit() && auditoria().length === 0" class="py-4 text-sm muted">
+      No hay actividad reciente.
+    </div>
+
+    <div *ngIf="!loadingAudit() && auditoria().length > 0" class="flex flex-col gap-4">
+      <div *ngFor="let log of auditoria()"
+        class="flex items-start gap-4 p-2 hover:bg-zinc-50 rounded-xl transition-colors">
+        <!-- Icon Container -->
+        <div class="w-12 h-12 rounded-xl bg-red-400 flex items-center justify-center shrink-0 text-white shadow-sm">
+          <lucide-icon name="activity" size="24" strokeWidth="2.5"></lucide-icon>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0 pt-0.5">
+          <h4 class="text-base font-bold text-zinc-900 leading-tight mb-1">
+            {{ log.accion }}
+          </h4>
+          <p class="text-sm text-zinc-500 mb-2 truncate">
+            {{ log.descripcion }}
+          </p>
+
+          <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
+            <lucide-icon name="clock" size="14" class="text-zinc-400"></lucide-icon>
+            <span>{{ log.createdAt | timeAgo }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
 </div>

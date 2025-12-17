@@ -91,19 +91,29 @@ import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-paginati
             </svg>
           </button>
 
-          <!-- New Quote Button -->
-          <button
+          <!-- New Quote Button (Non-Admin) -->
+          <button *ngIf="auth.role() !== 'ADMIN'"
             class="flex-1 md:flex-none h-12 px-6 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 shadow-sm whitespace-nowrap"
             (click)="goCreate()">
             <span>+ Nueva Cotización</span>
           </button>
+
+          <!-- Status Filter (Admin Only - Replaces Button) -->
+          <div *ngIf="auth.role() === 'ADMIN'" class="w-56">
+             <ui-select 
+                [items]="statusItems" 
+                [value]="store.filters().status ?? null" 
+                (valueChange)="setFilter($event)"
+                placeholder="Todos los estados">
+              </ui-select>
+          </div>
         </div>
 
       </div>
     </div>
 
-    <!-- FILTERS ROW (Visible only for Admin or My Quotes tab) -->
-    <div *ngIf="auth.role() === 'ADMIN' || store.filters().mineOnly" class="mb-6 flex justify-end animate-dropdown">
+    <!-- FILTERS ROW (Visible only for My Quotes tab if NOT Admin) -->
+    <div *ngIf="store.filters().mineOnly && auth.role() !== 'ADMIN'" class="mb-6 flex justify-end animate-dropdown">
       <div class="flex items-center gap-3">
         <span class="text-sm font-medium text-zinc-700">Filtrar por estado:</span>
         <div class="w-56">
