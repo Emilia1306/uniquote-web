@@ -40,6 +40,7 @@ export class ProyectosBrowsePage {
 
   // Estado
   searchText = signal('');
+  loading = this.store.loading;
   view = signal<'cards' | 'table'>((localStorage.getItem('proyectos-view-mode') as 'cards' | 'table') || 'table');
 
   toggleView() {

@@ -8,8 +8,48 @@
 
     <section class="card">
         <!-- Loading -->
-        <div *ngIf="loading()" class="py-12 flex justify-center muted">
-            Cargando registros...
+        <!-- Skeleton Loading -->
+        <div *ngIf="loading()" class="overflow-x-auto animate-pulse">
+            <table class="table w-full">
+                <thead>
+                    <tr>
+                        <th class="w-48">
+                            <div class="h-4 bg-zinc-200 rounded w-20"></div>
+                        </th>
+                        <th class="w-1/4">
+                            <div class="h-4 bg-zinc-200 rounded w-24"></div>
+                        </th>
+                        <th class="w-1/4">
+                            <div class="h-4 bg-zinc-200 rounded w-20"></div>
+                        </th>
+                        <th>
+                            <div class="h-4 bg-zinc-200 rounded w-32"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+                        <td>
+                            <div class="h-4 bg-zinc-100 rounded w-32"></div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-2">
+                                <div class="h-4 bg-zinc-200 rounded w-3/4"></div>
+                                <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-2">
+                                <div class="h-4 bg-zinc-200 rounded w-24"></div>
+                                <div class="h-3 bg-zinc-100 rounded w-16"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="h-4 bg-zinc-100 rounded w-full"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- Error -->

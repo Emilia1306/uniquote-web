@@ -129,8 +129,49 @@ import Swal from 'sweetalert2';
     </div>
 
 
-    <!-- LISTA -->
-    <ng-container [ngSwitch]="store.viewMode()">
+    <!-- SKELETON LOADER -->
+    <div *ngIf="store.loading()" class="animate-pulse">
+      <!-- Card Skeleton -->
+      <div *ngIf="store.viewMode() === 'cards'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="rounded-3xl bg-white p-6 shadow-sm border border-zinc-100 flex flex-col h-[320px]">
+           <div class="flex justify-between items-start mb-4">
+              <div class="space-y-2 w-2/3">
+                 <div class="h-5 bg-zinc-200 rounded w-1/2"></div>
+                 <div class="h-3 bg-zinc-100 rounded w-3/4"></div>
+              </div>
+              <div class="h-6 w-20 bg-zinc-100 rounded-full"></div>
+           </div>
+           <div class="space-y-3 mb-6">
+              <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
+              <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
+           </div>
+           
+           <div class="mt-auto pt-4 border-t border-zinc-50 flex items-center justify-between">
+              <div class="h-8 w-24 bg-zinc-200 rounded-lg"></div>
+              <div class="h-6 w-6 bg-zinc-100 rounded-full"></div>
+           </div>
+        </div>
+      </div>
+
+      <!-- Table Skeleton -->
+      <div *ngIf="store.viewMode() === 'table'" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+         <div class="w-full">
+            <div class="bg-zinc-50/50 border-b border-zinc-100 h-10 w-full mb-2"></div>
+            <div class="space-y-1">
+               <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="flex items-center border-b border-zinc-50 p-4">
+                  <div class="h-4 w-20 bg-zinc-200 rounded mx-4"></div>
+                  <div class="h-4 w-1/3 bg-zinc-100 rounded mx-4"></div>
+                  <div class="h-4 w-24 bg-zinc-100 rounded mx-4"></div>
+                  <div class="h-4 w-24 bg-zinc-100 rounded mx-4"></div>
+                  <div class="h-4 w-16 bg-zinc-200 rounded mx-4 ml-auto"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+
+    <!-- CONTENT LIST -->
+    <ng-container *ngIf="!store.loading()" [ngSwitch]="store.viewMode()">
       <quotes-cards *ngSwitchCase="'cards'" [quoteList]="store.paginatedItems()"/>
       <quotes-table *ngSwitchCase="'table'" [quoteList]="store.paginatedItems()"/>
     </ng-container>
