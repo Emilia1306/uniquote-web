@@ -100,6 +100,29 @@ export class CotizacionesStore {
     return rows;
   });
 
+  // PAGINATION
+  page = signal<number>(1);
+  pageSize = signal<number>(10);
+
+  paginatedItems = computed(() => {
+    const p = this.page();
+    const size = this.pageSize();
+    const all = this.filtered();
+    const start = (p - 1) * size;
+    return all.slice(start, start + size);
+  });
+
+  totalPages = computed(() => {
+    const total = this.filtered().length;
+    const size = this.pageSize();
+    return total === 0 ? 1 : Math.ceil(total / size);
+  });
+
+  setPage(p: number) {
+    this.page.set(p);
+  }
+
+
   async loadByProject(projectId: number) {
     this._loading.set(true);
     const res = await this.api.getByProject(projectId).toPromise();
@@ -128,11 +151,17 @@ export class CotizacionesStore {
 
   setFilters(patch: Partial<CotizacionFilters>) {
     const oldMine = this.filters().mineOnly;
+
+    // Update filters
     this.filters.set({
       ...this.filters(),
       ...patch
     });
 
+    // Reset pagination
+    this.page.set(1);
+
+    // If 'mineOnly' changed, reload data
     if (patch.mineOnly !== undefined && patch.mineOnly !== oldMine) {
       this.loadGlobal();
     }
