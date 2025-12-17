@@ -132,15 +132,17 @@ import { Location } from '@angular/common';
                (click)="toggleMyQuotes()"
                [class.bg-[var(--brand)]]="showOnlyMyQuotes()"
                [class.border-[var(--brand)]]="showOnlyMyQuotes()"
-               class="flex items-center bg-white border border-zinc-200 rounded-xl px-4 h-11 cursor-pointer hover:bg-zinc-50 transition-colors shadow-sm">
+               [class.hover:brightness-90]="showOnlyMyQuotes()"
+               class="flex items-center bg-white border border-zinc-200 rounded-xl px-4 h-11 cursor-pointer transition-all shadow-sm"
+               [class.hover:bg-zinc-50]="!showOnlyMyQuotes()">
             <span class="text-sm font-medium mr-2"
-                  [class.text-white]="showOnlyMyQuotes()"
+                  [class.text-zinc-900]="showOnlyMyQuotes()"
                   [class.text-zinc-700]="!showOnlyMyQuotes()">Mis cotizaciones</span>
             <div class="w-4 h-4 rounded-full border flex items-center justify-center"
-                 [class.border-white]="showOnlyMyQuotes()"
-                 [class.bg-white]="showOnlyMyQuotes()"
+                 [class.border-zinc-900]="showOnlyMyQuotes()"
+                 [class.bg-zinc-900]="showOnlyMyQuotes()"
                  [class.border-zinc-300]="!showOnlyMyQuotes()">
-              <svg *ngIf="showOnlyMyQuotes()" class="w-3 h-3 text-[var(--brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg *ngIf="showOnlyMyQuotes()" class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
               </svg>
             </div>
