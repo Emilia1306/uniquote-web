@@ -114,4 +114,45 @@ export class CotizacionesApi {
       withCredentials: true
     });
   }
+
+  // --------------------------------------------------------------------------
+  // STATS
+  // --------------------------------------------------------------------------
+  getStatsTotal() {
+    return this.http.get<{ total: number }>(`${this.base}/stats/total`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsPendientes() {
+    return this.http.get<{ status: string, total: number }>(`${this.base}/stats/pendientes`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsAprobadas() {
+    return this.http.get<{ status: string, total: number }>(`${this.base}/stats/aprobadas`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsNoAprobadas() {
+    return this.http.get<{ status: string, total: number }>(`${this.base}/stats/no-aprobadas`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsUltimos6Meses() {
+    return this.http.get<Array<{ month: string, total: number, aprobadas: number, noAprobadas: number }>>(
+      `${this.base}/stats/ultimos-6-meses`,
+      { withCredentials: true }
+    );
+  }
+
+  getStatsActividadSemanal(weekOffset = 0) {
+    return this.http.get<{ weekOffset: number, days: Array<{ day: string, date: string, total: number }> }>(
+      `${this.base}/stats/actividad-semanal?weekOffset=${weekOffset}`,
+      { withCredentials: true }
+    );
+  }
 }

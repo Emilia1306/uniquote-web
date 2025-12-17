@@ -231,11 +231,20 @@ export class AdminUsersPage {
         showConfirmButton: false
       });
     } catch (e: any) {
-      const msg = e?.message ?? 'No se pudo eliminar';
+      console.error(e);
+      let msg = 'No se pudo eliminar el usuario.';
+
+      // Check for 500 or constraint violation
+      if (e?.status === 500 || e?.message?.includes('500') || e?.error?.message?.includes('constraint')) {
+        msg = 'No se puede eliminar este usuario porque tiene registros asociados (Cotizaciones, Proyectos, etc.) en el sistema.';
+      } else {
+        msg = e?.message ?? msg;
+      }
+
       this.error.set(msg);
       Swal.fire({
         icon: 'error',
-        title: 'Error',
+        title: 'No se pudo eliminar',
         text: msg,
         confirmButtonColor: 'var(--brand)'
       });

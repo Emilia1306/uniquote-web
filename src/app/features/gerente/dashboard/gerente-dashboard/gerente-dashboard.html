@@ -1,59 +1,39 @@
-<div class="grid gap-6">
+<div class="grid gap-6 pt-8">
   <!-- Encabezado -->
   <div>
-    <h2 class="text-2xl md:text-3xl font-semibold">{{ titulo }}</h2>
-    <p class="text-sm text-zinc-500">{{ subtitulo }}</p>
+    <h2 class="text-3xl font-bold text-[color:var(--brand)] mb-1">{{ titulo }}</h2>
+    <p class="text-zinc-500">{{ subtitulo }}</p>
   </div>
 
   <!-- KPIs -->
-  
-    <section class="grid gap-4 md:grid-cols-4">
+
+  <section class="grid gap-4 md:grid-cols-4">
     <div *ngFor="let k of kpis()" class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
-        <div class="flex items-center gap-3 mb-2">
-        <div class="h-10 w-10 rounded-lg bg-zinc-200 grid place-items-center">
-            <!-- si tienes ng-icons -->
-            <ng-icon [name]="k.icon" class="text-zinc-700"></ng-icon>
-            <!-- si NO tienes ng-icons, usa un fallback de texto/emoji -->
-            <!-- <span>📄</span> -->
+      <div class="flex items-center gap-3 mb-2">
+        <div class="h-10 w-10 rounded-lg grid place-items-center" [ngClass]="k.bgClass">
+          <ng-icon [name]="k.icon" [class]="k.iconClass"></ng-icon>
         </div>
         <div class="text-sm text-zinc-500">{{ k.label }}</div>
-        </div>
-        <div class="text-2xl font-semibold">{{ k.value | number }}</div>
+      </div>
+      <div class="text-2xl font-semibold">{{ k.value | number }}</div>
     </div>
-    </section>
+  </section>
 
   <!-- Gráficas -->
-  <section class="grid gap-4 md:grid-cols-2">
+  <!-- Gráficas -->
+  <section *ngIf="!loading()" class="grid gap-4 md:grid-cols-2">
     <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
       <div class="font-medium mb-3">Cotizaciones vs Aprobadas (últimos 6 meses)</div>
-      <apx-chart
-        [series]="lineSeries()"
-        [chart]="lineChart"
-        [xaxis]="lineXAxis"
-        [yaxis]="lineYAxis"
-        [stroke]="lineStroke"
-        [markers]="lineMarkers"
-        [grid]="lineGrid"
-        [legend]="lineLegend"
-        [tooltip]="lineTooltip"
-        [dataLabels]="lineDataLabels"
-        [colors]="lineColors"
-        [fill]="lineFill">
+      <apx-chart [series]="lineSeries()" [chart]="lineChart" [xaxis]="lineXAxis()" [yaxis]="lineYAxis"
+        [stroke]="lineStroke" [markers]="lineMarkers" [grid]="lineGrid" [legend]="lineLegend" [tooltip]="lineTooltip"
+        [dataLabels]="lineDataLabels" [colors]="lineColors" [fill]="lineFill">
       </apx-chart>
     </div>
 
     <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
       <div class="font-medium mb-3">Actividad semanal (cotizaciones por día)</div>
-      <apx-chart
-        [series]="barSeries()"
-        [chart]="barChart"
-        [xaxis]="barXAxis"
-        [yaxis]="barYAxis"
-        [grid]="barGrid"
-        [plotOptions]="barPlot"
-        [dataLabels]="barDataLabels"
-        [colors]="barColors"
-        [fill]="barFill"
+      <apx-chart [series]="barSeries()" [chart]="barChart" [xaxis]="barXAxis()" [yaxis]="barYAxis" [grid]="barGrid"
+        [plotOptions]="barPlot" [dataLabels]="barDataLabels" [colors]="barColors" [fill]="barFill"
         [tooltip]="barTooltip">
       </apx-chart>
     </div>
