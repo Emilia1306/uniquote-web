@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CotizacionesApi } from '../data/cotizaciones.api';
 import { CotizacionStatusPillComponent } from './cotizacion-status-pill.component';
@@ -8,12 +9,17 @@ import { CotizacionItemsTableComponent } from './cotizacion-items-table.componen
 import { AuthService } from '../../../core/auth/auth.service';
 
 import { STATUS_COLORS } from '../ui/status-colors';
-
 @Component({
   standalone: true,
   selector: 'cotizacion-detail',
-  imports: [CommonModule, CotizacionStatusPillComponent, CotizacionItemsTableComponent],
-  templateUrl: './cotizacion-detail.page.html'
+  imports: [CommonModule, FormsModule, CotizacionStatusPillComponent, CotizacionItemsTableComponent],
+  templateUrl: './cotizacion-detail.page.html',
+  styles: [`
+    .animate-fade-in { animation: fadeIn 0.2s ease-out; }
+    .animate-scale-up { animation: scaleUp 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  `]
 })
 export class CotizacionDetailPage {
 
@@ -27,6 +33,14 @@ export class CotizacionDetailPage {
   cotizacion: any = null;
   loading = true;
 
+  // Edit Item State
+  editingItem: any = null;
+  editForm = {
+    personas: 0,
+    dias: 0,
+    costoUnitario: 0
+  };
+
   get canEdit() {
     if (!this.cotizacion) return false;
     const role = this.auth.role();
@@ -39,7 +53,8 @@ export class CotizacionDetailPage {
   get canEditItems() {
     if (!this.cotizacion) return false;
     const role = this.auth.role();
-    return role === 'ADMIN' || role === 'GERENTE';
+    // User requested "only admin" for this part
+    return role === 'ADMIN';
   }
 
   get canDelete() {
@@ -83,6 +98,38 @@ export class CotizacionDetailPage {
     if (!confirm('¿Seguro que deseas eliminar esta cotización?')) return;
     await this.api.delete(this.cotizacion.id).toPromise();
     this.router.navigate(['/cotizaciones']);
+  }
+
+  // Item Editing
+  openEdit(item: any) {
+    this.editingItem = item;
+    // Copy values to form
+    this.editForm = {
+      personas: Number(item.personas) || 0,
+      dias: Number(item.dias) || 0,
+      costoUnitario: Number(item.costoUnitario) || 0
+    };
+    // Prevent scrolling
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeEdit() {
+    this.editingItem = null;
+    document.body.style.overflow = '';
+  }
+
+  async saveItem() {
+    if (!this.editingItem || !this.cotizacion) return;
+
+    try {
+      await this.api.updateItem(this.cotizacion.id, this.editingItem.id, this.editForm).toPromise();
+      await this.load(this.cotizacion.id); // Reload to get updated calculations
+      this.closeEdit();
+    } catch (err: any) {
+      console.error('Error updating item:', err);
+      const msg = err.error?.message || 'Error al actualizar el ítem';
+      alert(msg);
+    }
   }
 
 }

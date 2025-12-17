@@ -15,21 +15,21 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
   template: `
   <ng-container *ngIf="(quoteList || store.filtered()).length > 0; else emptyState">
     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      <article *ngFor="let q of (quoteList || store.filtered())" class="card card-hover p-6">
+      <article *ngFor="let q of (quoteList || store.filtered())" class="card card-hover p-6 flex flex-col h-full">
 
         <!-- Header: Título + Estado -->
         <div class="flex items-start justify-between gap-2 mb-4">
-          <h3 class="text-xl font-semibold leading-tight">{{ q.name }}</h3>
-          <span class="px-3 py-1 rounded-full text-xs font-medium" [ngClass]="STATUS_COLORS[q.status]">
-            {{ q.status | titlecase }}
+          <h3 class="text-xl font-semibold leading-tight break-words">{{ q.name }}</h3>
+          <span class="px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0" [ngClass]="STATUS_COLORS[q.status]">
+            {{ formatStatus(q.status) }}
           </span>
         </div>
 
         <!-- Información detallada -->
-        <div class="space-y-2 text-sm">
+        <div class="space-y-2 text-sm flex-1">
           <div class="flex justify-between" *ngIf="!hideContextColumns">
             <span class="text-zinc-500">Cliente:</span>
-            <span class="font-medium">{{ q.project?.cliente?.empresa || 'N/A' }}</span>
+            <span class="font-medium text-right">{{ q.project?.cliente?.empresa || 'N/A' }}</span>
           </div>
           
           <div class="flex justify-between">
@@ -39,23 +39,24 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           
           <div class="flex justify-between" *ngIf="q.metodologia || q.studyType">
             <span class="text-zinc-500">Tipo de estudio:</span>
-            <span>{{ q.metodologia || q.studyType }}</span>
+            <span class="text-right">{{ q.metodologia || q.studyType }}</span>
           </div>
           
           <div class="flex justify-between" *ngIf="!hideContextColumns">
             <span class="text-zinc-500">Proyecto:</span>
-            <span class="font-medium">{{ q.project?.name || 'N/A' }}</span>
+            <span class="font-medium text-right">{{ q.project?.name || 'N/A' }}</span>
           </div>
           
           <div class="flex justify-between">
             <span class="text-zinc-500">Creador:</span>
+            <span class="text-right">
               {{ (q.createdBy && q.createdBy.name) ? (q.createdBy.name + ' ' + q.createdBy.lastName) : (auth.user()?.name + ' ' + auth.user()?.lastName) }}
-
+            </span>
           </div>
           
           <div class="flex justify-between">
             <span class="text-zinc-500">Contacto:</span>
-            <span>{{ q.contacto?.nombre || 'N/A' }}</span>
+            <span class="text-right">{{ q.contacto?.nombre || 'N/A' }}</span>
           </div>
           
           <div class="flex justify-between">
@@ -64,7 +65,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           </div>
         </div>
 
-        <div class="divider"></div>
+        <div class="divider mt-4 mb-4"></div>
 
         <!-- Monto total -->
         <div class="mb-4">
@@ -96,12 +97,14 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             </svg>
           </button>
 
+          <!-- Clonar (Solo aprobadas) -->
           <button 
-            class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
-            (click)="clonar(q.id)"
-            title="Clonar">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            *ngIf="q.status === 'APROBADO'"
+            (click)="clonar(q)"
+            class="h-8 w-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            title="Clonar cotización">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </button>
         </div>
@@ -131,6 +134,12 @@ export class QuotesCardsComponent {
 
   STATUS_COLORS = STATUS_COLORS;
 
+  formatStatus(status: string): string {
+    if (!status) return '';
+    const text = status.replace(/_/g, ' ').toLowerCase();
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
+
   isFinalized(status: string): boolean {
     return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
   }
@@ -156,11 +165,15 @@ export class QuotesCardsComponent {
     this.router.navigate(['editar', id], { relativeTo: this.route });
   }
 
-  async clonar(id: number) {
+  async clonar(q: Cotizacion) {
+    if (q.status !== 'APROBADO') {
+      alert('Solo se pueden clonar cotizaciones aprobadas.');
+      return;
+    }
     if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
 
     try {
-      const res = await this.store.cloneQuote(id);
+      const res = await this.store.cloneQuote(q.id);
       if (res?.id) {
         this.router.navigate(['editar', res.id], { relativeTo: this.route });
       }
