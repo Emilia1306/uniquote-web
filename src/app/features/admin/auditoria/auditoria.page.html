@@ -1,0 +1,75 @@
+<div class="page space-y-8">
+    <header class="flex items-center justify-between">
+        <div>
+            <h1 class="text-[color:var(--brand)]">Auditoría</h1>
+            <p class="muted">Registro de todas las acciones del sistema</p>
+        </div>
+    </header>
+
+    <section class="card">
+        <!-- Loading -->
+        <div *ngIf="loading()" class="py-12 flex justify-center muted">
+            Cargando registros...
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error()" class="p-4 bg-red-50 text-red-600 rounded-lg mb-4">
+            {{ error() }}
+        </div>
+
+        <!-- Table -->
+        <div *ngIf="!loading() && !error()" class="overflow-x-auto">
+            <table class="table w-full">
+                <thead>
+                    <tr>
+                        <th class="w-48">Fecha</th>
+                        <th class="w-1/4">Usuario</th>
+                        <th class="w-1/4">Acción</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of logs()">
+                        <td class="whitespace-nowrap">{{ log.createdAt | date:'medium' }}</td>
+                        <td>
+                            <div *ngIf="log.performedBy" class="flex flex-col">
+                                <span class="font-medium text-zinc-900">{{ log.performedBy.name }} {{
+                                    log.performedBy.lastName }}</span>
+                                <span class="text-xs muted">{{ log.performedBy.email }}</span>
+                            </div>
+                            <span *ngIf="!log.performedBy" class="muted italic">Sistema</span>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ log.accion }}</span>
+                            <div class="text-xs muted">{{ log.entidad }} #{{ log.entidadId }}</div>
+                        </td>
+                        <td class="text-sm text-zinc-600">
+                            {{ log.descripcion }}
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="logs().length === 0">
+                        <td colspan="4" class="py-12 text-center muted">No se encontraron registros de auditoría</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination (Simple Previous/Next for now) -->
+        <div *ngIf="!loading() && meta()" class="flex items-center justify-between mt-4 border-t pt-4">
+            <div class="text-sm muted">
+                Página {{ meta().page }} de {{ meta().lastPage }} (Total: {{ meta().total }})
+            </div>
+            <div class="flex gap-2">
+                <button [disabled]="meta().page <= 1" (click)="changePage(meta().page - 1)"
+                    class="btn btn-outline h-9 px-3 text-sm disabled:opacity-50">
+                    Anterior
+                </button>
+                <button [disabled]="meta().page >= meta().lastPage" (click)="changePage(meta().page + 1)"
+                    class="btn btn-outline h-9 px-3 text-sm disabled:opacity-50">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </section>
+</div>

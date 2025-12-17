@@ -9,8 +9,13 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  encapsulation: ViewEncapsulation.None, 
-  imports: [RouterLink, RouterLinkActive, NgFor, LucideAngularModule],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    NgFor,
+    LucideAngularModule
+  ],
   styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',
 })
@@ -25,8 +30,6 @@ export class SidebarComponent {
 
     return [...ROLE_MENU[role]];
   });
-
-
 
   logout() {
     this.auth.logout();

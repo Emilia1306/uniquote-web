@@ -62,6 +62,7 @@ export const routes: Routes = [
           { path: 'proyectos', component: ProyectosBrowsePage },
           { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
           { path: 'tarifario', component: TarifarioPage },
+          { path: 'auditoria', loadComponent: () => import('./features/admin/auditoria/auditoria.page').then(m => m.AuditoriaPage) },
         ]
       },
 

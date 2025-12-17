@@ -8,7 +8,9 @@ import { credentialsInterceptor } from './core/http/credentials.interceptor';
 import { jwtInterceptor } from './core/http/jwt.interceptor';
 import { errorsInterceptor } from './core/http/errors.interceptor';
 
-import { provideAnimations } from '@angular/platform-browser/animations'; // opcional (para librerías que lo requieran)
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { importProvidersFrom } from '@angular/core';
+import { LucideAngularModule, House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2 } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,5 +28,7 @@ export const appConfig: ApplicationConfig = {
         errorsInterceptor,      // tercero: maneja 401/otros errores
       ])
     ),
+
+    importProvidersFrom(LucideAngularModule.pick({ House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2 }))
   ],
 };

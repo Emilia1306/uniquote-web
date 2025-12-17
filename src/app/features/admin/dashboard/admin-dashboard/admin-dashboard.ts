@@ -1,40 +1,41 @@
 // src/app/features/admin/dashboard/admin-dashboard.ts
 import { Component, inject, signal } from '@angular/core';
-import { NgFor, NgIf, NgClass, TitleCasePipe } from '@angular/common';
+import { NgFor, NgIf, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UsersApi } from '../../users/data/users.api';
+import { AuditoriaApi, LogAuditoria } from '../../data/auditoria.api';
 import type { User } from '../../../../core/models/user';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-type LogAuditoria = { mensaje: string; hace: string };
+
 
 @Component({
   selector: 'admin-dashboard',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TitleCasePipe, RouterLink],
+  imports: [NgFor, NgIf, NgClass, TitleCasePipe, RouterLink, DatePipe],
   templateUrl: './admin-dashboard.html',
 })
 export class AdminDashboardComponent {
   private usersApi = inject(UsersApi);
+  private auditoriaApi = inject(AuditoriaApi);
   private auth = inject(AuthService);
 
   usuarios = signal<User[]>([]);
   loadingUsers = signal<boolean>(false);
   usersError = signal<string | null>(null);
 
+  auditoria = signal<LogAuditoria[]>([]);
+  loadingAudit = signal<boolean>(false);
+
   // (Opcional) por si quieres mostrarlos / depurar
   meId = signal<number | string | null>(null);
   meEmail = signal<string | null>(null);
 
-  auditoria: LogAuditoria[] = [
-    { mensaje: 'Editó cotización #104', hace: 'hace 2 h' },
-    { mensaje: 'Aprobó cotización #101', hace: 'hace 5 h' },
-    { mensaje: 'Actualizó tarifas de transporte', hace: 'ayer' },
-  ];
-
   async ngOnInit() {
     this.loadingUsers.set(true);
     this.usersError.set(null);
+    this.loadingAudit.set(true);
+
     try {
       // Asegura tener al usuario autenticado disponible
       await this.auth.loadMeOnce();
@@ -52,10 +53,17 @@ export class AdminDashboardComponent {
       );
 
       this.usuarios.set(cleaned);
+
+      // Cargar auditoria reciente
+      const logs = await this.auditoriaApi.listRecent(5);
+      this.auditoria.set(logs);
+
     } catch (e: any) {
-      this.usersError.set(e?.message ?? 'No se pudieron cargar los usuarios');
+      console.error('Error dashboard', e);
+      this.usersError.set(e?.message ?? 'No se pudieron cargar los datos');
     } finally {
       this.loadingUsers.set(false);
+      this.loadingAudit.set(false);
     }
   }
 
