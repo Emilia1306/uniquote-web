@@ -55,7 +55,6 @@ export class ProyectosBrowsePage {
   // Listas para comboboxes
   clientesItems = signal<UiComboboxItem[]>([]);
   contactosItems = signal<UiComboboxItem[]>([]);
-  editContactosItems = signal<UiComboboxItem[]>([]);
 
   // Contexto de cliente (si estamos viendo el historial de un cliente especifico)
   clienteId = signal<number | null>(null);
@@ -66,6 +65,10 @@ export class ProyectosBrowsePage {
   editName = '';
   editClienteId: number | null = null;
   editContactoId: number | null = null;
+
+  // Read-only display fields
+  editClienteName = '';
+  editContactoName = '';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -116,25 +119,6 @@ export class ProyectosBrowsePage {
           label: c.nombre
         }));
         this.contactosItems.set(items);
-      } catch (err) {
-        console.error('Error cargando contactos', err);
-      }
-    }
-  }
-
-  async onEditClienteChange(clienteId: number | null) {
-    this.editClienteId = clienteId;
-    this.editContactoId = null; // Reset contacto
-    this.editContactosItems.set([]);
-
-    if (clienteId) {
-      try {
-        const contactos = await this.contactosApi.listByCliente(clienteId);
-        const items = contactos.map(c => ({
-          value: c.id,
-          label: c.nombre
-        }));
-        this.editContactosItems.set(items);
       } catch (err) {
         console.error('Error cargando contactos', err);
       }
@@ -200,22 +184,10 @@ export class ProyectosBrowsePage {
     this.editClienteId = p.cliente.id;
     this.editContactoId = p.contacto?.id ?? null;
 
-    // Load contacts for the selected client BEFORE showing modal
-    this.editContactosItems.set([]);
-    if (this.editClienteId) {
-      try {
-        const contactos = await this.contactosApi.listByCliente(this.editClienteId);
-        const items = contactos.map(c => ({
-          value: c.id,
-          label: c.nombre
-        }));
-        this.editContactosItems.set(items);
-      } catch (err) {
-        console.error('Error cargando contactos', err);
-      }
-    }
+    // Set display names
+    this.editClienteName = p.cliente.empresa;
+    this.editContactoName = p.contacto?.nombre || 'Sin contacto';
 
-    // Show modal AFTER data is loaded
     (document.getElementById('modal-edit') as HTMLDialogElement).showModal();
   }
 
@@ -259,6 +231,11 @@ export class ProyectosBrowsePage {
   // ------------------------------------------------------
 
   verDetalle(id: number) {
-    this.router.navigate(['/gerente/proyectos', id]);
+    const role = this.auth.role();
+    let prefix = '/gerente';
+    if (role === 'ADMIN') prefix = '/admin';
+    if (role === 'DIRECTOR') prefix = '/director';
+
+    this.router.navigate([`${prefix}/proyectos`, id]);
   }
 }
