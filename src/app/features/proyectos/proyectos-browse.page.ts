@@ -11,6 +11,7 @@ import { Proyecto } from './data/proyectos.types';
 import { ProyectosCardsComponent } from './ui/proyectos-cards.component';
 import { ProyectosTableComponent } from './ui/proyectos-table.component';
 import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox/ui-combobox.component';
+import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
 
 import { ClientesApi } from '../clientes/data/clientes.api';
 import { ContactosApi } from '../clientes/data/contactos.api';
@@ -25,7 +26,8 @@ import { AuthService } from '../../core/auth/auth.service';
     ProyectosCardsComponent,
     ProyectosTableComponent,
     UiComboboxComponent,
-    LucideAngularModule
+    LucideAngularModule,
+    UiPaginationComponent
   ],
   templateUrl: './proyectos-browse.page.html'
 })
@@ -42,6 +44,10 @@ export class ProyectosBrowsePage {
   searchText = signal('');
   loading = this.store.loading;
   view = signal<'cards' | 'table'>((localStorage.getItem('proyectos-view-mode') as 'cards' | 'table') || 'table');
+
+  // Pagination
+  currentPage = signal<number>(1);
+  itemsPerPage = 10;
 
   toggleView() {
     const newVal = this.view() === 'cards' ? 'table' : 'cards';
@@ -162,6 +168,19 @@ export class ProyectosBrowsePage {
       p.contacto?.email?.toLowerCase().includes(text) ||
       `${p.createdBy.name} ${p.createdBy.lastName}`.toLowerCase().includes(text)
     );
+  });
+
+  // Paginated list
+  paginatedList = computed(() => {
+    const allProjects = this.filteredList();
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return allProjects.slice(start, end);
+  });
+
+  // Total pages
+  totalPages = computed(() => {
+    return Math.ceil(this.filteredList().length / this.itemsPerPage);
   });
 
   // ------------------------------------------------------
