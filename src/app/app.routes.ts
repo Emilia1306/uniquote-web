@@ -13,6 +13,7 @@ import { roleGuard } from './core/auth/role.guard';
 import { AdminDashboardComponent } from './features/admin/dashboard/admin-dashboard/admin-dashboard';
 import { GerenteDashboardComponent } from './features/gerente/dashboard/gerente-dashboard/gerente-dashboard';
 import { DirectorDashboard } from './features/director/dashboard/director-dashboard/director-dashboard';
+import { EmployeeStatsPage } from './features/gerente/employee-stats/employee-stats.page';
 
 import { QuotesBrowsePage } from './features/cotizaciones/quotes-browse.page';
 import { AdminUsersPage } from './features/admin/users/users.page';
@@ -72,6 +73,7 @@ export const routes: Routes = [
         canMatch: [roleGuard(['GERENTE'])],
         children: [
           { path: '', component: GerenteDashboardComponent },
+          { path: 'estadisticas-equipo', component: EmployeeStatsPage },
 
           // PROYECTOS
           { path: 'proyectos', component: ProyectosBrowsePage },
@@ -97,6 +99,7 @@ export const routes: Routes = [
         children: [
           { path: '', component: DirectorDashboard },
           { path: 'estadisticas', component: DirectorDashboard },
+          { path: 'estadisticas-equipo', component: EmployeeStatsPage },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
           { path: 'clientes/:id/proyectos', component: ProyectosBrowsePage },

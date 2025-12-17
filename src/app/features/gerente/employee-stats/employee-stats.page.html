@@ -1,0 +1,180 @@
+<div class="page">
+    <!-- HEADER -->
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-[color:var(--brand)] mb-1">Estadísticas de Equipo</h1>
+        <p class="text-zinc-500">Desempeño de gerentes y directores</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="error()" class="bg-red-50 border border-red-200 rounded-2xl p-4 mb-6">
+        <p class="text-red-600">{{ error() }}</p>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="mb-6">
+        <div class="relative">
+            <input type="text" [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)"
+                placeholder="Buscar..."
+                class="w-full px-4 py-3 pr-12 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-[var(--brand)] focus:border-transparent transition-all" />
+            <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading()" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-zinc-50/50 border-b border-zinc-100">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Empleado
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Total
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Enviadas
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">
+                            Aprobadas</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">No
+                            Aprobadas</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Total a
+                            Cobrar</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Última
+                            Creada</th>
+                    </tr>
+                </thead>
+                <tbody class="animate-pulse">
+                    <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" class="border-b border-zinc-50">
+                        <td class="px-6 py-4">
+                            <div class="h-4 w-40 bg-zinc-200 rounded"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-6 w-12 bg-zinc-100 rounded-full"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-6 w-12 bg-blue-100 rounded-full"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-6 w-12 bg-green-100 rounded-full"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-6 w-12 bg-red-100 rounded-full"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 w-24 bg-zinc-200 rounded"></div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="h-4 w-28 bg-zinc-100 rounded"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div *ngIf="!loading() && !error()" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-zinc-50/50 border-b border-zinc-100">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Empleado
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Total
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Enviadas
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">
+                            Aprobadas</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">No
+                            Aprobadas</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Total a
+                            Cobrar</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-zinc-500 uppercase tracking-wide">Última
+                            Creada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let emp of filteredEmployees()"
+                        class="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-zinc-900">{{ emp.name }} {{ emp.lastName }}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800">
+                                {{ formatNumber(emp.total) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ formatNumber(emp.enviados) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ formatNumber(emp.aprobadas) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {{ formatNumber(emp.noAprobadas) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-semibold text-zinc-900">{{ formatCurrency(emp.totalCobrar) }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-zinc-500">
+                            {{ emp.ultimaCreadaAt ? (emp.ultimaCreadaAt | date:'dd/MM/yyyy') : '-' }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div *ngIf="filteredEmployees().length === 0" class="p-12 text-center">
+            <div class="text-zinc-400 mb-2">
+                <svg class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+            </div>
+            <h3 class="text-sm font-medium text-zinc-900">No hay estadísticas disponibles</h3>
+            <p class="mt-1 text-sm text-zinc-500">No se encontraron empleados con estadísticas.</p>
+        </div>
+
+        <!-- PAGINATION -->
+        <div *ngIf="employees().length > 0"
+            class="px-6 py-4 border-t border-zinc-100 flex items-center justify-between bg-white">
+            <div class="text-sm text-zinc-600">
+                Mostrando {{ (pagination().page - 1) * pagination().limit + 1 }} -
+                {{ Math.min(pagination().page * pagination().limit, pagination().total) }}
+                de {{ pagination().total }}
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button (click)="prevPage()" [disabled]="pagination().page === 1"
+                    class="px-4 py-2 text-sm font-medium text-zinc-700 hover:text-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    Anterior
+                </button>
+
+                <div
+                    class="flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-full bg-[var(--brand)] text-white font-medium text-sm">
+                    {{ pagination().page }}
+                </div>
+
+                <button (click)="nextPage()" [disabled]="pagination().page === pagination().totalPages"
+                    class="px-4 py-2 text-sm font-medium text-zinc-700 hover:text-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

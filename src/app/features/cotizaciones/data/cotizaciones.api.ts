@@ -155,4 +155,28 @@ export class CotizacionesApi {
       { withCredentials: true }
     );
   }
+
+  getUsersStatsSummary(page = 1, limit = 10) {
+    return this.http.get<{
+      data: Array<{
+        userId: number;
+        name: string;
+        lastName: string;
+        total: number;
+        enviadas: number;
+        aprobadas: number;
+        noAprobadas: number;
+        totalCobrar: number;
+        ultimaCreada: string;
+      }>;
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`${this.base}/stats/users/summary?page=${page}&limit=${limit}`, {
+      withCredentials: true
+    });
+  }
 }
