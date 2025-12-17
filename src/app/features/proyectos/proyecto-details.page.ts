@@ -125,13 +125,25 @@ import { Location } from '@angular/common';
             (input)="onSearch($event)">
         </div>
 
-        <div class="flex items-center gap-3">
+         <div class="flex items-center gap-3">
            <!-- My Quotes Toggle (Visual) -->
            <!-- HIDDEN FOR ADMIN -->
           <div *ngIf="auth.role() !== 'ADMIN'"
+               (click)="toggleMyQuotes()"
+               [class.bg-[var(--brand)]]="showOnlyMyQuotes()"
+               [class.border-[var(--brand)]]="showOnlyMyQuotes()"
                class="flex items-center bg-white border border-zinc-200 rounded-xl px-4 h-11 cursor-pointer hover:bg-zinc-50 transition-colors shadow-sm">
-            <span class="text-sm font-medium text-zinc-700 mr-2">Mis cotizaciones</span>
-            <div class="w-4 h-4 rounded-full border border-zinc-300"></div>
+            <span class="text-sm font-medium mr-2"
+                  [class.text-white]="showOnlyMyQuotes()"
+                  [class.text-zinc-700]="!showOnlyMyQuotes()">Mis cotizaciones</span>
+            <div class="w-4 h-4 rounded-full border flex items-center justify-center"
+                 [class.border-white]="showOnlyMyQuotes()"
+                 [class.bg-white]="showOnlyMyQuotes()"
+                 [class.border-zinc-300]="!showOnlyMyQuotes()">
+              <svg *ngIf="showOnlyMyQuotes()" class="w-3 h-3 text-[var(--brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
           </div>
 
           <!-- View Toggle (Single Button) -->
@@ -184,8 +196,22 @@ export class ProyectoDetailsPage {
   // View state with persistence
   view = signal<'cards' | 'table'>((localStorage.getItem('project-details-view-mode') as 'cards' | 'table') || 'table');
 
-  // Expose quotes from store
-  quotes = this.quotesStore.items;
+  // Filter for "Mis cotizaciones"
+  showOnlyMyQuotes = signal<boolean>(false);
+
+  // Expose quotes from store with optional filtering
+  quotes = computed(() => {
+    const allQuotes = this.quotesStore.items();
+
+    // If "Mis cotizaciones" is not active, show all quotes for this project
+    if (!this.showOnlyMyQuotes()) {
+      return allQuotes;
+    }
+
+    // Filter to show only quotes created by the logged-in user
+    const userId = this.auth.user()?.id;
+    return allQuotes.filter(q => q.createdBy?.id === userId);
+  });
 
   totalAmount = computed(() => {
     const qs = this.quotes();
@@ -239,11 +265,17 @@ export class ProyectoDetailsPage {
   }
 
   toggleViewMode() {
-    this.toggleView(this.view() === 'cards' ? 'table' : 'cards');
+    this.view.update(v => v === 'cards' ? 'table' : 'cards');
+    localStorage.setItem('project-details-view-mode', this.view());
+  }
+
+  toggleMyQuotes() {
+    this.showOnlyMyQuotes.update(v => !v);
   }
 
   goCrearCotizacion() {
-    this.router.navigate(['/cotizaciones/crear'], {
+    const role = this.auth.role()?.toLowerCase();
+    this.router.navigate([`/${role}/cotizaciones/crear`], {
       queryParams: { projectId: this.project.id }
     });
   }
