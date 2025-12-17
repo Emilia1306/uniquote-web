@@ -61,75 +61,112 @@ interface GroupedData {
               [(ngModel)]="searchTerm"
               type="text"
               placeholder="Buscar tarifa..."
-              class="w-full pl-11 pr-4 py-2.5 rounded-full bg-zinc-50 border-2 border-transparent focus:bg-white focus:border-[var(--brand)]/20 focus:ring-4 focus:ring-[var(--brand)]/10 text-sm transition-all"
+              class="w-full pl-11 pr-4 py-2.5 rounded-full bg-zinc-50 border-2 border-zinc-200 focus:bg-white focus:border-[var(--brand)]/20 focus:ring-4 focus:ring-[var(--brand)]/10 text-sm transition-all"
             >
           </div>
         </div>
 
         <!-- Content Area -->
         <div class="space-y-10">
-          @for (category of getCategoriesToShow(); track category) {
-            <!-- Hide category if no items match in any subgroup -->
-            @if (hasCategoryMatches(category)) {
-              <section class="animate-fade-in">
-                <!-- Category Title -->
-                <div class="flex items-center gap-3 mb-6">
-                  <div class="h-8 w-1.5 bg-[var(--brand)] rounded-r-full"></div>
-                  <h2 class="text-xl font-bold text-zinc-900">{{ category }}</h2>
-                </div>
+          @if (loading) {
+            <!-- Skeleton Loader -->
+            <div class="animate-pulse space-y-10">
+              @for (i of [1,2]; track i) {
+                <div>
+                  <!-- Category Title Skeleton -->
+                  <div class="flex items-center gap-3 mb-6">
+                    <div class="h-8 w-1.5 bg-zinc-200 rounded-r-full"></div>
+                    <div class="h-6 w-48 bg-zinc-200 rounded"></div>
+                  </div>
 
-                <div class="grid gap-6 pl-0 md:pl-4">
-                  @for (group of getSubgroups(groupedData[category]); track group.name) {
-                    @if (getMatchingItems(group).length > 0) {
-                      <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
-                        <!-- Subgroup Header -->
-                        @if (group.name !== 'General' && group.name !== category) {
-                          <div class="px-6 py-4 bg-zinc-50/50 border-b border-zinc-100 flex items-center justify-between">
-                            <span class="font-semibold text-zinc-900">{{ group.name }}</span>
-                            <span class="text-xs font-medium bg-white px-2.5 py-1 rounded-md text-zinc-500 border border-zinc-200">
-                              {{ getMatchingItems(group).length }} tarifas
-                            </span>
-                          </div>
-                        }
-
-                        <div class="overflow-x-auto">
-                          <table class="w-full text-left text-sm">
-                            <thead class="bg-white text-zinc-400 font-medium text-xs uppercase tracking-wider border-b border-zinc-50">
-                              <tr>
-                                <th class="py-3 px-6 w-1/2">Descripción</th>
-                                <th class="py-3 px-6 text-right">Valor</th>
-                                <th class="py-3 px-6 text-right w-20"></th>
-                              </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-50">
-                              @for (item of getMatchingItems(group); track item.original.id) {
-                                <tr class="hover:bg-orange-50/30 transition-colors group/row">
-                                  <td class="py-3 px-6 font-medium text-zinc-700 group-hover/row:text-[var(--brand)] transition-colors">
-                                    {{ item.displayName }}
-                                  </td>
-                                  <td class="py-3 px-6 text-right font-medium text-zinc-900">
-                                    $ {{ item.original.valor | number:'1.2-2' }}
-                                  </td>
-                                  <td class="py-3 px-6 text-right">
-                                    <button 
-                                      (click)="openEditModal(item.original)"
-                                      class="p-2 rounded-full hover:bg-[var(--brand)]/10 text-zinc-300 hover:text-[var(--brand)] transition-all transform hover:scale-110 active:scale-95"
-                                      title="Editar">
-                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                      </svg>
-                                    </button>
-                                  </td>
-                                </tr>
-                              }
-                            </tbody>
-                          </table>
+                  <!-- Grid Skeleton -->
+                  <div class="grid gap-6 pl-0 md:pl-4">
+                    @for (j of [1,2]; track j) {
+                      <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden">
+                        <!-- Header Skeleton -->
+                        <div class="px-6 py-4 bg-zinc-50/50 border-b border-zinc-100 flex items-center justify-between">
+                          <div class="h-5 w-32 bg-zinc-200 rounded"></div>
+                          <div class="h-6 w-20 bg-zinc-200 rounded"></div>
+                        </div>
+                        <!-- Table Skeleton -->
+                        <div class="p-6 space-y-4">
+                          @for (k of [1,2,3]; track k) {
+                            <div class="flex justify-between items-center">
+                              <div class="h-4 w-1/3 bg-zinc-200 rounded"></div>
+                              <div class="h-4 w-20 bg-zinc-200 rounded"></div>
+                            </div>
+                          }
                         </div>
                       </div>
                     }
-                  }
+                  </div>
                 </div>
-              </section>
+              }
+            </div>
+          } @else {
+            @for (category of getCategoriesToShow(); track category) {
+              <!-- Hide category if no items match in any subgroup -->
+              @if (hasCategoryMatches(category)) {
+                <section class="animate-fade-in">
+                  <!-- Category Title -->
+                  <div class="flex items-center gap-3 mb-6">
+                    <div class="h-8 w-1.5 bg-[var(--brand)] rounded-r-full"></div>
+                    <h2 class="text-xl font-bold text-zinc-900">{{ category }}</h2>
+                  </div>
+  
+                  <div class="grid gap-6 pl-0 md:pl-4">
+                    @for (group of getSubgroups(groupedData[category]); track group.name) {
+                      @if (getMatchingItems(group).length > 0) {
+                        <div class="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
+                          <!-- Subgroup Header -->
+                          @if (group.name !== 'General' && group.name !== category) {
+                            <div class="px-6 py-4 bg-zinc-50/50 border-b border-zinc-100 flex items-center justify-between">
+                              <span class="font-semibold text-zinc-900">{{ group.name }}</span>
+                              <span class="text-xs font-medium bg-white px-2.5 py-1 rounded-md text-zinc-500 border border-zinc-200">
+                                {{ getMatchingItems(group).length }} tarifas
+                              </span>
+                            </div>
+                          }
+  
+                          <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                              <thead class="bg-white text-zinc-400 font-medium text-xs uppercase tracking-wider border-b border-zinc-50">
+                                <tr>
+                                  <th class="py-3 px-6 w-1/2">Descripción</th>
+                                  <th class="py-3 px-6 text-right">Valor</th>
+                                  <th class="py-3 px-6 text-right w-20"></th>
+                                </tr>
+                              </thead>
+                              <tbody class="divide-y divide-zinc-50">
+                                @for (item of getMatchingItems(group); track item.original.id) {
+                                  <tr class="hover:bg-orange-50/30 transition-colors group/row">
+                                    <td class="py-3 px-6 font-medium text-zinc-700 group-hover/row:text-[var(--brand)] transition-colors">
+                                      {{ item.displayName }}
+                                    </td>
+                                    <td class="py-3 px-6 text-right font-medium text-zinc-900">
+                                      $ {{ item.original.valor | number:'1.2-2' }}
+                                    </td>
+                                    <td class="py-3 px-6 text-right">
+                                      <button 
+                                        (click)="openEditModal(item.original)"
+                                        class="p-2 rounded-full hover:bg-[var(--brand)]/10 text-zinc-300 hover:text-[var(--brand)] transition-all transform hover:scale-110 active:scale-95"
+                                        title="Editar">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </section>
+              }
             }
           }
         </div>
@@ -173,7 +210,7 @@ interface GroupedData {
                             <input 
                                 [(ngModel)]="tempValue"
                                 type="number" 
-                                class="w-full pl-7 pr-4 h-11 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all font-mono text-lg placeholder:text-zinc-400"
+                                class="w-full pl-7 pr-4 h-11 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all text-lg placeholder:text-zinc-400"
                                 (keydown.enter)="saveEdit()"
                             >
                         </div>
@@ -213,6 +250,7 @@ export class TarifarioPage implements OnInit, OnDestroy {
   tabs: string[] = ['Todos'];
   selectedTab: string = 'Todos';
   searchTerm: string = '';
+  loading: boolean = true;
 
   // Modal State
   editingItem: Constante | null = null;
@@ -234,6 +272,8 @@ export class TarifarioPage implements OnInit, OnDestroy {
       this.groupData();
     } catch (err) {
       console.error('Error loading constantes:', err);
+    } finally {
+      this.loading = false;
     }
   }
 
