@@ -21,8 +21,9 @@ export const ROLE_MENU = {
 
   DIRECTOR: [
     { label: 'Inicio', path: '/director', icon: 'house' },
-    { label: 'Mis Cotizaciones', path: '/director/cotizaciones', icon: 'folder-open' },
-    { label: 'Biblioteca Aprobadas', path: '/director/biblioteca', icon: 'library' },
+    { label: 'Proyectos', path: '/director/proyectos', icon: 'folder-kanban' },
+    { label: 'Cotizaciones', path: '/director/cotizaciones', icon: 'file-text' },
+    { label: 'Estadísticas', path: '/director/estadisticas', icon: 'bar-chart' },
     { label: 'Clientes', path: '/director/clientes', icon: 'building-2' },
   ],
 } as const;

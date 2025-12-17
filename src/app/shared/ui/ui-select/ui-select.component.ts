@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, ElementRef, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -39,6 +39,15 @@ export class UiSelectComponent {
     this.selectedLabel = item.label;
     this.valueChange.emit(item.value);
     this.open.set(false);
+  }
+
+  private elementRef = inject(ElementRef);
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.open.set(false);
+    }
   }
 
 }

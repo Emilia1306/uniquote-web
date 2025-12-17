@@ -61,6 +61,12 @@ export class CotizacionesApi {
     });
   }
 
+  getMine() {
+    return this.http.get<Cotizacion[]>(`${this.base}/mine`, {
+      withCredentials: true
+    });
+  }
+
   getOne(id: number) {
     return this.http.get(`${this.base}/${id}`, {
       withCredentials: true

@@ -20,7 +20,7 @@ import { SidebarComponent } from '../shared/ui/sidebar/sidebar.component';
 })
 export class AppShellComponent implements OnInit {
 
-  private auth   = inject(AuthService);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
   open = signal(false);
@@ -29,6 +29,8 @@ export class AppShellComponent implements OnInit {
   hideSideRoutes = [
     '/gerente/cotizaciones/crear',
     '/gerente/cotizaciones/editar',
+    '/director/cotizaciones/crear',
+    '/director/cotizaciones/editar',
     '/admin/cotizaciones/crear',
     '/admin/cotizaciones/editar'
   ];
@@ -42,7 +44,7 @@ export class AppShellComponent implements OnInit {
   }
 
   toggleDrawer() { this.open.update(v => !v); }
-  closeDrawer()  { this.open.set(false); }
+  closeDrawer() { this.open.set(false); }
 
   async ngOnInit() {
     await this.auth.loadMeOnce();
