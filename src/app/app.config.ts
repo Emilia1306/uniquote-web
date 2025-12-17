@@ -10,7 +10,7 @@ import { errorsInterceptor } from './core/http/errors.interceptor';
 
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { importProvidersFrom } from '@angular/core';
-import { LucideAngularModule, House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2 } from 'lucide-angular';
+import { LucideAngularModule, House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2, Activity, Clock } from 'lucide-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,6 +29,6 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
 
-    importProvidersFrom(LucideAngularModule.pick({ House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2 }))
+    importProvidersFrom(LucideAngularModule.pick({ House, FolderKanban, FileText, Users, Ticket, History, BarChart, Building2, Activity, Clock }))
   ],
 };
