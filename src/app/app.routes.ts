@@ -95,9 +95,15 @@ export const routes: Routes = [
         canMatch: [roleGuard(['DIRECTOR'])],
         children: [
           { path: '', component: DirectorDashboard },
+          { path: 'estadisticas', component: DirectorDashboard },
           { path: 'clientes', component: ClientesPage },
           { path: 'clientes/:id', component: ClienteDetailPage },
           { path: 'clientes/:id/proyectos', component: ProyectosBrowsePage },
+
+          // PROYECTOS
+          { path: 'proyectos', component: ProyectosBrowsePage },
+          { path: 'proyectos/:projectId', component: ProyectoDetailsPage },
+
           { path: 'cotizaciones', component: QuotesBrowsePage },
           { path: 'cotizaciones/crear', component: CrearCotizacionPage },
           { path: 'cotizaciones/:id', component: CotizacionDetailPage },

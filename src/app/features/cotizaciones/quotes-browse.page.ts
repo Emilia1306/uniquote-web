@@ -112,7 +112,11 @@ export class QuotesBrowsePage {
   }
 
   goCreate() {
-    this.router.navigate(['gerente/cotizaciones/crear']);
+    const role = this.auth.role();
+    if (!role) return;
+
+    const prefix = role.toLowerCase();
+    this.router.navigate([`/${prefix}/cotizaciones/crear`]);
   }
 
   onSearchChange(event: Event) {

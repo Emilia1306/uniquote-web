@@ -37,20 +37,48 @@ export class CotizacionesStore {
     const { search, mineOnly } = this.filters();
     let rows = this._items();
 
-    // Filtro por "Mis Cotizaciones"
-    if (mineOnly) {
-      const myId = this.auth.user()?.id;
-      if (myId) {
+    // ------------------------------------------------------------------
+    // VISIBILIDAD POR ROL
+    // ------------------------------------------------------------------
+    // Reglas:
+    // 1. ADMIN: Ve todo.
+    // 2. GERENTE / DIRECTOR: Ve 'APROBADO' de todos + SUYAS (todas).
+    // 3. (Implícito) Otros: Solo verían suyas si aplicamos filtro estricto, 
+    //    pero la lógica aquí abajo maneja la mezcla.
+
+    const role = this.auth.role();
+    const myId = this.auth.user()?.id;
+
+    if (role !== 'ADMIN') {
+      rows = rows.filter(r => {
+        const isMine = r.createdBy?.id === myId;
+        const isApproved = r.status === 'APROBADO';
+
+        // Si activó "Mis cotizaciones", forzamos solo suyas
+        if (mineOnly) {
+          return true;
+        }
+
+        // Si no, ve Aprobadas (globales)
+        return isApproved;
+      });
+    } else {
+      // ADMIN: Solo aplicamos "Mis cotizaciones" si lo activara (aunque UI lo oculta)
+      if (mineOnly && myId) {
         rows = rows.filter(r => r.createdBy?.id === myId);
       }
     }
+
+    // ------------------------------------------------------------------
+    // FILTROS UI (Status, Contacto, Search)
+    // ------------------------------------------------------------------
 
     // Filtro por Contacto
     if (this.filters().contactoId) {
       rows = rows.filter(r => r.contacto?.id === this.filters().contactoId);
     }
 
-    // Filtro por Estado (Status)
+    // Filtro por Estado (Dropdown específico de Admin)
     if (this.filters().status) {
       rows = rows.filter(r => r.status === this.filters().status);
     }
@@ -81,16 +109,33 @@ export class CotizacionesStore {
 
   async loadGlobal(params: any = {}) {
     this._loading.set(true);
-    const res = await this.api.getAllFiltered(params).toPromise();
-    this._items.set(res ?? []);
-    this._loading.set(false);
+    const mineOnly = this.filters().mineOnly;
+    try {
+      let res;
+      if (mineOnly) {
+        res = await this.api.getMine().toPromise();
+      } else {
+        res = await this.api.getAllFiltered(params).toPromise();
+      }
+      this._items.set(res ?? []);
+    } catch (err) {
+      console.error('Error loading quotes', err);
+      this._items.set([]);
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   setFilters(patch: Partial<CotizacionFilters>) {
+    const oldMine = this.filters().mineOnly;
     this.filters.set({
       ...this.filters(),
       ...patch
     });
+
+    if (patch.mineOnly !== undefined && patch.mineOnly !== oldMine) {
+      this.loadGlobal();
+    }
   }
 
   setViewMode(mode: ViewMode) {
