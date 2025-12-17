@@ -96,12 +96,14 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             </svg>
           </button>
 
+          <!-- Clonar (Solo aprobadas) -->
           <button 
-            class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
-            (click)="clonar(q.id)"
-            title="Clonar">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+            *ngIf="q.status === 'APROBADO'"
+            (click)="clonar(q)"
+            class="h-8 w-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            title="Clonar cotización">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </button>
         </div>
@@ -156,11 +158,15 @@ export class QuotesCardsComponent {
     this.router.navigate(['editar', id], { relativeTo: this.route });
   }
 
-  async clonar(id: number) {
+  async clonar(q: Cotizacion) {
+    if (q.status !== 'APROBADO') {
+      alert('Solo se pueden clonar cotizaciones aprobadas.');
+      return;
+    }
     if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
 
     try {
-      const res = await this.store.cloneQuote(id);
+      const res = await this.store.cloneQuote(q.id);
       if (res?.id) {
         this.router.navigate(['editar', res.id], { relativeTo: this.route });
       }

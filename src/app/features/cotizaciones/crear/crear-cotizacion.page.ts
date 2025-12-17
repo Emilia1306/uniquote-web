@@ -168,12 +168,14 @@ export class CrearCotizacionPage {
 
     try {
       if (this.editMode && this.editId) {
-        // UPDATE
+        // Update
         await firstValueFrom(this.api.update(this.editId, payload));
         alert('Cotización actualizada correctamente');
         // Invalidar cache de clientes para refrescar contadores
         this.clientesApi.clearCache();
-        this.location.back();
+
+        // Redirect to Details Page instead of List
+        this.router.navigate(['/cotizaciones', this.editId]);
       } else {
         // CREATE
         await firstValueFrom(this.api.create(payload));

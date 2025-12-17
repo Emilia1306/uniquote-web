@@ -98,7 +98,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
                   Editar estado
                 </button>
 
-                <button (click)="clonar(q.id)" 
+                <button *ngIf="q.status === 'APROBADO'" (click)="clonar(q)" 
                   class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
@@ -194,11 +194,16 @@ export class QuotesTableComponent {
     this.router.navigate(['editar', id], { relativeTo: this.route });
   }
 
-  async clonar(id: number) {
+  async clonar(q: Cotizacion) {
+    this.activeDropdownId = null;
+    if (q.status !== 'APROBADO') {
+      alert('Solo se pueden clonar cotizaciones aprobadas.');
+      return;
+    }
     if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
 
     try {
-      const res = await this.store.cloneQuote(id);
+      const res = await this.store.cloneQuote(q.id);
       if (res?.id) {
         this.router.navigate(['editar', res.id], { relativeTo: this.route });
       }
