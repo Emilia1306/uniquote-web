@@ -9,7 +9,7 @@
 }
 
 .ui-select-btn {
-  @apply w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-left flex items-center justify-between shadow-sm cursor-pointer select-none;
+  @apply w-full h-12 rounded-xl border border-zinc-300 bg-white px-3 py-2 text-left flex items-center justify-between shadow-sm cursor-pointer select-none;
 
   &:focus {
     @apply border-brand-500 ring-2 ring-brand-200;
