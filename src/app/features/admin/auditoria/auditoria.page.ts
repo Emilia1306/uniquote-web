@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { NgFor, NgIf, DatePipe } from '@angular/common';
 import { AuditoriaApi, LogAuditoria } from '../data/auditoria.api';
 
@@ -16,6 +16,21 @@ export class AuditoriaPage {
     loading = signal<boolean>(false);
     error = signal<string | null>(null);
 
+    // Pagination computed
+    totalPages = computed(() => this.meta()?.lastPage || 1);
+    hasPrev = computed(() => (this.meta()?.page || 1) > 1);
+    hasNext = computed(() => (this.meta()?.page || 1) < this.totalPages());
+
+    pagesArray = computed(() => {
+        const total = this.totalPages();
+        // Generate array [0, 1, 2... total-1]
+        // Note: The API uses 1-based indexing for 'page', so we map accordingly in the template (i+1)
+        // However, if we want strict page numbers, let's just generate an array of numbers.
+        // Let's stick to 0-indexed for the loop to match Users implementation if that's what was used.
+        // In Users page: i of pagesArray() (0..N-1), display {{ i + 1 }}.
+        return Array.from({ length: total }, (_, i) => i);
+    });
+
     currentPage = 1;
 
     ngOnInit() {
@@ -27,7 +42,7 @@ export class AuditoriaPage {
         this.loading.set(true);
         this.error.set(null);
         try {
-            const res = await this.api.list({ page, limit: 20 });
+            const res = await this.api.list({ page, limit: 10 });
             this.logs.set(res.data);
             this.meta.set(res.meta);
         } catch (e: any) {
@@ -38,6 +53,21 @@ export class AuditoriaPage {
     }
 
     changePage(newPage: number) {
-        this.loadData(newPage);
+        if (newPage >= 1 && newPage <= this.totalPages()) {
+            this.loadData(newPage);
+        }
+    }
+
+    prevPage() {
+        if (this.hasPrev()) this.changePage(this.currentPage - 1);
+    }
+
+    nextPage() {
+        if (this.hasNext()) this.changePage(this.currentPage + 1);
+    }
+
+    goPage(i: number) {
+        // i is 0-indexed from the template loop
+        this.changePage(i + 1);
     }
 }

@@ -11,6 +11,7 @@ import { ClientesApi } from '../clientes/data/clientes.api';
 
 import { UiSelectComponent, UiSelectItem } from '../../shared/ui/ui-select/ui-select.component';
 import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
+import Swal from 'sweetalert2';
 
 @Component({
   standalone: true,
@@ -179,11 +180,31 @@ export class QuotesBrowsePage {
           }
         } catch (err) {
           console.error('Error cargando metadata de contacto', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cargar la información del contacto',
+            timer: 3000,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false
+          });
         }
+      } else if (params['clienteId']) {
+        const clientId = Number(params['clienteId']);
+        this.store.setFilters({ clienteId: clientId });
 
+        try {
+          const client = await this.clientesApi.getById(clientId);
+          this.pageTitle.set(`Historial de ${client.empresa}`);
+          this.pageSubtitle.set(`Listado de todas las cotizaciones asociadas a ${client.razonSocial || client.empresa}`);
+        } catch (err) {
+          console.error('Error loading client metadata', err);
+          this.pageTitle.set('Historial de Cliente');
+        }
       } else {
         // Reset defaults
-        this.store.setFilters({ contactoId: undefined });
+        this.store.setFilters({ contactoId: undefined, clienteId: undefined });
         this.pageTitle.set('Cotizaciones');
         this.pageSubtitle.set('Resumen general de cotizaciones y aprobaciones');
       }

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
+import Swal from 'sweetalert2';
 
 function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -60,7 +61,14 @@ export class ClientesPage {
       const res = await this.api.list({ sort: 'empresa_asc', page: 1, pageSize: 50 }, 'auto');
       this.clientes.set(res.items);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudieron cargar los clientes');
+      const msg = e?.message ?? 'No se pudieron cargar los clientes';
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }
@@ -87,21 +95,63 @@ export class ClientesPage {
         this.clientes.set([created, ...this.clientes()]);
       }
       this.cancelForm();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Guardado',
+        text: 'Cliente guardado correctamente',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudo guardar el cliente');
+      const msg = e?.message ?? 'No se pudo guardar el cliente';
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }
   }
 
   async remove(c: Cliente) {
-    if (!confirm(`¿Eliminar "${c.empresa}"?`)) return;
+    const res = await Swal.fire({
+      title: '¿Eliminar cliente?',
+      text: `Se eliminará "${c.empresa}"`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#71717a',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!res.isConfirmed) return;
+
     this.loading.set(true); this.error.set(null);
     try {
       await this.api.remove(c.id);
       this.clientes.set(this.clientes().filter(x => x.id !== c.id));
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Eliminado',
+        text: 'Cliente eliminado correctamente',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudo eliminar');
+      const msg = e?.message ?? 'No se pudo eliminar';
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }

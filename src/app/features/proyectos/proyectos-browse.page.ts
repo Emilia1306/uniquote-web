@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import Swal from 'sweetalert2';
 
 import { ProyectosStore } from './data/proyectos.store';
 import { Proyecto } from './data/proyectos.types';
@@ -85,6 +86,15 @@ export class ProyectosBrowsePage {
         }
       } catch (err) {
         console.error('Error cargando info de cliente', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo cargar la información del cliente',
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false
+        });
       }
 
     } else {
@@ -103,6 +113,12 @@ export class ProyectosBrowsePage {
       this.clientesItems.set(items);
     } catch (err) {
       console.error('Error cargando clientes', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de conexión',
+        text: 'No se pudieron cargar los clientes. Por favor intente más tarde.',
+        confirmButtonColor: 'var(--brand)'
+      });
     }
   }
 
@@ -121,6 +137,15 @@ export class ProyectosBrowsePage {
         this.contactosItems.set(items);
       } catch (err) {
         console.error('Error cargando contactos', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los contactos del cliente seleccionado',
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false
+        });
       }
     }
   }
@@ -161,7 +186,13 @@ export class ProyectosBrowsePage {
 
   async crearProyecto() {
     if (!this.modalName.trim() || !this.modalClienteId) {
-      alert('Debe rellenar nombre y cliente');
+      Swal.fire({
+        title: 'Formulario incompleto',
+        text: 'Debe rellenar nombre y cliente',
+        icon: 'error',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: 'var(--brand)'
+      });
       return;
     }
 
@@ -172,6 +203,14 @@ export class ProyectosBrowsePage {
     });
 
     this.closeCreateModal();
+
+    Swal.fire({
+      title: '¡Creado!',
+      text: 'Proyecto creado correctamente',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 
   // ------------------------------------------------------
@@ -208,6 +247,14 @@ export class ProyectosBrowsePage {
     await this.store.loadAll();
 
     this.closeEditModal();
+
+    Swal.fire({
+      title: '¡Actualizado!',
+      text: 'Proyecto actualizado correctamente',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 
   // ------------------------------------------------------
@@ -216,14 +263,37 @@ export class ProyectosBrowsePage {
 
   async eliminarProyecto(p: Proyecto) {
     if (p._count.cotizaciones > 0) {
-      alert("No se puede eliminar un proyecto que tiene cotizaciones.");
+      Swal.fire({
+        title: 'No se puede eliminar',
+        text: 'El proyecto tiene cotizaciones asociadas y no puede ser eliminado.',
+        icon: 'error',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: 'var(--brand)'
+      });
       return;
     }
 
-    const ok = confirm(`¿Eliminar el proyecto "${p.name}"?`);
-    if (!ok) return;
+    const res = await Swal.fire({
+      title: '¿Eliminar proyecto?',
+      text: `Se eliminará el proyecto "${p.name}". Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444', // red-500
+      cancelButtonColor: '#71717a', // zinc-500
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
 
-    await this.store.delete(p.id);
+    if (res.isConfirmed) {
+      await this.store.delete(p.id);
+      Swal.fire({
+        title: '¡Eliminado!',
+        text: 'El proyecto ha sido eliminado.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
   }
 
   // ------------------------------------------------------

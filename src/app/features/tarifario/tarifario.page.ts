@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ConstantesApi, Constante, UpdateConstanteDto } from './data/constantes.api';
 import { firstValueFrom } from 'rxjs';
 import { getDepartment } from './data/departamentos.config';
+import Swal from 'sweetalert2';
 
 interface SubGroup {
   name: string;
@@ -106,8 +107,8 @@ interface GroupedData {
                                   <td class="py-3 px-6 font-medium text-zinc-700 group-hover/row:text-[var(--brand)] transition-colors">
                                     {{ item.displayName }}
                                   </td>
-                                  <td class="py-3 px-6 text-right font-mono font-medium text-zinc-900">
-                                    {{ item.original.valor | number:'1.2-2' }}
+                                  <td class="py-3 px-6 text-right font-medium text-zinc-900">
+                                    $ {{ item.original.valor | number:'1.2-2' }}
                                   </td>
                                   <td class="py-3 px-6 text-right">
                                     <button 
@@ -333,6 +334,20 @@ export class TarifarioPage implements OnInit, OnDestroy {
   async saveEdit() {
     if (!this.editingItem) return;
 
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Se actualizará el valor de la tarifa.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ea580c',
+      cancelButtonColor: '#71717a',
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar',
+      heightAuto: false
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       // Ensure value is a number and only send what we want to update
       const dto: UpdateConstanteDto = {
@@ -344,10 +359,23 @@ export class TarifarioPage implements OnInit, OnDestroy {
       // Update local state
       this.editingItem.valor = Number(this.tempValue);
       this.closeEditModal();
+
+      Swal.fire({
+        title: '¡Actualizado!',
+        text: 'La tarifa ha sido actualizada correctamente.',
+        icon: 'success',
+        confirmButtonColor: '#ea580c',
+        heightAuto: false
+      });
     } catch (err) {
       console.error('Error saving changes:', err);
-      // Optionally show a toast or alert
-      alert('Error al guardar los cambios');
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo guardar los cambios.',
+        icon: 'error',
+        confirmButtonColor: '#ea580c',
+        heightAuto: false
+      });
     }
   }
 }
