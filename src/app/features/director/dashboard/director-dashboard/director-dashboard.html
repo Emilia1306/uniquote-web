@@ -23,7 +23,7 @@
     </section>
 
     <!-- Gráficas -->
-    <section class="grid gap-4 md:grid-cols-2">
+    <section *ngIf="!loading()" class="grid gap-4 md:grid-cols-2">
         <div class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
             <div class="font-medium mb-3">Cotizaciones vs Aprobadas (últimos 6 meses)</div>
             <apx-chart [series]="lineSeries()" [chart]="lineChart" [xaxis]="lineXAxis()" [yaxis]="lineYAxis"
@@ -41,7 +41,7 @@
         </div>
     </section>
 
-    <section class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
+    <section *ngIf="!loading()" class="bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm">
         <div class="text-xs text-zinc-500">
             Total aprobadas en 6 meses: <b>{{ totalAprobadas() | number }}</b>
         </div>

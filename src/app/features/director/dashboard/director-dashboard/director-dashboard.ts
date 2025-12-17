@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { NgFor, NgIf, DecimalPipe, CommonModule } from '@angular/common';
 import {
   NgApexchartsModule,
@@ -26,7 +26,7 @@ type Semana = { dia: string; valor: number };
   templateUrl: './director-dashboard.html',
   styleUrl: './director-dashboard.scss',
 })
-export class DirectorDashboard {
+export class DirectorDashboard implements OnInit {
   private cotizacionesApi = inject(CotizacionesApi);
 
   // ===== Encabezado =====
