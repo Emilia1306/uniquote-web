@@ -78,6 +78,11 @@ export class CotizacionesStore {
       rows = rows.filter(r => r.contacto?.id === this.filters().contactoId);
     }
 
+    // Filtro por Cliente
+    if (this.filters().clienteId) {
+      rows = rows.filter(r => r.project?.cliente?.id === this.filters().clienteId);
+    }
+
     // Filtro por Estado (Dropdown específico de Admin)
     if (this.filters().status) {
       rows = rows.filter(r => r.status === this.filters().status);

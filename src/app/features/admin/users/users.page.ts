@@ -6,6 +6,7 @@ import type { User } from '../../../core/models/user';
 import type { Role } from '../../../core/auth/roles';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../../core/auth/auth.service';
+import Swal from 'sweetalert2';
 
 function normalizeTxt(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -124,7 +125,14 @@ export class AdminUsersPage {
       this.users.set(cleaned);
       this.page.set(0);
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudo cargar usuarios');
+      const msg = e?.message ?? 'No se pudo cargar usuarios';
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error cargando usuarios',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }
@@ -173,22 +181,73 @@ export class AdminUsersPage {
       }
       await this.load();
       this.cancelForm();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Guardado',
+        text: 'Usuario guardado correctamente',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudo guardar');
+      const msg = e?.message ?? 'No se pudo guardar';
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }
   }
 
   async remove(u: User) {
-    if (!confirm(`¿Eliminar a ${u.name} ${u.lastName}?`)) return;
+    const res = await Swal.fire({
+      title: '¿Eliminar usuario?',
+      text: `Se eliminará a ${u.name} ${u.lastName}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#71717a',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!res.isConfirmed) return;
+
     this.loading.set(true); this.error.set(null);
     try {
       await this.api.remove(u.id);
       this.users.set(this.users().filter(x => x.id !== u.id));
       if (this.paged().length === 0 && this.page() > 0) this.page.set(this.page() - 1);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Eliminado',
+        text: 'Usuario eliminado correctamente',
+        timer: 1500,
+        showConfirmButton: false
+      });
     } catch (e: any) {
-      this.error.set(e?.message ?? 'No se pudo eliminar');
+      console.error(e);
+      let msg = 'No se pudo eliminar el usuario.';
+
+      // Check for 500 or constraint violation
+      if (e?.status === 500 || e?.message?.includes('500') || e?.error?.message?.includes('constraint')) {
+        msg = 'No se puede eliminar este usuario porque tiene registros asociados (Cotizaciones, Proyectos, etc.) en el sistema.';
+      } else {
+        msg = e?.message ?? msg;
+      }
+
+      this.error.set(msg);
+      Swal.fire({
+        icon: 'error',
+        title: 'No se pudo eliminar',
+        text: msg,
+        confirmButtonColor: 'var(--brand)'
+      });
     } finally {
       this.loading.set(false);
     }

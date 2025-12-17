@@ -1,4 +1,3 @@
-// src/app/features/admin/dashboard/admin-dashboard.ts
 import { Component, inject, signal } from '@angular/core';
 import { NgFor, NgIf, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -7,10 +6,9 @@ import { AuditoriaApi, LogAuditoria } from '../../data/auditoria.api';
 import type { User } from '../../../../core/models/user';
 import { AuthService } from '../../../../core/auth/auth.service';
 
-
-
 import { TimeAgoPipe } from '../../../../shared/pipes/time-ago.pipe';
 import { LucideAngularModule } from 'lucide-angular';
+
 
 @Component({
   selector: 'admin-dashboard',
@@ -30,7 +28,6 @@ export class AdminDashboardComponent {
   auditoria = signal<LogAuditoria[]>([]);
   loadingAudit = signal<boolean>(false);
 
-  // (Opcional) por si quieres mostrarlos / depurar
   meId = signal<number | string | null>(null);
   meEmail = signal<string | null>(null);
 
@@ -40,7 +37,6 @@ export class AdminDashboardComponent {
     this.loadingAudit.set(true);
 
     try {
-      // Asegura tener al usuario autenticado disponible
       await this.auth.loadMeOnce();
       const me = this.auth.user();
       const myId = (me as any)?.id ?? null;
@@ -48,18 +44,17 @@ export class AdminDashboardComponent {
       this.meId.set(myId);
       this.meEmail.set(myEmail);
 
-      // Trae últimos 5 y filtra al usuario actual
-      const recent = await this.usersApi.listRecent(5);
-      const cleaned = recent.filter(u =>
+      const [recentUsers, recentAudit] = await Promise.all([
+        this.usersApi.listRecent(5),
+        this.auditoriaApi.listRecent(5)
+      ]);
+
+      const cleaned = recentUsers.filter(u =>
         (myId ? u.id !== myId : true) &&
         (myEmail ? u.email !== myEmail : true)
       );
-
       this.usuarios.set(cleaned);
-
-      // Cargar auditoria reciente
-      const logs = await this.auditoriaApi.listRecent(5);
-      this.auditoria.set(logs);
+      this.auditoria.set(recentAudit);
 
     } catch (e: any) {
       console.error('Error dashboard', e);

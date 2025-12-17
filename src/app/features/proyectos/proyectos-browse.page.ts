@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import Swal from 'sweetalert2';
 
 import { ProyectosStore } from './data/proyectos.store';
 import { Proyecto } from './data/proyectos.types';
@@ -13,6 +14,7 @@ import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox
 
 import { ClientesApi } from '../clientes/data/clientes.api';
 import { ContactosApi } from '../clientes/data/contactos.api';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'proyectos-browse',
@@ -34,9 +36,11 @@ export class ProyectosBrowsePage {
   private route = inject(ActivatedRoute);
   private clientesApi = inject(ClientesApi);
   private contactosApi = inject(ContactosApi);
+  auth = inject(AuthService);
 
   // Estado
   searchText = signal('');
+  loading = this.store.loading;
   view = signal<'cards' | 'table'>((localStorage.getItem('proyectos-view-mode') as 'cards' | 'table') || 'table');
 
   toggleView() {
@@ -53,7 +57,6 @@ export class ProyectosBrowsePage {
   // Listas para comboboxes
   clientesItems = signal<UiComboboxItem[]>([]);
   contactosItems = signal<UiComboboxItem[]>([]);
-  editContactosItems = signal<UiComboboxItem[]>([]);
 
   // Contexto de cliente (si estamos viendo el historial de un cliente especifico)
   clienteId = signal<number | null>(null);
@@ -64,6 +67,10 @@ export class ProyectosBrowsePage {
   editName = '';
   editClienteId: number | null = null;
   editContactoId: number | null = null;
+
+  // Read-only display fields
+  editClienteName = '';
+  editContactoName = '';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -80,6 +87,15 @@ export class ProyectosBrowsePage {
         }
       } catch (err) {
         console.error('Error cargando info de cliente', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo cargar la información del cliente',
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false
+        });
       }
 
     } else {
@@ -98,6 +114,12 @@ export class ProyectosBrowsePage {
       this.clientesItems.set(items);
     } catch (err) {
       console.error('Error cargando clientes', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de conexión',
+        text: 'No se pudieron cargar los clientes. Por favor intente más tarde.',
+        confirmButtonColor: 'var(--brand)'
+      });
     }
   }
 
@@ -116,25 +138,15 @@ export class ProyectosBrowsePage {
         this.contactosItems.set(items);
       } catch (err) {
         console.error('Error cargando contactos', err);
-      }
-    }
-  }
-
-  async onEditClienteChange(clienteId: number | null) {
-    this.editClienteId = clienteId;
-    this.editContactoId = null; // Reset contacto
-    this.editContactosItems.set([]);
-
-    if (clienteId) {
-      try {
-        const contactos = await this.contactosApi.listByCliente(clienteId);
-        const items = contactos.map(c => ({
-          value: c.id,
-          label: c.nombre
-        }));
-        this.editContactosItems.set(items);
-      } catch (err) {
-        console.error('Error cargando contactos', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los contactos del cliente seleccionado',
+          toast: true,
+          position: 'top-end',
+          timer: 3000,
+          showConfirmButton: false
+        });
       }
     }
   }
@@ -175,7 +187,13 @@ export class ProyectosBrowsePage {
 
   async crearProyecto() {
     if (!this.modalName.trim() || !this.modalClienteId) {
-      alert('Debe rellenar nombre y cliente');
+      Swal.fire({
+        title: 'Formulario incompleto',
+        text: 'Debe rellenar nombre y cliente',
+        icon: 'error',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: 'var(--brand)'
+      });
       return;
     }
 
@@ -186,6 +204,14 @@ export class ProyectosBrowsePage {
     });
 
     this.closeCreateModal();
+
+    Swal.fire({
+      title: '¡Creado!',
+      text: 'Proyecto creado correctamente',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 
   // ------------------------------------------------------
@@ -198,22 +224,10 @@ export class ProyectosBrowsePage {
     this.editClienteId = p.cliente.id;
     this.editContactoId = p.contacto?.id ?? null;
 
-    // Load contacts for the selected client BEFORE showing modal
-    this.editContactosItems.set([]);
-    if (this.editClienteId) {
-      try {
-        const contactos = await this.contactosApi.listByCliente(this.editClienteId);
-        const items = contactos.map(c => ({
-          value: c.id,
-          label: c.nombre
-        }));
-        this.editContactosItems.set(items);
-      } catch (err) {
-        console.error('Error cargando contactos', err);
-      }
-    }
+    // Set display names
+    this.editClienteName = p.cliente.empresa;
+    this.editContactoName = p.contacto?.nombre || 'Sin contacto';
 
-    // Show modal AFTER data is loaded
     (document.getElementById('modal-edit') as HTMLDialogElement).showModal();
   }
 
@@ -234,6 +248,14 @@ export class ProyectosBrowsePage {
     await this.store.loadAll();
 
     this.closeEditModal();
+
+    Swal.fire({
+      title: '¡Actualizado!',
+      text: 'Proyecto actualizado correctamente',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 
   // ------------------------------------------------------
@@ -242,14 +264,37 @@ export class ProyectosBrowsePage {
 
   async eliminarProyecto(p: Proyecto) {
     if (p._count.cotizaciones > 0) {
-      alert("No se puede eliminar un proyecto que tiene cotizaciones.");
+      Swal.fire({
+        title: 'No se puede eliminar',
+        text: 'El proyecto tiene cotizaciones asociadas y no puede ser eliminado.',
+        icon: 'error',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: 'var(--brand)'
+      });
       return;
     }
 
-    const ok = confirm(`¿Eliminar el proyecto "${p.name}"?`);
-    if (!ok) return;
+    const res = await Swal.fire({
+      title: '¿Eliminar proyecto?',
+      text: `Se eliminará el proyecto "${p.name}". Esta acción no se puede deshacer.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444', // red-500
+      cancelButtonColor: '#71717a', // zinc-500
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
 
-    await this.store.delete(p.id);
+    if (res.isConfirmed) {
+      await this.store.delete(p.id);
+      Swal.fire({
+        title: '¡Eliminado!',
+        text: 'El proyecto ha sido eliminado.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
   }
 
   // ------------------------------------------------------
@@ -257,6 +302,11 @@ export class ProyectosBrowsePage {
   // ------------------------------------------------------
 
   verDetalle(id: number) {
-    this.router.navigate(['/gerente/proyectos', id]);
+    const role = this.auth.role();
+    let prefix = '/gerente';
+    if (role === 'ADMIN') prefix = '/admin';
+    if (role === 'DIRECTOR') prefix = '/director';
+
+    this.router.navigate([`${prefix}/proyectos`, id]);
   }
 }

@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { STATUS_COLORS } from './status-colors';
 import { QuoteStatusModalComponent } from './quote-status-modal.component';
 import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'quotes-cards',
@@ -88,7 +89,7 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
           </button>
 
           <!-- Editar Estado (Solo si NO es final) -->
-          <button *ngIf="!isFinalized(q.status)"
+          <button *ngIf="canChangeStatus(q)"
             class="h-10 w-10 shrink-0 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors flex items-center justify-center text-zinc-600"
             (click)="cambiarEstado(q)"
             title="Cambiar Estado">
@@ -97,9 +98,9 @@ import { CotizacionesApi, Cotizacion } from '../data/cotizaciones.api';
             </svg>
           </button>
 
-          <!-- Clonar (Solo aprobadas) -->
+          <!-- Clonar (Solo aprobadas, NO admin) -->
           <button 
-            *ngIf="q.status === 'APROBADO'"
+            *ngIf="canClone(q)"
             (click)="clonar(q)"
             class="h-8 w-8 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
             title="Clonar cotización">
@@ -144,6 +145,21 @@ export class QuotesCardsComponent {
     return ['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(status);
   }
 
+  canChangeStatus(q: Cotizacion): boolean {
+    if (this.isFinalized(q.status)) return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    if (isAdmin) return false; // Admin cannot edit status
+
+    const userId = this.auth.user()?.id;
+    return q.createdBy?.id === userId;
+  }
+
+  canClone(q: Cotizacion): boolean {
+    if (q.status !== 'APROBADO') return false;
+    const isAdmin = this.auth.role() === 'ADMIN';
+    return !isAdmin; // Admin cannot clone
+  }
+
   cambiarEstado(q: Cotizacion) {
     this.dialog.open(QuoteStatusModalComponent, {
       data: {
@@ -158,7 +174,10 @@ export class QuotesCardsComponent {
   }
 
   verDetalles(id: number) {
-    this.router.navigate([id], { relativeTo: this.route });
+    const role = this.auth.role();
+    if (!role) return;
+    const prefix = role.toLowerCase();
+    this.router.navigate([`/${prefix}/cotizaciones`, id]);
   }
 
   editar(id: number) {
@@ -167,18 +186,49 @@ export class QuotesCardsComponent {
 
   async clonar(q: Cotizacion) {
     if (q.status !== 'APROBADO') {
-      alert('Solo se pueden clonar cotizaciones aprobadas.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Acción no permitida',
+        text: 'Solo se pueden clonar cotizaciones aprobadas',
+        timer: 2000,
+        showConfirmButton: false
+      });
       return;
     }
-    if (!confirm('¿Seguro que deseas clonar esta cotización?')) return;
+
+    const res = await Swal.fire({
+      title: '¿Clonar cotización?',
+      text: `Se creará una copia de "${q.name}"`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, clonar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!res.isConfirmed) return;
 
     try {
-      const res = await this.store.cloneQuote(q.id);
-      if (res?.id) {
-        this.router.navigate(['editar', res.id], { relativeTo: this.route });
+      const newQuote = await this.store.cloneQuote(q.id);
+      if (newQuote?.id) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Clonada',
+          text: 'Redirigiendo a edición...',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        setTimeout(() => {
+          this.router.navigate(['editar', newQuote.id], { relativeTo: this.route });
+        }, 1500);
       }
     } catch (err) {
       console.error('Error al clonar', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo clonar la cotización',
+        confirmButtonColor: 'var(--brand)'
+      });
     }
   }
 }

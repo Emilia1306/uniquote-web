@@ -19,7 +19,6 @@ import { Proyecto } from '../data/proyectos.types';
           <button class="dropdown-item" (click)="onVer(p.id)">Ver cotizaciones</button>
           <button class="dropdown-item" (click)="onEditar(p)">Editar</button>
           <button class="dropdown-item text-red-500"
-                  [disabled]="p._count.cotizaciones > 0"
                   (click)="onEliminar(p)">
             Eliminar
           </button>

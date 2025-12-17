@@ -8,8 +8,48 @@
 
     <section class="card">
         <!-- Loading -->
-        <div *ngIf="loading()" class="py-12 flex justify-center muted">
-            Cargando registros...
+        <!-- Skeleton Loading -->
+        <div *ngIf="loading()" class="overflow-x-auto animate-pulse">
+            <table class="table w-full">
+                <thead>
+                    <tr>
+                        <th class="w-48">
+                            <div class="h-4 bg-zinc-200 rounded w-20"></div>
+                        </th>
+                        <th class="w-1/4">
+                            <div class="h-4 bg-zinc-200 rounded w-24"></div>
+                        </th>
+                        <th class="w-1/4">
+                            <div class="h-4 bg-zinc-200 rounded w-20"></div>
+                        </th>
+                        <th>
+                            <div class="h-4 bg-zinc-200 rounded w-32"></div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+                        <td>
+                            <div class="h-4 bg-zinc-100 rounded w-32"></div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-2">
+                                <div class="h-4 bg-zinc-200 rounded w-3/4"></div>
+                                <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-2">
+                                <div class="h-4 bg-zinc-200 rounded w-24"></div>
+                                <div class="h-3 bg-zinc-100 rounded w-16"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="h-4 bg-zinc-100 rounded w-full"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- Error -->
@@ -56,17 +96,34 @@
         </div>
 
         <!-- Pagination (Simple Previous/Next for now) -->
-        <div *ngIf="!loading() && meta()" class="flex items-center justify-between mt-4 border-t pt-4">
-            <div class="text-sm muted">
-                Página {{ meta().page }} de {{ meta().lastPage }} (Total: {{ meta().total }})
+        <!-- Pagination Consistent with Users Page -->
+        <div *ngIf="!loading() && meta()"
+            class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mt-4 border-t border-zinc-100 pt-6">
+            <div class="text-sm text-zinc-600">
+                Mostrando página {{ meta().page }} de {{ meta().lastPage }} (Total: {{ meta().total }})
             </div>
-            <div class="flex gap-2">
-                <button [disabled]="meta().page <= 1" (click)="changePage(meta().page - 1)"
-                    class="btn btn-outline h-9 px-3 text-sm disabled:opacity-50">
+
+            <div class="flex items-center gap-4">
+                <button
+                    class="text-sm text-zinc-600 hover:text-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    [disabled]="!hasPrev()" (click)="prevPage()">
                     Anterior
                 </button>
-                <button [disabled]="meta().page >= meta().lastPage" (click)="changePage(meta().page + 1)"
-                    class="btn btn-outline h-9 px-3 text-sm disabled:opacity-50">
+
+                <div class="flex items-center gap-1">
+                    <!-- Use the same page index logic: meta().page is 1-based -->
+                    <button *ngFor="let i of pagesArray()"
+                        class="h-8 w-8 rounded-full text-sm font-medium transition-colors"
+                        [class.bg-[var(--brand)]]="meta().page === (i + 1)" [class.text-white]="meta().page === (i + 1)"
+                        [class.text-zinc-600]="meta().page !== (i + 1)"
+                        [class.hover:bg-zinc-100]="meta().page !== (i + 1)" (click)="goPage(i)">
+                        {{ i + 1 }}
+                    </button>
+                </div>
+
+                <button
+                    class="text-sm text-zinc-600 hover:text-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    [disabled]="!hasNext()" (click)="nextPage()">
                     Siguiente
                 </button>
             </div>

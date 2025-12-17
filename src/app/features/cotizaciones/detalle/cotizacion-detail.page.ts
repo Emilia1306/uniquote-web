@@ -43,6 +43,12 @@ export class CotizacionDetailPage {
 
   get canEdit() {
     if (!this.cotizacion) return false;
+
+    // Check status first
+    if (['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(this.cotizacion.status)) {
+      return false;
+    }
+
     const role = this.auth.role();
     const isAdmin = role === 'ADMIN';
     const isGerente = role === 'GERENTE';
@@ -52,6 +58,12 @@ export class CotizacionDetailPage {
 
   get canEditItems() {
     if (!this.cotizacion) return false;
+
+    // Check status first
+    if (['APROBADO', 'NO_APROBADO', 'REEMPLAZADA'].includes(this.cotizacion.status)) {
+      return false;
+    }
+
     const role = this.auth.role();
     // User requested "only admin" for this part
     return role === 'ADMIN';
