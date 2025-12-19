@@ -86,15 +86,15 @@
   <!-- TOTAL ENTREVISTAS -->
   <div>
     <label class="form-label">Total entrevistas *</label>
-    <input class="form-input" type="number" min="0" [(ngModel)]="d.totalEntrevistas"
-      (ngModelChange)="patch({ totalEntrevistas: d.totalEntrevistas })" />
+    <input class="form-input" type="number" min="0" [ngModel]="d.totalEntrevistas"
+      (ngModelChange)="patch({ totalEntrevistas: $event })" />
   </div>
 
   <!-- DURACIÓN CUESTIONARIO -->
   <div>
     <label class="form-label">Duración cuestionario (min) *</label>
-    <input class="form-input" type="number" min="1" [(ngModel)]="d.duracionCuestionarioMin"
-      (ngModelChange)="patch({ duracionCuestionarioMin: d.duracionCuestionarioMin })" />
+    <input class="form-input" type="number" min="1" [ngModel]="d.duracionCuestionarioMin"
+      (ngModelChange)="patch({ duracionCuestionarioMin: $event })" />
   </div>
 
   <!-- METODOLOGÍA -->
