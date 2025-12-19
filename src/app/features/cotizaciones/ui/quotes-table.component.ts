@@ -148,12 +148,17 @@ export class QuotesTableComponent {
   }
 
   canChangeStatus(q: Cotizacion): boolean {
-    if (this.isFinalized(q.status)) return false;
+    // Admin cannot change status
     const isAdmin = this.auth.role() === 'ADMIN';
-    if (isAdmin) return false; // Admin cannot edit status
+    if (isAdmin) return false;
 
-    const userId = this.auth.user()?.id;
-    return q.createdBy?.id === userId;
+    // Cannot change if finalized (NO_APROBADO, APROBADO, REEMPLAZADA)
+    if (this.isFinalized(q.status)) return false;
+
+    // GERENTE and DIRECTOR can change status of non-finalized quotes
+    // Note: API doesn't populate createdBy, so we allow editing for all non-finalized quotes
+    // The backend should handle ownership validation
+    return true;
   }
 
   canClone(q: Cotizacion): boolean {

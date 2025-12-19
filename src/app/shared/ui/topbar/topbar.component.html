@@ -2,11 +2,8 @@
   <div class="mx-auto w-full max-w-[1600px] px-4 flex items-center">
 
     <!-- HAMBURGUESA (solo móvil) -->
-    <button
-      type="button"
-      class="mr-3 flex md:hidden items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100"
-      (click)="openDrawer.emit()"
-    >
+    <button type="button" class="mr-3 flex md:hidden items-center justify-center h-8 w-8 rounded-lg hover:bg-zinc-100"
+      (click)="openDrawer.emit()">
       <lucide-angular name="menu" class="w-5 h-5"></lucide-angular>
     </button>
 
@@ -15,13 +12,8 @@
 
     <!-- Usuario -->
     <div class="ml-auto relative topbar-user-area">
-      <button
-        type="button"
-        (click)="toggleMenu()"
-        class="flex items-center gap-2 hover:opacity-80 transition"
-      >
-        <hlm-avatar
-          class="size-8 rounded-full grid place-items-center
+      <button type="button" (click)="toggleMenu()" class="flex items-center gap-2 hover:opacity-80 transition">
+        <hlm-avatar class="size-8 rounded-full grid place-items-center
                  bg-[var(--brand)] text-white shadow-sm ring-1 ring-[var(--accent-600)]/25">
           <span hlmAvatarFallback class="text-[12px] leading-none">{{ initials() }}</span>
         </hlm-avatar>
@@ -31,31 +23,12 @@
           <div class="text-xs opacity-70">{{ roleText() }}</div>
         </div>
 
-        <lucide-angular
-          name="chevron-down"
-          class="w-4 h-4 text-zinc-600 transition"
-          [class.rotate-180]="menuOpen()"
-        />
+        <lucide-angular name="chevron-down" class="w-4 h-4 text-zinc-600 transition" [class.rotate-180]="menuOpen()" />
       </button>
 
       <!-- Dropdown -->
-      <div
-        *ngIf="menuOpen()"
-        class="absolute right-0 mt-2 w-52 bg-white shadow-xl rounded-xl
-               border border-zinc-200 py-2 z-50 animate-fade-in"
-      >
-        <button class="dropdown-item" (click)="profile()">
-          <lucide-angular name="user" class="h-4 w-4 opacity-70"></lucide-angular>
-          Mi Perfil
-        </button>
-
-        <button class="dropdown-item" (click)="settings()">
-          <lucide-angular name="settings" class="h-4 w-4 opacity-70"></lucide-angular>
-          Configuración
-        </button>
-
-        <div class="my-1 border-t border-zinc-200"></div>
-
+      <div *ngIf="menuOpen()" class="absolute right-0 mt-2 w-52 bg-white shadow-xl rounded-xl
+               border border-zinc-200 py-2 z-50 animate-fade-in">
         <button class="dropdown-item text-red-600 font-semibold" (click)="logout()">
           <lucide-angular name="log-out" class="h-4 w-4 opacity-70"></lucide-angular>
           Cerrar Sesión

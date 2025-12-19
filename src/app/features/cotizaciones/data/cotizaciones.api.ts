@@ -155,4 +155,66 @@ export class CotizacionesApi {
       { withCredentials: true }
     );
   }
+
+  getUsersStatsSummary(page = 1, limit = 10) {
+    return this.http.get<{
+      data: Array<{
+        userId: number;
+        name: string;
+        lastName: string;
+        total: number;
+        enviadas: number;
+        aprobadas: number;
+        noAprobadas: number;
+        totalCobrar: number;
+        ultimaCreada: string;
+      }>;
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`${this.base}/stats/users/summary?page=${page}&limit=${limit}`, {
+      withCredentials: true
+    });
+  }
+
+  // ✅ Endpoints /mine para estadísticas personales (Director)
+  getStatsMineSummary() {
+    return this.http.get<{
+      userId: number;
+      name: string;
+      lastName: string;
+      total: number;
+      enviados: number;
+      aprobadas: number;
+      noAprobadas: number;
+      totalCobrar: number;
+      ultimaCreadaAt: string | null;
+    }>(`${this.base}/stats/mine/summary`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsMineUltimos6Meses() {
+    return this.http.get<Array<{
+      month: string;
+      total: number;
+      enviados: number;
+      aprobadas: number;
+      noAprobadas: number;
+    }>>(`${this.base}/stats/mine/ultimos-6-meses`, {
+      withCredentials: true
+    });
+  }
+
+  getStatsMineActividadSemanal(weekOffset = 0) {
+    return this.http.get<{
+      weekOffset: number;
+      days: Array<{ day: string; date: string; total: number }>;
+    }>(`${this.base}/stats/mine/actividad-semanal?weekOffset=${weekOffset}`, {
+      withCredentials: true
+    });
+  }
 }

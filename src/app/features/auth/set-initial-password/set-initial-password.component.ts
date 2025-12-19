@@ -10,24 +10,6 @@ import { AuthService } from '../../../core/auth/auth.service';
     selector: 'app-set-initial-password',
     imports: [CommonModule, FormsModule],
     templateUrl: './set-initial-password.component.html',
-    styles: [`
-    :host {
-      display: block;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #f3f4f6;
-    }
-    .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-  `]
 })
 export class SetInitialPasswordComponent {
     private auth = inject(AuthService);

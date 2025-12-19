@@ -77,16 +77,21 @@
   <ng-container *ngIf="!loading()" [ngSwitch]="view()">
 
     <!-- CARDS -->
-    <proyectos-cards *ngSwitchCase="'cards'" [items]="filteredList()" (ver)="verDetalle($event)"
+    <proyectos-cards *ngSwitchCase="'cards'" [items]="paginatedList()" (ver)="verDetalle($event)"
       (editar)="openEditModal($event)" (eliminar)="eliminarProyecto($event)"></proyectos-cards>
 
     <!-- TABLA -->
     <div *ngSwitchCase="'table'" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
-      <proyectos-table [items]="filteredList()" (ver)="verDetalle($event)" (editar)="openEditModal($event)"
+      <proyectos-table [items]="paginatedList()" (ver)="verDetalle($event)" (editar)="openEditModal($event)"
         (eliminar)="eliminarProyecto($event)"></proyectos-table>
     </div>
 
   </ng-container>
+
+  <!-- PAGINATION -->
+  <ui-pagination *ngIf="!loading() && filteredList().length > 0" [currentPage]="currentPage()"
+    [totalPages]="totalPages()" [totalItems]="filteredList().length" [itemsPerPage]="itemsPerPage"
+    (pageChange)="currentPage.set($event)" />
 </div>
 
 <!-- MODAL CREAR -->

@@ -33,9 +33,9 @@
         <lucide-angular [name]="view() === 'cards' ? 'list' : 'layout-grid'" [size]="20"></lucide-angular>
       </button>
 
-      <!-- Botón crear (Negro) -->
+      <!-- Botón crear (Brand Color) -->
       <button
-        class="h-12 px-6 rounded-xl bg-black text-white font-medium hover:bg-zinc-900 transition-colors flex items-center gap-2 shadow-sm"
+        class="h-12 px-6 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-opacity-90 transition-colors flex items-center gap-2 shadow-sm"
         (click)="openCreate()">
         <lucide-angular name="plus" [size]="18"></lucide-angular>
         <span>Nuevo Cliente</span>

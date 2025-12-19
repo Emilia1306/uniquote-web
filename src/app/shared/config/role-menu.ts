@@ -15,7 +15,7 @@ export const ROLE_MENU = {
     { label: 'Inicio', path: '/gerente', icon: 'house' },
     { label: 'Proyectos', path: '/gerente/proyectos', icon: 'file-text' },
     { label: 'Cotizaciones', path: '/gerente/cotizaciones', icon: 'file-text' },
-    { label: 'Estadísticas', path: '/gerente/estadisticas', icon: 'bar-chart' },
+    { label: 'Estadísticas de Equipo', path: '/gerente/estadisticas-equipo', icon: 'users' },
     { label: 'Clientes', path: '/gerente/clientes', icon: 'building-2' },
   ],
 
@@ -23,7 +23,6 @@ export const ROLE_MENU = {
     { label: 'Inicio', path: '/director', icon: 'house' },
     { label: 'Proyectos', path: '/director/proyectos', icon: 'folder-kanban' },
     { label: 'Cotizaciones', path: '/director/cotizaciones', icon: 'file-text' },
-    { label: 'Estadísticas', path: '/director/estadisticas', icon: 'bar-chart' },
     { label: 'Clientes', path: '/director/clientes', icon: 'building-2' },
   ],
 } as const;

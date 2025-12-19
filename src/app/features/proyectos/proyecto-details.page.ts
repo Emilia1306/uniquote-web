@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { ProyectosApi } from './data/proyectos.api';
 import { QuotesCardsComponent } from '../cotizaciones/ui/quotes-cards.component';
 import { QuotesTableComponent } from '../cotizaciones/ui/quotes-table.component';
+import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
 import { CotizacionesStore } from '../cotizaciones/data/quotes.store';
 import { AuthService } from '../../core/auth/auth.service';
 import Swal from 'sweetalert2';
@@ -16,7 +17,8 @@ import { Location } from '@angular/common';
   imports: [
     CommonModule,
     QuotesCardsComponent,
-    QuotesTableComponent
+    QuotesTableComponent,
+    UiPaginationComponent
   ],
   template: `
   <div class="page">
@@ -125,13 +127,27 @@ import { Location } from '@angular/common';
             (input)="onSearch($event)">
         </div>
 
-        <div class="flex items-center gap-3">
+         <div class="flex items-center gap-3">
            <!-- My Quotes Toggle (Visual) -->
            <!-- HIDDEN FOR ADMIN -->
           <div *ngIf="auth.role() !== 'ADMIN'"
-               class="flex items-center bg-white border border-zinc-200 rounded-xl px-4 h-11 cursor-pointer hover:bg-zinc-50 transition-colors shadow-sm">
-            <span class="text-sm font-medium text-zinc-700 mr-2">Mis cotizaciones</span>
-            <div class="w-4 h-4 rounded-full border border-zinc-300"></div>
+               (click)="toggleMyQuotes()"
+               [class.bg-[var(--brand)]]="showOnlyMyQuotes()"
+               [class.border-[var(--brand)]]="showOnlyMyQuotes()"
+               [class.hover:brightness-90]="showOnlyMyQuotes()"
+               class="flex items-center bg-white border border-zinc-200 rounded-xl px-4 h-11 cursor-pointer transition-all shadow-sm"
+               [class.hover:bg-zinc-50]="!showOnlyMyQuotes()">
+            <span class="text-sm font-medium mr-2"
+                  [class.text-zinc-900]="showOnlyMyQuotes()"
+                  [class.text-zinc-700]="!showOnlyMyQuotes()">Mis cotizaciones</span>
+            <div class="w-4 h-4 rounded-full border flex items-center justify-center"
+                 [class.border-zinc-900]="showOnlyMyQuotes()"
+                 [class.bg-zinc-900]="showOnlyMyQuotes()"
+                 [class.border-zinc-300]="!showOnlyMyQuotes()">
+              <svg *ngIf="showOnlyMyQuotes()" class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
           </div>
 
           <!-- View Toggle (Single Button) -->
@@ -156,15 +172,23 @@ import { Location } from '@angular/common';
       <ng-container [ngSwitch]="view()">
         <quotes-cards 
           *ngSwitchCase="'cards'" 
-          [quoteList]="quotes()"
+          [quoteList]="paginatedQuotes()"
           [hideContextColumns]="true"
         />
         <quotes-table 
           *ngSwitchCase="'table'" 
-          [quoteList]="quotes()" 
+          [quoteList]="paginatedQuotes()" 
           [hideContextColumns]="true"
         />
       </ng-container>
+
+      <ui-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalItems]="quotes().length"
+        [itemsPerPage]="itemsPerPage"
+        (pageChange)="currentPage.set($event)"
+      />
 
     </ng-container>
   </div>
@@ -184,8 +208,39 @@ export class ProyectoDetailsPage {
   // View state with persistence
   view = signal<'cards' | 'table'>((localStorage.getItem('project-details-view-mode') as 'cards' | 'table') || 'table');
 
-  // Expose quotes from store
-  quotes = this.quotesStore.items;
+  // Filter for "Mis cotizaciones"
+  showOnlyMyQuotes = signal<boolean>(false);
+
+  // Pagination state
+  currentPage = signal<number>(1);
+  itemsPerPage = 10;
+
+  // Expose quotes from store with optional filtering
+  quotes = computed(() => {
+    const allQuotes = this.quotesStore.items();
+
+    // If "Mis cotizaciones" is not active, show all quotes for this project
+    if (!this.showOnlyMyQuotes()) {
+      return allQuotes;
+    }
+
+    // Filter to show only quotes created by the logged-in user
+    const userId = this.auth.user()?.id;
+    return allQuotes.filter(q => q.createdBy?.id === userId);
+  });
+
+  // Paginated quotes
+  paginatedQuotes = computed(() => {
+    const allQuotes = this.quotes();
+    const start = (this.currentPage() - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return allQuotes.slice(start, end);
+  });
+
+  // Total pages
+  totalPages = computed(() => {
+    return Math.ceil(this.quotes().length / this.itemsPerPage);
+  });
 
   totalAmount = computed(() => {
     const qs = this.quotes();
@@ -239,11 +294,18 @@ export class ProyectoDetailsPage {
   }
 
   toggleViewMode() {
-    this.toggleView(this.view() === 'cards' ? 'table' : 'cards');
+    this.view.update(v => v === 'cards' ? 'table' : 'cards');
+    localStorage.setItem('project-details-view-mode', this.view());
+  }
+
+  toggleMyQuotes() {
+    this.showOnlyMyQuotes.update(v => !v);
+    this.currentPage.set(1); // Reset to first page when filter changes
   }
 
   goCrearCotizacion() {
-    this.router.navigate(['/cotizaciones/crear'], {
+    const role = this.auth.role()?.toLowerCase();
+    this.router.navigate([`/${role}/cotizaciones/crear`], {
       queryParams: { projectId: this.project.id }
     });
   }

@@ -67,15 +67,15 @@
                 <!-- ENCUESTADORES -->
                 <div>
                     <label class="form-label">Encuestadores</label>
-                    <input class="form-input" type="number" min="0" [(ngModel)]="d.encuestadoresTotales"
-                        (ngModelChange)="patch({ encuestadoresTotales: d.encuestadoresTotales })">
+                    <input class="form-input" type="number" min="0" [ngModel]="d.encuestadoresTotales"
+                        (ngModelChange)="patch({ encuestadoresTotales: $event })">
                 </div>
 
                 <!-- SUPERVISORES -->
                 <div>
                     <label class="form-label">Supervisores</label>
-                    <input class="form-input" type="number" min="0" [(ngModel)]="d.supervisores"
-                        (ngModelChange)="patch({ supervisores: d.supervisores })">
+                    <input class="form-input" type="number" min="0" [ngModel]="d.supervisores"
+                        (ngModelChange)="patch({ supervisores: $event })">
                 </div>
 
             </div>
@@ -88,15 +88,15 @@
         <!-- =============================== -->
         <div *ngIf="d.trabajoDeCampoTipo === 'subcontratado'" class="p-4 border bg-white rounded-lg mb-6">
             <label class="form-label">Monto de subcontratación</label>
-            <input class="form-input" type="number" min="0" [(ngModel)]="d.trabajoDeCampoCosto"
-                (ngModelChange)="patch({ trabajoDeCampoCosto: d.trabajoDeCampoCosto })">
+            <input class="form-input" type="number" min="0" [ngModel]="d.trabajoDeCampoCosto"
+                (ngModelChange)="patch({ trabajoDeCampoCosto: $event })">
         </div>
 
         <!-- Incentivo -->
         <div class="mb-2">
             <label class="form-label">Incentivo</label>
-            <input class="form-input" type="number" min="0" [(ngModel)]="d.incentivoTotal"
-                (ngModelChange)="patch({ incentivoTotal: d.incentivoTotal })" />
+            <input class="form-input" type="number" min="0" [ngModel]="d.incentivoTotal"
+                (ngModelChange)="patch({ incentivoTotal: $event })" />
         </div>
     </div>
 
