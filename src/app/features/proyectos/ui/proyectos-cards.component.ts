@@ -7,7 +7,7 @@ import { Proyecto } from '../data/proyectos.types';
   standalone: true,
   imports: [CommonModule, DatePipe],
   template: `
-  <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+  <div class="grid gap-6 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
     <article *ngFor="let p of items" class="card card-hover p-6 relative h-full flex flex-col">
 
       <!-- Acciones -->
