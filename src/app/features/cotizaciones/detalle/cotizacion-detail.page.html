@@ -1,14 +1,41 @@
 <div class="mx-auto max-w-6xl px-6 py-6">
 
-  <!-- Loader -->
-  <div *ngIf="loading" class="text-center py-20">
-    <div class="loader mx-auto"></div>
-    <p class="muted mt-2">Cargando cotización...</p>
+  <!-- LOADING STATES -->
+  <div *ngIf="loading" class="space-y-8 animate-fade-in">
+    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+      <div class="space-y-2 flex-1">
+        <ui-skeleton width="60%" height="40px"></ui-skeleton>
+        <ui-skeleton width="30%" height="20px"></ui-skeleton>
+      </div>
+      <ui-skeleton width="80px" height="28px" borderRadius="14px"></ui-skeleton>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card p-6 space-y-4">
+        <ui-skeleton width="50%" height="24px"></ui-skeleton>
+        <div class="space-y-2">
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+        </div>
+      </div>
+      <div class="card p-6 space-y-4">
+        <ui-skeleton width="50%" height="24px"></ui-skeleton>
+        <div class="space-y-2">
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+          <ui-skeleton width="100%" height="16px"></ui-skeleton>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <ui-skeleton width="100%" height="200px" borderRadius="12px"></ui-skeleton>
+    </div>
   </div>
 
   <ng-container *ngIf="!loading && cotizacion">
 
-    <!-- Encabezado -->
     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
       <div>
         <h1 class="text-3xl font-semibold text-[color:var(--brand)]">
@@ -23,7 +50,7 @@
       </span>
     </div>
 
-    <!-- Info general -->
+    <!-- Información -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
 
       <div class="card p-6">
@@ -139,7 +166,7 @@
           <!-- Personas -->
           <div>
             <label class="block text-xs font-bold text-zinc-500 uppercase tracking-wide mb-1.5">Personas</label>
-            <input [(ngModel)]="editForm.personas" type="number" min="0"
+            <input [(ngModel)]="editForm.personas" type="number" min="0" placeholder="0"
               class="w-full px-4 h-11 rounded-xl border border-zinc-200 bg-white text-zinc-900 outline-none focus:border-[var(--brand)] focus:ring-1 focus:ring-[var(--brand)] transition-all">
           </div>
 

@@ -25,7 +25,6 @@ export class AppShellComponent implements OnInit {
 
   open = signal(false);
 
-  // RUTAS donde NO se debe mostrar sidebar (wizard mode)
   hideSideRoutes = [
     '/gerente/cotizaciones/crear',
     '/gerente/cotizaciones/editar',

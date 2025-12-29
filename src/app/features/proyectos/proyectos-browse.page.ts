@@ -12,6 +12,7 @@ import { ProyectosCardsComponent } from './ui/proyectos-cards.component';
 import { ProyectosTableComponent } from './ui/proyectos-table.component';
 import { UiComboboxComponent, UiComboboxItem } from '../../shared/ui/ui-combobox/ui-combobox.component';
 import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
+import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 import { ClientesApi } from '../clientes/data/clientes.api';
 import { ContactosApi } from '../clientes/data/contactos.api';
@@ -27,7 +28,8 @@ import { AuthService } from '../../core/auth/auth.service';
     ProyectosTableComponent,
     UiComboboxComponent,
     LucideAngularModule,
-    UiPaginationComponent
+    UiPaginationComponent,
+    UiSkeletonComponent
   ],
   templateUrl: './proyectos-browse.page.html'
 })

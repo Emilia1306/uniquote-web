@@ -21,11 +21,12 @@ function norm(s: string) {
 import { AuthService } from '../../core/auth/auth.service';
 
 import { LucideAngularModule } from 'lucide-angular';
+import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 @Component({
   standalone: true,
   selector: 'cliente-detail-page',
-  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule, UiSkeletonComponent],
   templateUrl: './clientes-detail.page.html',
 })
 export class ClienteDetailPage {

@@ -7,7 +7,7 @@ import { Proyecto } from '../data/proyectos.types';
   standalone: true,
   imports: [CommonModule, DatePipe],
   template: `
-  <div class="card p-4 overflow-x-auto">
+  <div class="card p-4 table-responsive">
     <table class="w-full text-sm">
       <thead>
         <tr class="text-left text-zinc-500">

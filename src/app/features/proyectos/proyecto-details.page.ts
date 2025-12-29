@@ -10,6 +10,7 @@ import { CotizacionesStore } from '../cotizaciones/data/quotes.store';
 import { AuthService } from '../../core/auth/auth.service';
 import Swal from 'sweetalert2';
 import { Location } from '@angular/common';
+import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 @Component({
   standalone: true,
@@ -18,29 +19,67 @@ import { Location } from '@angular/common';
     CommonModule,
     QuotesCardsComponent,
     QuotesTableComponent,
-    UiPaginationComponent
+    UiPaginationComponent,
+    UiSkeletonComponent
   ],
   template: `
   <div class="page">
+    <!-- LOADING STATES -->
+    <div *ngIf="!project" class="space-y-8">
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div class="flex-1 space-y-4">
+          <ui-skeleton width="70%" height="48px" borderRadius="12px"></ui-skeleton>
+          <div class="flex gap-2">
+             <ui-skeleton width="120px" height="24px" borderRadius="12px"></ui-skeleton>
+             <ui-skeleton width="150px" height="24px" borderRadius="12px"></ui-skeleton>
+          </div>
+          <div class="flex flex-col md:flex-row gap-8">
+            <div class="flex items-center gap-3">
+              <ui-skeleton width="40px" height="40px" borderRadius="20px"></ui-skeleton>
+              <div><ui-skeleton width="100px" height="12px" class="mb-1"></ui-skeleton><ui-skeleton width="140px" height="16px"></ui-skeleton></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <ui-skeleton width="40px" height="40px" borderRadius="20px"></ui-skeleton>
+              <div><ui-skeleton width="100px" height="12px" class="mb-1"></ui-skeleton><ui-skeleton width="140px" height="16px"></ui-skeleton></div>
+            </div>
+          </div>
+        </div>
+        <ui-skeleton width="180px" height="48px" borderRadius="16px"></ui-skeleton>
+      </div>
+      
+      <div class="flex flex-wrap gap-6">
+        <ui-skeleton width="240px" height="88px" borderRadius="24px"></ui-skeleton>
+        <ui-skeleton width="280px" height="88px" borderRadius="24px"></ui-skeleton>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex justify-between">
+          <ui-skeleton width="300px" height="44px" borderRadius="12px"></ui-skeleton>
+          <div class="flex gap-3">
+            <ui-skeleton width="150px" height="44px" borderRadius="12px"></ui-skeleton>
+            <ui-skeleton width="44px" height="44px" borderRadius="12px"></ui-skeleton>
+          </div>
+        </div>
+        <ui-skeleton width="100%" height="400px" borderRadius="24px"></ui-skeleton>
+      </div>
+    </div>
+
     <ng-container *ngIf="project">
 
-      <!-- Header Section -->
+      <!-- Header -->
       <header class="mb-8">
         
         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
           
           <div class="flex-1">
-            <!-- Title -->
             <h1 class="text-3xl md:text-4xl font-bold text-[var(--brand)] tracking-tight mb-2">{{ project.name }}</h1>
             
-            <!-- Metadata: Client • Date -->
             <div class="flex flex-wrap items-center gap-2 text-sm text-zinc-600 mb-6">
                <span class="font-medium bg-zinc-100 px-3 py-1 rounded-full">{{ project.cliente.empresa }}</span>
                <span class="text-zinc-300 hidden md:inline">•</span>
                <span class="block md:inline w-full md:w-auto text-zinc-500">Creado el {{ project.createdAt | date:'longDate' }}</span>
             </div>
 
-            <!-- Contact Info -->
             <div class="flex flex-col md:flex-row gap-4 md:gap-8 text-sm">
               <div class="flex items-center gap-3">
                 <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
@@ -68,8 +107,6 @@ import { Location } from '@angular/common';
             </div>
           </div>
 
-          <!-- New Quote Button (Top Right Desktop, Bottom Header Mobile) -->
-          <!-- HIDDEN FOR ADMIN -->
           <button *ngIf="auth.role() !== 'ADMIN'"
             class="btn btn-primary h-12 shadow-lg shadow-orange-200/50 px-6 shrink-0 w-full md:w-auto order-last md:order-none mt-4 md:mt-0 rounded-2xl" 
             (click)="goCrearCotizacion()">
@@ -83,7 +120,6 @@ import { Location } from '@angular/common';
 
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap gap-4 md:gap-6 mb-8 md:mb-10">
-        <!-- Card 1: Total Quotes -->
         <div class="card p-5 flex items-center gap-5 w-full md:w-auto md:min-w-[240px] !rounded-3xl border-0 shadow-lg shadow-orange-500/5">
            <div class="h-12 w-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +132,6 @@ import { Location } from '@angular/common';
            </div>
         </div>
 
-        <!-- Card 2: Total Amount -->
         <div class="card p-5 flex items-center gap-5 w-full md:w-auto md:min-w-[280px] !rounded-3xl border-0 shadow-lg shadow-green-500/5">
            <div class="h-12 w-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,10 +145,9 @@ import { Location } from '@angular/common';
         </div>
       </div>
 
-      <!-- Toolbar: Search + Filters -->
+      <!-- Toolbar -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         
-        <!-- Search Bar -->
         <div class="relative flex-1">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="h-5 w-5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor">
@@ -128,8 +162,6 @@ import { Location } from '@angular/common';
         </div>
 
          <div class="flex items-center gap-3">
-           <!-- My Quotes Toggle (Visual) -->
-           <!-- HIDDEN FOR ADMIN -->
           <div *ngIf="auth.role() !== 'ADMIN'"
                (click)="toggleMyQuotes()"
                [class.bg-[var(--brand)]]="showOnlyMyQuotes()"
@@ -150,18 +182,13 @@ import { Location } from '@angular/common';
             </div>
           </div>
 
-          <!-- View Toggle (Single Button) -->
           <button 
             class="h-11 w-11 bg-white border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-600 hover:bg-zinc-50 transition-colors shadow-sm"
             (click)="toggleViewMode()"
             [title]="view() === 'cards' ? 'Ver como lista' : 'Ver como tarjetas'">
-            
-            <!-- Show List icon when in Cards mode (to switch to list) -->
             <svg *ngIf="view() === 'cards'" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
-
-            <!-- Show Cards icon when in Table mode (to switch to cards) -->
             <svg *ngIf="view() === 'table'" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
             </svg>

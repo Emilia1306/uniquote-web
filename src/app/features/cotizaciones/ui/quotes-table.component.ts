@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, CurrencyPipe, DatePipe], // CommonModule includes NgIf
   template: `
-  <div class="card card-hover p-4 overflow-x-auto">
+  <div class="card card-hover p-4 table-responsive">
     <ng-container *ngIf="(quoteList || store.filtered()).length > 0; else emptyState">
       <table class="w-full text-sm">
         <thead>

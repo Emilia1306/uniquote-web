@@ -21,6 +21,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { firstValueFrom } from 'rxjs';
 import { ProyectosApi } from '../../proyectos/data/proyectos.api';
+import { UiSkeletonComponent } from '../../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 @Component({
   selector: 'crear-cotizacion-page',
@@ -36,6 +37,7 @@ import { ProyectosApi } from '../../proyectos/data/proyectos.api';
     Step2DatosComponent,
     Step3EntregablesComponent,
     Step4ResumenComponent,
+    UiSkeletonComponent
   ]
 })
 export class CrearCotizacionPage {

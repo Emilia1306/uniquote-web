@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, CurrencyPipe, DatePipe],
   template: `
   <ng-container *ngIf="(quoteList || store.filtered()).length > 0; else emptyState">
-    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       <article *ngFor="let q of (quoteList || store.filtered())" class="card card-hover p-6 flex flex-col h-full">
 
         <!-- Header: Título + Estado -->
