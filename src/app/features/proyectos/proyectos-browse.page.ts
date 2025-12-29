@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -21,6 +21,7 @@ import { AuthService } from '../../core/auth/auth.service';
 @Component({
   selector: 'proyectos-browse',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -85,6 +86,8 @@ export class ProyectosBrowsePage {
     if (id) {
       const cId = Number(id);
       this.clienteId.set(cId);
+
+      // Guarded loading
       await this.store.loadByCliente(cId);
 
       // Cargar info del cliente para el titulo
@@ -107,9 +110,16 @@ export class ProyectosBrowsePage {
       }
 
     } else {
-      await this.store.loadAll();
+      // Guarded loading: avoid re-fetching if we already have projects
+      if (this.store.list().length === 0) {
+        await this.store.loadAll();
+      }
     }
-    await this.loadClientes();
+
+    // Always ensure we have clientes for the combo (might want to cache this too if it's large)
+    if (this.clientesItems().length === 0) {
+      await this.loadClientes();
+    }
   }
 
   async loadClientes() {

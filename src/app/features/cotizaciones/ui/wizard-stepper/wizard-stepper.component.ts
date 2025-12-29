@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NgFor, NgIf, NgClass, NgTemplateOutlet } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'wizard-stepper',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, NgTemplateOutlet, LucideAngularModule],
+  imports: [NgFor, NgIf, NgClass, LucideAngularModule],
   templateUrl: './wizard-stepper.component.html',
   styleUrls: ['./wizard-stepper.component.scss'],
 })

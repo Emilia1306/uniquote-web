@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { QuotesTableComponent } from './ui/quotes-table.component';
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 @Component({
   standalone: true,
   selector: 'quotes-browse',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     QuotesTableComponent,
@@ -266,8 +267,10 @@ export class QuotesBrowsePage {
       }
     });
 
-    // Cargar todas las cotizaciones
-    this.store.loadGlobal({});
+    // Cargar todas las cotizaciones (Guarded)
+    if (this.store.items().length === 0) {
+      this.store.loadGlobal({});
+    }
   }
 
 

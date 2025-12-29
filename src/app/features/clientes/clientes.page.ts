@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,17 +7,17 @@ import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
 import Swal from 'sweetalert2';
 import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
+import { AuthService } from '../../core/auth/auth.service';
 
 function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
 }
 type ViewMode = 'cards' | 'list';
 
-import { AuthService } from '../../core/auth/auth.service';
-
 @Component({
   standalone: true,
   selector: 'clientes-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule, UiSkeletonComponent],
   templateUrl: './clientes.page.html',
 })
@@ -45,7 +45,7 @@ export class ClientesPage {
   filtered = computed(() => {
     const q = norm(this.q());
     if (!q) return this.clientes();
-    return this.clientes().filter(c => norm(`${c.empresa} ${c.razonSocial}`).includes(q));
+    return this.clientes().filter(c => norm(`${c.empresa} ${c.razonSocial} `).includes(q));
   });
 
   showForm = signal(false);
@@ -55,6 +55,9 @@ export class ClientesPage {
   async ngOnInit() { await this.load(); }
 
   async load(force = false) {
+    // API Guard: Avoid loading if already loaded (unless forced)
+    if (!force && this.clientes().length > 0) return;
+
     this.loading.set(true); this.error.set(null);
     try {
       if (force) this.api.clearCache();
@@ -156,7 +159,4 @@ export class ClientesPage {
       this.loading.set(false);
     }
   }
-
-  // demo KPIs
-
 }

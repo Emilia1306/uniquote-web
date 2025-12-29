@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { NgFor, NgIf, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UsersApi } from '../../users/data/users.api';
 import { AuditoriaApi, LogAuditoria } from '../../data/auditoria.api';
@@ -14,7 +14,8 @@ import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skelet
 @Component({
   selector: 'admin-dashboard',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TitleCasePipe, RouterLink, DatePipe, TimeAgoPipe, LucideAngularModule, UiSkeletonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgFor, NgIf, TitleCasePipe, RouterLink, LucideAngularModule, UiSkeletonComponent, TimeAgoPipe],
   templateUrl: './admin-dashboard.html',
 })
 export class AdminDashboardComponent {
@@ -33,6 +34,9 @@ export class AdminDashboardComponent {
   meEmail = signal<string | null>(null);
 
   async ngOnInit() {
+    // Guard: Avoid redundant loading
+    if (this.usuarios().length > 0) return;
+
     this.loadingUsers.set(true);
     this.usersError.set(null);
     this.loadingAudit.set(true);
@@ -64,16 +68,5 @@ export class AdminDashboardComponent {
       this.loadingUsers.set(false);
       this.loadingAudit.set(false);
     }
-  }
-
-  // clases para el pill por rol (mismo diseño)
-  rolePillClasses(role: string) {
-    const r = (role ?? '').toLowerCase();
-    return {
-      'inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium text-white': true,
-      'bg-red-500': r === 'admin',
-      'bg-orange-500': r === 'gerente',
-      'bg-amber-500': r === 'director',
-    };
   }
 }

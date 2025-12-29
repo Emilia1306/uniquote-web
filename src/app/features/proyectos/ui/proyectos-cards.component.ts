@@ -48,7 +48,7 @@ import { Proyecto } from '../data/proyectos.types';
 
       <!-- Footer con count -->
       <div class="flex flex-col items-center ml-auto w-fit">
-        <div class="text-3xl font-bold text-[color:var(--brand)] leading-none">{{ p._count?.cotizaciones || 0 }}</div>
+        <div class="text-3xl font-bold text-[color:var(--brand)] leading-none">{{ p._count.cotizaciones || 0 }}</div>
         <div class="text-xs text-black font-medium mt-1">cot.</div>
       </div>
 

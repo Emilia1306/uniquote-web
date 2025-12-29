@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 import { CotizacionesApi } from '../data/cotizaciones.api';
-import { CotizacionStatusPillComponent } from './cotizacion-status-pill.component';
 import { CotizacionItemsTableComponent } from './cotizacion-items-table.component';
 import { UiSkeletonComponent } from '../../../shared/ui/ui-skeleton/ui-skeleton.component';
 
@@ -13,7 +13,7 @@ import { STATUS_COLORS } from '../ui/status-colors';
 @Component({
   standalone: true,
   selector: 'cotizacion-detail',
-  imports: [CommonModule, FormsModule, CotizacionStatusPillComponent, CotizacionItemsTableComponent, UiSkeletonComponent],
+  imports: [CommonModule, FormsModule, CotizacionItemsTableComponent, UiSkeletonComponent],
   templateUrl: './cotizacion-detail.page.html',
   styles: [`
     .animate-fade-in { animation: fadeIn 0.2s ease-out; }
