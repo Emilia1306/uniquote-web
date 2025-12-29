@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NgFor, NgIf, DecimalPipe, CommonModule } from '@angular/common';
 import {
   NgApexchartsModule,
@@ -23,7 +23,8 @@ import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skelet
 @Component({
   selector: 'gerente-dashboard',
   standalone: true,
-  imports: [NgApexchartsModule, DecimalPipe, NgApexchartsModule, NgIcon, CommonModule, UiSkeletonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, NgApexchartsModule, DecimalPipe, NgIcon, UiSkeletonComponent],
   providers: [provideIcons({ lucideFileText, lucideClock, lucideCheckCheck, lucideXCircle })],
   templateUrl: './gerente-dashboard.html',
 })
@@ -53,6 +54,12 @@ export class GerenteDashboardComponent {
   );
 
   async ngOnInit() {
+    // Guard: Avoid redundant loading
+    if (this.serieMeses().length > 0) {
+      this.loading.set(false);
+      return;
+    }
+
     this.loading.set(true);
     try {
       const [total, pend, aprob, noApp, sixMonths, weekly] = await Promise.all([

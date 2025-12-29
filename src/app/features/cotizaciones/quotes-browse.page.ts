@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { QuotesTableComponent } from './ui/quotes-table.component';
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 @Component({
   standalone: true,
   selector: 'quotes-browse',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     QuotesTableComponent,
@@ -56,7 +57,7 @@ import Swal from 'sweetalert2';
         <!-- TABS (Biblioteca / Mis Cotizaciones) -->
         <div *ngIf="auth.role() !== 'ADMIN'" class="flex p-1 bg-zinc-100 rounded-xl">
           <button 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all"
+            class="min-w-[120px] px-4 py-2 text-sm font-semibold rounded-lg transition-all"
             [class.bg-white]="!store.filters().mineOnly"
             [class.shadow-sm]="!store.filters().mineOnly"
             [class.text-zinc-900]="!store.filters().mineOnly"
@@ -65,13 +66,13 @@ import Swal from 'sweetalert2';
             Biblioteca
           </button>
           <button 
-            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all"
+            class="min-w-[120px] px-4 py-2 text-sm font-semibold rounded-lg transition-all"
             [class.bg-white]="store.filters().mineOnly"
             [class.shadow-sm]="store.filters().mineOnly"
             [class.text-zinc-900]="store.filters().mineOnly"
             [class.text-zinc-500]="!store.filters().mineOnly"
             (click)="store.setFilters({ mineOnly: true })">
-            Mis
+            Mis Cotizaciones
           </button>
         </div>
 
@@ -266,8 +267,10 @@ export class QuotesBrowsePage {
       }
     });
 
-    // Cargar todas las cotizaciones
-    this.store.loadGlobal({});
+    // Cargar todas las cotizaciones (Guarded)
+    if (this.store.items().length === 0) {
+      this.store.loadGlobal({});
+    }
   }
 
 

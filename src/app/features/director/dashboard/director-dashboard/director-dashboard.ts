@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { NgFor, NgIf, DecimalPipe, CommonModule } from '@angular/common';
 import {
   NgApexchartsModule,
@@ -14,16 +14,17 @@ import {
 import { CotizacionesApi } from '../../../../features/cotizaciones/data/cotizaciones.api';
 import { firstValueFrom } from 'rxjs';
 
+import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skeleton.component';
+
 type Kpi = { label: string; value: number; icon: string; bgClass: string; iconClass: string };
 type Serie = { mes: string; totales: number; aprobadas: number };
 type Semana = { dia: string; valor: number };
 
-import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skeleton.component';
-
 @Component({
   selector: 'app-director-dashboard',
   standalone: true,
-  imports: [NgApexchartsModule, DecimalPipe, NgApexchartsModule, NgIcon, CommonModule, UiSkeletonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, NgApexchartsModule, DecimalPipe, NgIcon, UiSkeletonComponent],
   providers: [provideIcons({ lucideFileText, lucideClock, lucideCheckCheck, lucideXCircle })],
   templateUrl: './director-dashboard.html',
   styleUrl: './director-dashboard.scss',
@@ -54,6 +55,12 @@ export class DirectorDashboard implements OnInit {
   );
 
   async ngOnInit() {
+    // Guard: Avoid redundant loading
+    if (this.serieMeses().length > 0) {
+      this.loading.set(false);
+      return;
+    }
+
     this.loading.set(true);
     try {
       // ✅ Usar endpoints /mine para estadísticas personales
@@ -66,21 +73,21 @@ export class DirectorDashboard implements OnInit {
       console.log('Director Dashboard Data:', { summary, sixMonths, weekly });
 
       this.kpis.set([
-        { label: 'Cotizaciones Totales', value: summary.total, icon: 'lucideFileText', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
-        { label: 'Enviadas', value: summary.enviados, icon: 'lucideClock', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
-        { label: 'Cotizaciones Aprobadas', value: summary.aprobadas, icon: 'lucideCheckCheck', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
-        { label: 'Cotizaciones No Aprobadas', value: summary.noAprobadas, icon: 'lucideXCircle', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
+        { label: 'Cotizaciones Totales', value: (summary as any).total, icon: 'lucideFileText', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
+        { label: 'Enviadas', value: (summary as any).enviados, icon: 'lucideClock', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
+        { label: 'Cotizaciones Aprobadas', value: (summary as any).aprobadas, icon: 'lucideCheckCheck', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
+        { label: 'Cotizaciones No Aprobadas', value: (summary as any).noAprobadas, icon: 'lucideXCircle', bgClass: 'bg-[var(--brand)]', iconClass: 'text-white' },
       ]);
 
       // Convertir formato de mes YYYY-MM a nombre corto
-      const monthMap = sixMonths.map((m: any) => ({
+      const monthMap = (sixMonths as any).map((m: any) => ({
         mes: this.getMonthName(m.month),
         totales: m.total,
         aprobadas: m.aprobadas
       }));
       this.serieMeses.set(monthMap);
 
-      const weekMap = weekly.days.map((d: any) => ({
+      const weekMap = (weekly as any).days.map((d: any) => ({
         dia: d.day,
         valor: d.total
       }));

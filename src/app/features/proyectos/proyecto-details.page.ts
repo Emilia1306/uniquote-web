@@ -89,11 +89,11 @@ import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.com
                 </div>
                 <div>
                   <div class="text-zinc-500 text-xs mb-0.5">Contacto Principal</div>
-                  <div class="font-semibold text-zinc-900">{{ project.contacto?.nombre || 'Sin asignar' }}</div>
+                  <div class="font-semibold text-zinc-900">{{ project.contacto.nombre || 'Sin asignar' }}</div>
                 </div>
               </div>
 
-               <div class="flex items-center gap-3" *ngIf="project.contacto?.email">
+               <div class="flex items-center gap-3" *ngIf="project.contacto.email">
                 <div class="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 shrink-0">
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -127,7 +127,7 @@ import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.com
              </svg>
            </div>
            <div>
-             <div class="text-3xl font-bold text-zinc-900 tracking-tight">{{ quotes()?.length || 0 }}</div>
+             <div class="text-3xl font-bold text-zinc-900 tracking-tight">{{ quotes().length || 0 }}</div>
              <div class="text-sm text-zinc-500 font-medium">Cotizaciones Totales</div>
            </div>
         </div>
@@ -331,9 +331,10 @@ export class ProyectoDetailsPage {
   }
 
   goCrearCotizacion() {
-    const role = this.auth.role()?.toLowerCase();
-    this.router.navigate([`/${role}/cotizaciones/crear`], {
-      queryParams: { projectId: this.project.id }
+    const role = (this.auth.role() as string).toLowerCase();
+    const prefix = role === 'admin' ? '/admin' : role === 'director' ? '/director' : '/gerente';
+    this.router.navigate([`${prefix}/cotizaciones/crear`], {
+      queryParams: { projectId: this.project.id, clientId: this.project.cliente.id }
     });
   }
 
