@@ -7,6 +7,7 @@ import type { Role } from '../../../core/auth/roles';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../../core/auth/auth.service';
 import Swal from 'sweetalert2';
+import { UiSkeletonComponent } from '../../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 function normalizeTxt(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -17,7 +18,7 @@ type RoleFilter = Role | 'ALL';
 @Component({
   standalone: true,
   selector: 'admin-users-page',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, UiSkeletonComponent],
   templateUrl: './users.page.html',
 })
 export class AdminUsersPage {

@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
       <h3 class="font-semibold text-lg">Desglose de costos</h3>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="table-responsive">
       <table class="w-full text-sm min-w-[600px]">
         <thead class="text-left text-zinc-500 border-b">
           <tr>

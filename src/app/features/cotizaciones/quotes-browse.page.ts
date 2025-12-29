@@ -11,6 +11,7 @@ import { ClientesApi } from '../clientes/data/clientes.api';
 
 import { UiSelectComponent, UiSelectItem } from '../../shared/ui/ui-select/ui-select.component';
 import { UiPaginationComponent } from '../../shared/ui/ui-pagination/ui-pagination.component';
+import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,7 +22,8 @@ import Swal from 'sweetalert2';
     QuotesTableComponent,
     QuotesCardsComponent,
     UiSelectComponent,
-    UiPaginationComponent
+    UiPaginationComponent,
+    UiSkeletonComponent
   ],
   template: `
   <div class="page">
@@ -35,13 +37,13 @@ import Swal from 'sweetalert2';
     <!-- TOOLBAR -->
     <div class="flex flex-col xl:flex-row gap-4 mb-8">
       <!-- Buscador -->
-      <div class="relative flex-1">
+      <div class="relative flex-1 group">
         <input
-          class="w-full h-12 rounded-xl border border-zinc-200 bg-white px-5 pr-12 outline-none focus:border-zinc-400 focus:ring-0 shadow-sm"
-          placeholder="Buscar..."
+          class="w-full h-12 rounded-xl border border-zinc-200 bg-white px-5 pr-12 outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-brand-500/5 shadow-sm transition-all"
+          placeholder="Buscar cotizaciones, clientes..."
           [value]="store.filters().search"
           (input)="onSearchChange($event)" />
-        <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 h-5 w-5" 
+        <svg class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 h-5 w-5 group-focus-within:text-[var(--brand)] transition-colors" 
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -49,12 +51,12 @@ import Swal from 'sweetalert2';
       </div>
 
       <!-- Controls Group -->
-      <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         
         <!-- TABS (Biblioteca / Mis Cotizaciones) -->
         <div *ngIf="auth.role() !== 'ADMIN'" class="flex p-1 bg-zinc-100 rounded-xl">
           <button 
-            class="flex-1 md:flex-none px-4 py-2 text-sm font-medium rounded-lg transition-all"
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all"
             [class.bg-white]="!store.filters().mineOnly"
             [class.shadow-sm]="!store.filters().mineOnly"
             [class.text-zinc-900]="!store.filters().mineOnly"
@@ -63,20 +65,20 @@ import Swal from 'sweetalert2';
             Biblioteca
           </button>
           <button 
-            class="flex-1 md:flex-none px-4 py-2 text-sm font-medium rounded-lg transition-all"
+            class="px-4 py-2 text-sm font-semibold rounded-lg transition-all"
             [class.bg-white]="store.filters().mineOnly"
             [class.shadow-sm]="store.filters().mineOnly"
             [class.text-zinc-900]="store.filters().mineOnly"
             [class.text-zinc-500]="!store.filters().mineOnly"
             (click)="store.setFilters({ mineOnly: true })">
-            Mis Cotizaciones
+            Mis
           </button>
         </div>
 
-        <div class="hidden md:block w-px h-8 bg-zinc-200"></div>
+        <div class="hidden sm:block w-px h-8 bg-zinc-200"></div>
 
         <!-- ACTIONS ROW -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <!-- View Toggle -->
           <button type="button"
             class="h-12 w-12 rounded-xl border border-zinc-200 bg-white flex items-center justify-center hover:bg-zinc-50 shadow-sm text-zinc-600 transition-colors"
@@ -94,18 +96,19 @@ import Swal from 'sweetalert2';
 
           <!-- New Quote Button (Non-Admin) -->
           <button *ngIf="auth.role() !== 'ADMIN'"
-            class="flex-1 md:flex-none h-12 px-6 rounded-xl bg-[var(--brand)] text-white font-medium hover:bg-opacity-90 transition-colors flex items-center justify-center gap-2 shadow-sm whitespace-nowrap"
+            class="flex-1 sm:flex-none h-12 px-4 rounded-xl bg-[var(--brand)] text-white font-bold hover:shadow-lg hover:shadow-brand-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm whitespace-nowrap"
             (click)="goCreate()">
-            <span>+ Nueva Cotización</span>
+            <span class="text-xl">+</span>
+            <span class="sm:inline">Nueva Cotización</span>
           </button>
 
-          <!-- Status Filter (Admin Only - Replaces Button) -->
-          <div *ngIf="auth.role() === 'ADMIN'" class="w-56">
+          <!-- Status Filter (Admin Only) -->
+          <div *ngIf="auth.role() === 'ADMIN'" class="w-full sm:w-56">
              <ui-select 
                 [items]="statusItems" 
                 [value]="store.filters().status ?? null" 
                 (valueChange)="setFilter($event)"
-                placeholder="Todos los estados">
+                placeholder="Estado">
               </ui-select>
           </div>
         </div>
@@ -130,25 +133,35 @@ import Swal from 'sweetalert2';
 
 
     <!-- SKELETON LOADER -->
-    <div *ngIf="store.loading()" class="animate-pulse">
+    <div *ngIf="store.loading()">
       <!-- Card Skeleton -->
       <div *ngIf="store.viewMode() === 'cards'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let i of [1,2,3,4,5,6]" class="rounded-3xl bg-white p-6 shadow-sm border border-zinc-100 flex flex-col h-[320px]">
-           <div class="flex justify-between items-start mb-4">
-              <div class="space-y-2 w-2/3">
-                 <div class="h-5 bg-zinc-200 rounded w-1/2"></div>
-                 <div class="h-3 bg-zinc-100 rounded w-3/4"></div>
+        <div *ngFor="let i of [1,2,3,4,5,6]" class="rounded-3xl bg-white p-6 shadow-sm border border-zinc-100 flex flex-col h-[300px]">
+           <div class="flex justify-between items-start mb-6">
+              <div class="space-y-3 w-2/3">
+                 <ui-skeleton width="60%" height="24px"></ui-skeleton>
+                 <ui-skeleton width="80%" height="16px"></ui-skeleton>
               </div>
-              <div class="h-6 w-20 bg-zinc-100 rounded-full"></div>
+              <ui-skeleton width="80px" height="24px" borderRadius="12px"></ui-skeleton>
            </div>
-           <div class="space-y-3 mb-6">
-              <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
-              <div class="h-3 bg-zinc-100 rounded w-1/2"></div>
+           
+           <div class="space-y-4 mb-6">
+              <div class="flex items-center gap-2">
+                 <ui-skeleton width="20px" height="20px"></ui-skeleton>
+                 <ui-skeleton width="50%" height="16px"></ui-skeleton>
+              </div>
+              <div class="flex items-center gap-2">
+                 <ui-skeleton width="20px" height="20px"></ui-skeleton>
+                 <ui-skeleton width="40%" height="16px"></ui-skeleton>
+              </div>
            </div>
            
            <div class="mt-auto pt-4 border-t border-zinc-50 flex items-center justify-between">
-              <div class="h-8 w-24 bg-zinc-200 rounded-lg"></div>
-              <div class="h-6 w-6 bg-zinc-100 rounded-full"></div>
+              <ui-skeleton width="100px" height="40px" borderRadius="10px"></ui-skeleton>
+              <div class="flex gap-2">
+                <ui-skeleton width="32px" height="32px" borderRadius="50%"></ui-skeleton>
+                <ui-skeleton width="32px" height="32px" borderRadius="50%"></ui-skeleton>
+              </div>
            </div>
         </div>
       </div>
@@ -156,14 +169,16 @@ import Swal from 'sweetalert2';
       <!-- Table Skeleton -->
       <div *ngIf="store.viewMode() === 'table'" class="rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
          <div class="w-full">
-            <div class="bg-zinc-50/50 border-b border-zinc-100 h-10 w-full mb-2"></div>
-            <div class="space-y-1">
-               <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="flex items-center border-b border-zinc-50 p-4">
-                  <div class="h-4 w-20 bg-zinc-200 rounded mx-4"></div>
-                  <div class="h-4 w-1/3 bg-zinc-100 rounded mx-4"></div>
-                  <div class="h-4 w-24 bg-zinc-100 rounded mx-4"></div>
-                  <div class="h-4 w-24 bg-zinc-100 rounded mx-4"></div>
-                  <div class="h-4 w-16 bg-zinc-200 rounded mx-4 ml-auto"></div>
+            <div class="bg-zinc-50/50 border-b border-zinc-100 h-12 w-full mb-2"></div>
+            <div class="space-y-1 p-2">
+               <div *ngFor="let i of [1,2,3,4,5,6,7,8]" class="flex items-center border-b border-zinc-50 p-4 gap-4">
+                  <ui-skeleton width="80px" height="20px"></ui-skeleton>
+                  <ui-skeleton width="30%" height="20px"></ui-skeleton>
+                  <ui-skeleton width="15%" height="20px"></ui-skeleton>
+                  <ui-skeleton width="15%" height="20px"></ui-skeleton>
+                  <div class="ml-auto">
+                    <ui-skeleton width="100px" height="30px" borderRadius="15px"></ui-skeleton>
+                  </div>
                </div>
             </div>
          </div>

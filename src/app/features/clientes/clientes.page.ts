@@ -1,4 +1,3 @@
-// src/app/features/clientes/clientes.page.ts
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +6,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import type { Cliente } from '../../core/models/cliente';
 import { ClientesApi } from './data/clientes.api';
 import Swal from 'sweetalert2';
+import { UiSkeletonComponent } from '../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 function norm(s: string) {
   return (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -18,7 +18,7 @@ import { AuthService } from '../../core/auth/auth.service';
 @Component({
   standalone: true,
   selector: 'clientes-page',
-  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule, UiSkeletonComponent],
   templateUrl: './clientes.page.html',
 })
 export class ClientesPage {

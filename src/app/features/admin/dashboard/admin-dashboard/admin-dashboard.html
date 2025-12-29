@@ -21,14 +21,23 @@
       </a>
     </div>
 
-    <!-- Estados -->
-    <div *ngIf="loadingUsers()" class="py-4 text-sm muted">Cargando…</div>
-    <div *ngIf="!loadingUsers() && usersError()" class="py-4 text-sm text-red-600">
+    <!-- Estados de Carga (Skeletons) -->
+    <div *ngIf="loadingUsers()" class="space-y-4">
+      <div class="flex flex-col gap-3">
+        <ui-skeleton height="40px" width="100%"></ui-skeleton>
+        <ui-skeleton height="40px" width="90%"></ui-skeleton>
+        <ui-skeleton height="40px" width="95%"></ui-skeleton>
+      </div>
+    </div>
+
+    <div *ngIf="!loadingUsers() && usersError()"
+      class="py-4 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex items-center gap-2">
+      <lucide-icon name="alert-circle" size="18"></lucide-icon>
       {{ usersError() }}
     </div>
 
-    <!-- Tabla -->
-    <div *ngIf="!loadingUsers() && !usersError()" class="overflow-x-auto">
+    <!-- Tabla Responsiva -->
+    <div *ngIf="!loadingUsers() && !usersError()" class="table-responsive">
       <table class="table w-full">
         <thead>
           <tr>
@@ -65,12 +74,22 @@
       <a routerLink="/admin/auditoria" class="text-sm text-[--brand] hover:underline">Ver todo</a>
     </div>
 
-    <!-- Loading -->
-    <div *ngIf="loadingAudit()" class="py-4 text-sm muted">Cargando actividad...</div>
+    <!-- Skeletons para Actividad -->
+    <div *ngIf="loadingAudit()" class="space-y-4">
+      <div *ngFor="let i of [1,2,3]" class="flex items-start gap-4 p-2">
+        <ui-skeleton width="48px" height="48px" borderRadius="12px"></ui-skeleton>
+        <div class="flex-1 space-y-2">
+          <ui-skeleton width="40%" height="20px"></ui-skeleton>
+          <ui-skeleton width="80%" height="16px"></ui-skeleton>
+        </div>
+      </div>
+    </div>
 
     <!-- Empty -->
-    <div *ngIf="!loadingAudit() && auditoria().length === 0" class="py-4 text-sm muted">
-      No hay actividad reciente.
+    <div *ngIf="!loadingAudit() && auditoria().length === 0"
+      class="py-8 text-center muted border-2 border-dashed border-zinc-100 rounded-2xl">
+      <lucide-icon name="activity" class="mx-auto mb-2 opacity-20" size="32"></lucide-icon>
+      <p>No hay actividad reciente.</p>
     </div>
 
     <div *ngIf="!loadingAudit() && auditoria().length > 0" class="flex flex-col gap-4">
@@ -86,7 +105,7 @@
           <h4 class="text-base font-bold text-zinc-900 leading-tight mb-1">
             {{ log.accion }}
           </h4>
-          <p class="text-sm text-zinc-500 mb-2 truncate">
+          <p class="text-sm text-zinc-500 mb-2 break-words line-clamp-2 md:line-clamp-none">
             {{ log.descripcion }}
           </p>
 

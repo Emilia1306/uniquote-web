@@ -8,12 +8,13 @@ import { AuthService } from '../../../../core/auth/auth.service';
 
 import { TimeAgoPipe } from '../../../../shared/pipes/time-ago.pipe';
 import { LucideAngularModule } from 'lucide-angular';
+import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 
 @Component({
   selector: 'admin-dashboard',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TitleCasePipe, RouterLink, DatePipe, TimeAgoPipe, LucideAngularModule],
+  imports: [NgFor, NgIf, NgClass, TitleCasePipe, RouterLink, DatePipe, TimeAgoPipe, LucideAngularModule, UiSkeletonComponent],
   templateUrl: './admin-dashboard.html',
 })
 export class AdminDashboardComponent {

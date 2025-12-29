@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CotizacionesApi } from '../data/cotizaciones.api';
 import { CotizacionStatusPillComponent } from './cotizacion-status-pill.component';
 import { CotizacionItemsTableComponent } from './cotizacion-items-table.component';
+import { UiSkeletonComponent } from '../../../shared/ui/ui-skeleton/ui-skeleton.component';
 
 import { AuthService } from '../../../core/auth/auth.service';
 
@@ -12,7 +13,7 @@ import { STATUS_COLORS } from '../ui/status-colors';
 @Component({
   standalone: true,
   selector: 'cotizacion-detail',
-  imports: [CommonModule, FormsModule, CotizacionStatusPillComponent, CotizacionItemsTableComponent],
+  imports: [CommonModule, FormsModule, CotizacionStatusPillComponent, CotizacionItemsTableComponent, UiSkeletonComponent],
   templateUrl: './cotizacion-detail.page.html',
   styles: [`
     .animate-fade-in { animation: fadeIn 0.2s ease-out; }

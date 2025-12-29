@@ -18,10 +18,12 @@ type Kpi = { label: string; value: number; icon: string; bgClass: string; iconCl
 type Serie = { mes: string; totales: number; aprobadas: number };
 type Semana = { dia: string; valor: number };
 
+import { UiSkeletonComponent } from '../../../../shared/ui/ui-skeleton/ui-skeleton.component';
+
 @Component({
   selector: 'gerente-dashboard',
   standalone: true,
-  imports: [NgApexchartsModule, DecimalPipe, NgApexchartsModule, NgIcon, CommonModule],
+  imports: [NgApexchartsModule, DecimalPipe, NgApexchartsModule, NgIcon, CommonModule, UiSkeletonComponent],
   providers: [provideIcons({ lucideFileText, lucideClock, lucideCheckCheck, lucideXCircle })],
   templateUrl: './gerente-dashboard.html',
 })
