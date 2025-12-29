@@ -83,9 +83,12 @@ export class CotizacionesStore {
       rows = rows.filter(r => r.project?.cliente?.id === this.filters().clienteId);
     }
 
-    // Filtro por Estado (Dropdown específico de Admin)
+    // Filtro por Estado (Dropdown específico de Admin o Mi Tab)
     if (this.filters().status) {
-      rows = rows.filter(r => r.status === this.filters().status);
+      const isMyTab = this.filters().mineOnly;
+      if (role === 'ADMIN' || isMyTab) {
+        rows = rows.filter(r => r.status === this.filters().status);
+      }
     }
 
     if (search.trim()) {
