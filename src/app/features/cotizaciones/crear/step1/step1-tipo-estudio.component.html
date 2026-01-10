@@ -7,16 +7,19 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
   <!-- CUALITATIVO -->
-  <div 
-    class="option-card"
-    [class.selected]="isSelected('Cualitativo')"
-    (click)="select('Cualitativo')">
+  <div class="option-card disabled" [class.selected]="isSelected('Cualitativo')" (click)="select('Cualitativo')">
 
-    <div class="flex items-start gap-3">
+    <div class="flex items-start gap-3 w-full">
       <lucide-icon name="star" class=" w-5 h-5 mt-1"></lucide-icon>
 
-      <div>
-        <h3 class="font-semibold text-[--brand]">Estudio Cualitativo</h3>
+      <div class="flex-1">
+        <div class="flex justify-between items-center">
+          <h3 class="font-semibold text-[--brand]">Estudio Cualitativo</h3>
+          <span
+            class="text-[10px] font-bold uppercase tracking-wider bg-zinc-100 text-zinc-500 px-2 py-0.5 rounded-full border border-zinc-200">
+            Próximamente
+          </span>
+        </div>
         <p class="text-sm text-zinc-600">
           Análisis profundo basado en textos y observaciones.
         </p>
@@ -26,10 +29,7 @@
   </div>
 
   <!-- CUANTITATIVO -->
-  <div 
-    class="option-card"
-    [class.selected]="isSelected('Cuantitativo')"
-    (click)="select('Cuantitativo')">
+  <div class="option-card" [class.selected]="isSelected('Cuantitativo')" (click)="select('Cuantitativo')">
 
     <div class="flex items-start gap-3">
       <lucide-icon name="activity" class="w-5 h-5 mt-1"></lucide-icon>

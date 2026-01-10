@@ -32,3 +32,9 @@
     @apply text-[--brand];
   }
 }
+
+/* ESTADO DESHABILITADO */
+.option-card.disabled {
+  @apply opacity-60 grayscale-[0.8] cursor-not-allowed pointer-events-none;
+  border-color: #e5e7eb;
+}
