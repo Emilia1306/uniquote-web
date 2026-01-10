@@ -57,6 +57,7 @@ export class CotizacionesApi {
 
   getAllFiltered(params: any) {
     return this.http.get<Cotizacion[]>(`${this.base}/all`, {
+      params,
       withCredentials: true
     });
   }

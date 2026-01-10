@@ -98,12 +98,18 @@ export class CotizacionDetailPage {
   async clonar() {
     const clone = await this.api.clone(this.cotizacion.id).toPromise();
 
-    if (!clone) {
+    if (!clone?.id) {
       console.error('Error: clone es undefined');
       return;
     }
 
-    this.router.navigate(['/cotizaciones', clone.id]);
+    // Navegar al wizard de edición (con prefijo de rol)
+    const role = this.auth.role()?.toLowerCase();
+    if (role) {
+      this.router.navigate([`/${role}/cotizaciones/editar`, clone.id]);
+    } else {
+      this.router.navigate(['/cotizaciones/editar', clone.id]);
+    }
   }
 
 

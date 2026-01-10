@@ -146,7 +146,10 @@ export class CotizacionesStore {
       if (mineOnly) {
         res = await this.api.getMine().toPromise();
       } else {
-        res = await this.api.getAllFiltered(params).toPromise();
+        // Si es Admin, podemos pasar un limite alto para asegurarnos de traer "todas"
+        const isAdmin = this.auth.role() === 'ADMIN';
+        const finalParams = isAdmin ? { limit: 1000, ...params } : params;
+        res = await this.api.getAllFiltered(finalParams).toPromise();
       }
       this._items.set(res ?? []);
     } catch (err) {

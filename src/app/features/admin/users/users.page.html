@@ -159,9 +159,8 @@
   </div>
 
   <!-- Modal crear/editar -->
-  <dialog [open]="showForm()"
-    class="modal backdrop:bg-black/40 backdrop:backdrop-blur-sm bg-transparent border-none shadow-none z-50 fixed inset-0 w-full h-full m-0 p-0 grid place-items-center pointer-events-auto"
-    style="max-width: none; max-height: none;" *ngIf="showForm()">
+  <div *ngIf="showForm()"
+    class="fixed inset-0 z-50 grid place-items-center bg-black/40 backdrop-blur-sm p-4 transition-opacity animate-in fade-in duration-200">
     <div
       class="modal-box p-0 w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden pointer-events-auto relative mx-4">
 
@@ -266,5 +265,5 @@
         </button>
       </div>
     </div>
-  </dialog>
+  </div>
 </div>
